@@ -59,7 +59,7 @@ export class ReviewModel {
   @Column()
   finishRating: number;
 
-  @Column()
+  @Column('json')
   finishNotes: string[];
 
   @Column()
