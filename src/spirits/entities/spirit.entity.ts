@@ -25,19 +25,19 @@ export class SpiritModel {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   maker: string;
 
-  @Column()
+  @Column({ nullable: true })
   alc: number;
 
-  @Column()
+  @Column({ nullable: true })
   price: number;
 
-  @Column()
+  @Column({ nullable: true })
   purchaseLocation: string;
 
-  @Column()
+  @Column({ nullable: true })
   purchaseDate: Date;
 
   @OneToMany(() => ReviewModel, (review) => review.spirit)

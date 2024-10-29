@@ -32,37 +32,37 @@ export class ReviewModel {
   @Column()
   comment: string;
 
-  @Column()
+  @Column('json', { nullable: true })
   pairing: string;
 
-  @Column()
+  @Column({ nullable: true })
   aeration: number;
 
-  @Column()
+  @Column({ nullable: true })
   noseRating: number;
 
-  @Column('json')
+  @Column('json', { nullable: true })
   noseNotes: string[];
 
-  @Column()
+  @Column({ nullable: true })
   noseComment: string;
 
-  @Column()
+  @Column({ nullable: true })
   palateRating: number;
 
-  @Column('json')
+  @Column('json', { nullable: true })
   palateNotes: string[];
 
-  @Column()
+  @Column({ nullable: true })
   palateComment: string;
 
-  @Column()
+  @Column({ nullable: true })
   finishRating: number;
 
-  @Column('json')
+  @Column('json', { nullable: true })
   finishNotes: string[];
 
-  @Column()
+  @Column({ nullable: true })
   finishComment: string;
 
   @ManyToOne(() => SpiritModel, (spirit) => spirit.reviews, { nullable: true })
