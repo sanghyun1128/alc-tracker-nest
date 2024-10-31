@@ -12,6 +12,17 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+export class DetailEvaluation {
+  @Column({ nullable: true })
+  rating: number;
+
+  @Column('json', { nullable: true })
+  notes: string[];
+
+  @Column({ nullable: true })
+  comment: string;
+}
+
 @Entity()
 @Check(`("spiritId" IS NOT NULL AND "wineId" IS NULL AND "cocktailId" IS NULL) OR
        ("spiritId" IS NULL AND "wineId" IS NOT NULL AND "cocktailId" IS NULL) OR
@@ -38,32 +49,14 @@ export class ReviewModel {
   @Column({ nullable: true })
   aeration: number;
 
-  @Column({ nullable: true })
-  noseRating: number;
+  @Column(() => DetailEvaluation)
+  nose: DetailEvaluation;
 
-  @Column('json', { nullable: true })
-  noseNotes: string[];
+  @Column(() => DetailEvaluation)
+  palate: DetailEvaluation;
 
-  @Column({ nullable: true })
-  noseComment: string;
-
-  @Column({ nullable: true })
-  palateRating: number;
-
-  @Column('json', { nullable: true })
-  palateNotes: string[];
-
-  @Column({ nullable: true })
-  palateComment: string;
-
-  @Column({ nullable: true })
-  finishRating: number;
-
-  @Column('json', { nullable: true })
-  finishNotes: string[];
-
-  @Column({ nullable: true })
-  finishComment: string;
+  @Column(() => DetailEvaluation)
+  finish: DetailEvaluation;
 
   @ManyToOne(() => SpiritModel, (spirit) => spirit.reviews, { nullable: true })
   @JoinColumn({ name: 'spiritId' })
