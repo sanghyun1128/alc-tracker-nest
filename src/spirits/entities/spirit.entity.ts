@@ -1,4 +1,4 @@
-import { ReviewModel } from 'src/reviews/entities/review.entity';
+import { SpiritReviewModel } from 'src/reviews/entities/review.entity';
 import {
   Column,
   CreateDateColumn,
@@ -40,8 +40,8 @@ export class SpiritModel {
   @Column({ nullable: true })
   purchaseDate: Date;
 
-  @OneToMany(() => ReviewModel, (review) => review.spirit)
-  reviews: ReviewModel[];
+  @OneToMany(() => SpiritReviewModel, (review) => review.spirit)
+  reviews: SpiritReviewModel[];
 
   // @OneToMany(() => ImageModel, (image) => image.spirit)
   // images: ImageModel[];

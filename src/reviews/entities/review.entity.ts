@@ -2,7 +2,6 @@ import { CocktailModel } from 'src/cocktails/entities/cocktail.entity';
 import { SpiritModel } from 'src/spirits/entities/spirit.entity';
 import { WineModel } from 'src/wines/entities/wine.entity';
 import {
-  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -24,10 +23,7 @@ export class DetailEvaluation {
 }
 
 @Entity()
-@Check(`("spiritId" IS NOT NULL AND "wineId" IS NULL AND "cocktailId" IS NULL) OR
-       ("spiritId" IS NULL AND "wineId" IS NOT NULL AND "cocktailId" IS NULL) OR
-       ("spiritId" IS NULL AND "wineId" IS NULL AND "cocktailId" IS NOT NULL)`)
-export class ReviewModel {
+export class BaseReviewModel {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -46,9 +42,6 @@ export class ReviewModel {
   @Column('json', { nullable: true })
   pairing: string;
 
-  @Column({ nullable: true })
-  aeration: number;
-
   @Column(() => DetailEvaluation)
   nose: DetailEvaluation;
 
@@ -58,21 +51,34 @@ export class ReviewModel {
   @Column(() => DetailEvaluation)
   finish: DetailEvaluation;
 
-  @ManyToOne(() => SpiritModel, (spirit) => spirit.reviews, { nullable: true })
-  @JoinColumn({ name: 'spiritId' })
-  spirit: SpiritModel;
-
-  @ManyToOne(() => WineModel, (wine) => wine.reviews, { nullable: true })
-  @JoinColumn({ name: 'wineId' })
-  wine: WineModel;
-
-  @ManyToOne(() => CocktailModel, (cocktail) => cocktail.reviews, {
-    nullable: true,
-  })
-  @JoinColumn({ name: 'cocktailId' })
-  cocktail: CocktailModel;
-
   // @ManyToOne(() => User, (user) => user.reviews)
   // @JoinColumn({ name: 'userId' })
   // user: User;
+}
+
+@Entity()
+export class SpiritReviewModel extends BaseReviewModel {
+  @ManyToOne(() => SpiritModel, (spirit) => spirit.reviews)
+  @JoinColumn({ name: 'spiritId' })
+  spirit: SpiritModel;
+
+  @Column({ nullable: true })
+  bottleCondition: number;
+}
+
+@Entity()
+export class WineReviewModel extends BaseReviewModel {
+  @ManyToOne(() => WineModel, (wine) => wine.reviews)
+  @JoinColumn({ name: 'wineId' })
+  wine: WineModel;
+
+  @Column({ nullable: true })
+  aeration: number;
+}
+
+@Entity()
+export class CocktailReviewModel extends BaseReviewModel {
+  @ManyToOne(() => CocktailModel, (cocktail) => cocktail.reviews)
+  @JoinColumn({ name: 'cocktailId' })
+  cocktail: CocktailModel;
 }

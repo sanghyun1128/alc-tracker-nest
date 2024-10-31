@@ -1,14 +1,14 @@
-import { ReviewModel } from 'src/reviews/entities/review.entity';
+import { CocktailReviewModel } from 'src/reviews/entities/review.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class CocktailModel {
   @PrimaryGeneratedColumn()
-  id: number;
+  cocktailId: number;
 
   @Column()
   name: string;
 
-  @OneToMany(() => ReviewModel, (review) => review.spirit)
-  reviews: ReviewModel[];
+  @OneToMany(() => CocktailReviewModel, (review) => review.cocktail)
+  reviews: CocktailReviewModel[];
 }

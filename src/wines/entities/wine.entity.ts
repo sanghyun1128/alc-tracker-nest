@@ -1,4 +1,4 @@
-import { ReviewModel } from 'src/reviews/entities/review.entity';
+import { WineReviewModel } from 'src/reviews/entities/review.entity';
 import {
   Column,
   CreateDateColumn,
@@ -11,7 +11,7 @@ import {
 @Entity()
 export class WineModel {
   @PrimaryGeneratedColumn()
-  id: number;
+  wineId: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -43,8 +43,8 @@ export class WineModel {
   @Column()
   purchaseDate: Date;
 
-  @OneToMany(() => ReviewModel, (review) => review.spirit)
-  reviews: ReviewModel[];
+  @OneToMany(() => WineReviewModel, (review) => review.wine)
+  reviews: WineReviewModel[];
 
   // @OneToMany(() => ImageModel, (image) => image.wine)
   // images: ImageModel[];
