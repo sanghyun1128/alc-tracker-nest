@@ -8,7 +8,12 @@ import { CocktailsModule } from './cocktails/cocktails.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { ReviewModel } from './reviews/entities/review.entity';
+import {
+  BaseReviewModel,
+  CocktailReviewModel,
+  SpiritReviewModel,
+  WineReviewModel,
+} from './reviews/entities/review.entity';
 import { SpiritModel } from './spirits/entities/spirit.entity';
 import { WineModel } from './wines/entities/wine.entity';
 import { CocktailModel } from './cocktails/entities/cocktail.entity';
@@ -31,7 +36,15 @@ import { CocktailModel } from './cocktails/entities/cocktail.entity';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [ReviewModel, SpiritModel, WineModel, CocktailModel],
+      entities: [
+        BaseReviewModel,
+        SpiritReviewModel,
+        WineReviewModel,
+        CocktailReviewModel,
+        SpiritModel,
+        WineModel,
+        CocktailModel,
+      ],
       synchronize: true,
     }),
   ],
