@@ -1,10 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ReviewsModule } from './reviews/reviews.module';
-import { SpiritsModule } from './spirits/spirits.module';
-import { WinesModule } from './wines/wines.module';
-import { CocktailsModule } from './cocktails/cocktails.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
@@ -14,16 +10,18 @@ import {
   SpiritReviewModel,
   WineReviewModel,
 } from './reviews/entities/review.entity';
-import { SpiritModel } from './spirits/entities/spirit.entity';
-import { WineModel } from './wines/entities/wine.entity';
-import { CocktailModel } from './cocktails/entities/cocktail.entity';
+import {
+  SpiritModel,
+  WineModel,
+  CocktailModel,
+} from './alcohol/entities/alcohol.entity';
+import { AlcoholModule } from './alcohol/alcohol.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
     ReviewsModule,
-    SpiritsModule,
-    WinesModule,
-    CocktailsModule,
+    AlcoholModule,
     UsersModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
@@ -33,9 +31,9 @@ import { CocktailModel } from './cocktails/entities/cocktail.entity';
       type: process.env.DB_TYPE as any,
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT),
-      username: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DB,
       entities: [
         BaseReviewModel,
         SpiritReviewModel,

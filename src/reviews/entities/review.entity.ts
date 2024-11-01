@@ -1,6 +1,8 @@
-import { CocktailModel } from 'src/cocktails/entities/cocktail.entity';
-import { SpiritModel } from 'src/spirits/entities/spirit.entity';
-import { WineModel } from 'src/wines/entities/wine.entity';
+import {
+  SpiritModel,
+  WineModel,
+  CocktailModel,
+} from 'src/alcohol/entities/alcohol.entity';
 import {
   Column,
   CreateDateColumn,
