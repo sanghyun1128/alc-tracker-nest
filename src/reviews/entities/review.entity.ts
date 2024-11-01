@@ -83,4 +83,10 @@ export class CocktailReviewModel extends BaseReviewModel {
   @ManyToOne(() => CocktailModel, (cocktail) => cocktail.reviews)
   @JoinColumn({ name: 'cocktailId' })
   cocktail: CocktailModel;
+
+  @Column('json')
+  ingredients: string[];
+
+  @Column('json')
+  recipe: string[];
 }
