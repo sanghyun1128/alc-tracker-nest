@@ -51,7 +51,11 @@ export class SpiritModel extends AlcoholModel {
   })
   category: SpiritCategoryEnum;
 
-  @Column({ type: 'enum', enum: CaskEnum, default: CaskEnum.OTHER })
+  @Column({
+    type: 'enum',
+    enum: CaskEnum,
+    default: CaskEnum.OTHER,
+  })
   cask: CaskEnum;
 
   @Column({ nullable: true })
@@ -75,10 +79,16 @@ export class WineModel extends AlcoholModel {
   @OneToMany(() => WineReviewModel, (review) => review.wine)
   reviews: WineReviewModel[];
 
-  @Column({ type: 'enum', enum: WineCategoryEnum })
+  @Column({
+    type: 'enum',
+    enum: WineCategoryEnum,
+  })
   category: WineCategoryEnum;
 
-  @Column({ type: 'enum', enum: WineRegionEnum })
+  @Column({
+    type: 'enum',
+    enum: WineRegionEnum,
+  })
   region: WineRegionEnum;
 
   @Column({
