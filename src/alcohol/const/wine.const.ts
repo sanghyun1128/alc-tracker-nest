@@ -8,6 +8,29 @@ export enum WineCategoryEnum {
   OTHER = 'other',
 }
 
+export enum GrapeVarietyEnum {
+  CABERNET_SAUVIGNON = 'cabernet_sauvignon',
+  MERLOT = 'merlot',
+  PINOT_NOIR = 'pinot_noir',
+  SYRAH = 'syrah',
+  GRENACHE = 'grenache',
+  SANGIOVESE = 'sangiovese',
+  NEBBIOLO = 'nebbiolo',
+  TEMPRANILLO = 'tempranillo',
+  ZINFANDEL = 'zinfandel',
+  MALBEC = 'malbec',
+  SHIRAZ = 'shiraz',
+  CHARDONNAY = 'chardonnay',
+  SAUVIGNON_BLANC = 'sauvignon_blanc',
+  RIESLING = 'riesling',
+  PINOT_GRIS = 'pinot_gris',
+  CHENIN_BLANC = 'chenin_blanc',
+  SEMILLON = 'semillon',
+  VIOGNIER = 'viognier',
+  MUSCAT = 'muscat',
+  OTHER = 'other',
+}
+
 export enum WineRegionEnum {
   FRANCE = 'france',
   ITALY = 'italy',
