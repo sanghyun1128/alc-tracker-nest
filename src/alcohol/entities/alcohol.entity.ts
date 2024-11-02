@@ -11,6 +11,15 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { CaskEnum, SpiritCategoryEnum } from '../const/spirit.const';
+import {
+  CombinedAppellationEnum,
+  CombinedAppellationType,
+  GrapeVarietyEnum,
+  WineCategoryEnum,
+  WineRegionEnum,
+} from '../const/wine.const';
+import { CocktailCategoryEnum } from '../const/cocktail.const';
 
 @Entity()
 export class AlcoholModel {
@@ -35,8 +44,15 @@ export class SpiritModel extends AlcoholModel {
   @OneToMany(() => SpiritReviewModel, (review) => review.spirit)
   reviews: SpiritReviewModel[];
 
-  @Column()
-  category: string;
+  @Column({
+    type: 'enum',
+    enum: SpiritCategoryEnum,
+    default: SpiritCategoryEnum.OTHER,
+  })
+  category: SpiritCategoryEnum;
+
+  @Column({ type: 'enum', enum: CaskEnum, default: CaskEnum.OTHER })
+  cask: CaskEnum;
 
   @Column({ nullable: true })
   maker: string;
@@ -59,8 +75,26 @@ export class WineModel extends AlcoholModel {
   @OneToMany(() => WineReviewModel, (review) => review.wine)
   reviews: WineReviewModel[];
 
-  @Column()
-  category: string;
+  @Column({ type: 'enum', enum: WineCategoryEnum })
+  category: WineCategoryEnum;
+
+  @Column({ type: 'enum', enum: WineRegionEnum })
+  region: WineRegionEnum;
+
+  @Column({
+    type: 'enum',
+    enum: CombinedAppellationEnum,
+  })
+  appellation: CombinedAppellationType;
+
+  @Column({
+    type: 'enum',
+    enum: GrapeVarietyEnum,
+  })
+  grape: GrapeVarietyEnum;
+
+  @Column({ nullable: true })
+  vintage: number;
 
   @Column({ nullable: true })
   maker: string;
@@ -83,6 +117,9 @@ export class CocktailModel extends AlcoholModel {
   @OneToMany(() => CocktailReviewModel, (review) => review.cocktail)
   reviews: CocktailReviewModel[];
 
-  @Column()
-  category: string;
+  @Column({
+    type: 'enum',
+    enum: CocktailCategoryEnum,
+  })
+  category: CocktailCategoryEnum;
 }
