@@ -1,9 +1,4 @@
 import {
-  CocktailReviewModel,
-  SpiritReviewModel,
-  WineReviewModel,
-} from 'src/reviews/entities/review.entity';
-import {
   Column,
   CreateDateColumn,
   Entity,
@@ -11,6 +6,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { CocktailCategoryEnum } from '../const/cocktail.const';
 import { CaskEnum, SpiritCategoryEnum } from '../const/spirit.const';
 import {
   CombinedAppellationEnum,
@@ -19,7 +16,11 @@ import {
   WineCategoryEnum,
   WineRegionEnum,
 } from '../const/wine.const';
-import { CocktailCategoryEnum } from '../const/cocktail.const';
+import {
+  CocktailReviewModel,
+  SpiritReviewModel,
+  WineReviewModel,
+} from 'src/reviews/entities/review.entity';
 
 @Entity()
 export class AlcoholModel {

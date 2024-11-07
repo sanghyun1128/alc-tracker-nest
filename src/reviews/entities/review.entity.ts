@@ -1,9 +1,4 @@
 import {
-  SpiritModel,
-  WineModel,
-  CocktailModel,
-} from 'src/alcohol/entities/alcohol.entity';
-import {
   Column,
   CreateDateColumn,
   Entity,
@@ -12,6 +7,12 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import {
+  SpiritModel,
+  WineModel,
+  CocktailModel,
+} from 'src/alcohol/entities/alcohol.entity';
 
 export class DetailEvaluation {
   @Column({ nullable: true })
