@@ -17,6 +17,7 @@ import {
   WineReviewModel,
 } from './reviews/entities/review.entity';
 import { ReviewsModule } from './reviews/reviews.module';
+import { UserModel } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -43,6 +44,7 @@ import { UsersModule } from './users/users.module';
         SpiritModel,
         WineModel,
         CocktailModel,
+        UserModel,
       ],
       synchronize: true,
     }),
