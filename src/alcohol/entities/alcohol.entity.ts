@@ -33,7 +33,10 @@ export class AlcoholModel {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column()
+  @Column({
+    length: 100,
+    nullable: false,
+  })
   name: string;
 
   // @OneToMany(() => ImageModel, (image) => image.spirit)
@@ -47,19 +50,21 @@ export class SpiritModel extends AlcoholModel {
 
   @Column({
     type: 'enum',
-    enum: SpiritCategoryEnum,
+    enum: Object.values(SpiritCategoryEnum),
     default: SpiritCategoryEnum.OTHER,
+    nullable: false,
   })
   category: SpiritCategoryEnum;
 
   @Column({
     type: 'enum',
-    enum: CaskEnum,
+    enum: Object.values(CaskEnum),
     default: CaskEnum.OTHER,
+    nullable: false,
   })
   cask: CaskEnum;
 
-  @Column({ nullable: true })
+  @Column({ length: 100, nullable: true })
   maker: string;
 
   @Column({ nullable: true })
@@ -68,10 +73,10 @@ export class SpiritModel extends AlcoholModel {
   @Column({ nullable: true })
   price: number;
 
-  @Column({ nullable: true })
+  @Column({ length: 100, nullable: true })
   purchaseLocation: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'date', nullable: true })
   purchaseDate: Date;
 }
 
@@ -82,32 +87,40 @@ export class WineModel extends AlcoholModel {
 
   @Column({
     type: 'enum',
-    enum: WineCategoryEnum,
+    enum: Object.values(WineCategoryEnum),
+    default: WineCategoryEnum.OTHER,
+    nullable: false,
   })
   category: WineCategoryEnum;
 
   @Column({
     type: 'enum',
-    enum: WineRegionEnum,
+    enum: Object.values(WineRegionEnum),
+    default: WineRegionEnum.OTHER,
+    nullable: false,
   })
   region: WineRegionEnum;
 
   @Column({
     type: 'enum',
-    enum: CombinedAppellationEnum,
+    enum: Object.values(CombinedAppellationEnum),
+    default: CombinedAppellationEnum.OTHER,
+    nullable: false,
   })
   appellation: CombinedAppellationType;
 
   @Column({
     type: 'enum',
-    enum: GrapeVarietyEnum,
+    enum: Object.values(GrapeVarietyEnum),
+    default: GrapeVarietyEnum.OTHER,
+    nullable: false,
   })
   grape: GrapeVarietyEnum;
 
   @Column({ nullable: true })
   vintage: number;
 
-  @Column({ nullable: true })
+  @Column({ length: 100, nullable: true })
   maker: string;
 
   @Column({ nullable: true })
@@ -116,10 +129,10 @@ export class WineModel extends AlcoholModel {
   @Column({ nullable: true })
   price: number;
 
-  @Column({ nullable: true })
+  @Column({ length: 100, nullable: true })
   purchaseLocation: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'date', nullable: true })
   purchaseDate: Date;
 }
 
@@ -130,7 +143,9 @@ export class CocktailModel extends AlcoholModel {
 
   @Column({
     type: 'enum',
-    enum: CocktailCategoryEnum,
+    enum: Object.values(CocktailCategoryEnum),
+    default: CocktailCategoryEnum.CLASSIC,
+    nullable: false,
   })
   category: CocktailCategoryEnum;
 }
