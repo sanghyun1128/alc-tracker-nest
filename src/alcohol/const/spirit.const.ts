@@ -1,7 +1,7 @@
 export enum SpiritCategoryEnum {
-  Irish = 'irish',
-  Scotch = 'scotch',
-  Bourbon = 'bourbon',
+  IRISH = 'irish',
+  SCOTCH = 'scotch',
+  BOURBON = 'bourbon',
   WHISKY = 'whisky',
   VODKA = 'vodka',
   GIN = 'gin',
