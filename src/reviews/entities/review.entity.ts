@@ -15,7 +15,7 @@ import {
 } from 'src/alcohol/entities/alcohol.entity';
 
 export class DetailEvaluation {
-  @Column({ nullable: true })
+  @Column({ nullable: false, default: 0 })
   rating: number;
 
   @Column('json', { nullable: true })
@@ -36,10 +36,16 @@ export class BaseReviewModel {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column()
+  @Column({
+    nullable: false,
+    default: 0,
+  })
   rating: number;
 
-  @Column()
+  @Column({
+    length: 1000,
+    nullable: true,
+  })
   comment: string;
 
   @Column('json', { nullable: true })
@@ -65,7 +71,10 @@ export class SpiritReviewModel extends BaseReviewModel {
   @JoinColumn({ name: 'spiritId' })
   spirit: SpiritModel;
 
-  @Column({ nullable: true })
+  /**
+   * bottleCondition represents a percentage value between 0 and 100.
+   */
+  @Column({ nullable: true, default: 100 })
   bottleCondition: number;
 }
 
@@ -75,7 +84,10 @@ export class WineReviewModel extends BaseReviewModel {
   @JoinColumn({ name: 'wineId' })
   wine: WineModel;
 
-  @Column({ nullable: true })
+  /**
+   * aeration represents a minute of aeration.
+   */
+  @Column({ nullable: true, default: 0 })
   aeration: number;
 }
 
@@ -85,9 +97,9 @@ export class CocktailReviewModel extends BaseReviewModel {
   @JoinColumn({ name: 'cocktailId' })
   cocktail: CocktailModel;
 
-  @Column('json')
+  @Column('json', { nullable: false })
   ingredients: string[];
 
-  @Column('json')
+  @Column('json', { nullable: false })
   recipe: string[];
 }
