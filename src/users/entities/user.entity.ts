@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { GenderEnum } from '../const/gender.const';
 import { RoleEnum } from '../const/role.const';
+import { BaseReviewModel } from 'src/reviews/entities/review.entity';
 
 @Entity()
 export class UserModel {
@@ -27,6 +28,7 @@ export class UserModel {
   })
   nickname: string;
 
+  //TODO: ADMIN이 함부로 설정되지 않도록 조치 필요
   @Column({
     type: 'enum',
     enum: Object.values(RoleEnum),
@@ -48,4 +50,7 @@ export class UserModel {
     nullable: false,
   })
   birth: Date;
+
+  @OneToMany(() => BaseReviewModel, (review) => review.author)
+  reviews: BaseReviewModel[];
 }

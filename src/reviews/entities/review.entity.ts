@@ -13,6 +13,7 @@ import {
   WineModel,
   CocktailModel,
 } from 'src/alcohol/entities/alcohol.entity';
+import { UserModel } from 'src/users/entities/user.entity';
 
 export class DetailEvaluation {
   @Column({ nullable: false, default: 0 })
@@ -60,14 +61,18 @@ export class BaseReviewModel {
   @Column(() => DetailEvaluation)
   finish: DetailEvaluation;
 
-  // @ManyToOne(() => User, (user) => user.reviews)
-  // @JoinColumn({ name: 'userId' })
-  // user: User;
+  @ManyToOne(() => UserModel, (user) => user.reviews, {
+    nullable: false,
+  })
+  @JoinColumn({ name: 'authorId' })
+  author: UserModel;
 }
 
 @Entity()
 export class SpiritReviewModel extends BaseReviewModel {
-  @ManyToOne(() => SpiritModel, (spirit) => spirit.reviews)
+  @ManyToOne(() => SpiritModel, (spirit) => spirit.reviews, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'spiritId' })
   spirit: SpiritModel;
 
@@ -80,7 +85,9 @@ export class SpiritReviewModel extends BaseReviewModel {
 
 @Entity()
 export class WineReviewModel extends BaseReviewModel {
-  @ManyToOne(() => WineModel, (wine) => wine.reviews)
+  @ManyToOne(() => WineModel, (wine) => wine.reviews, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'wineId' })
   wine: WineModel;
 
@@ -93,7 +100,9 @@ export class WineReviewModel extends BaseReviewModel {
 
 @Entity()
 export class CocktailReviewModel extends BaseReviewModel {
-  @ManyToOne(() => CocktailModel, (cocktail) => cocktail.reviews)
+  @ManyToOne(() => CocktailModel, (cocktail) => cocktail.reviews, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'cocktailId' })
   cocktail: CocktailModel;
 
