@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import {
+  BaseReviewModel,
   CocktailReviewModel,
   SpiritReviewModel,
   WineReviewModel,
@@ -12,6 +13,7 @@ import { ReviewsService } from './reviews.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      BaseReviewModel,
       SpiritReviewModel,
       WineReviewModel,
       CocktailReviewModel,
