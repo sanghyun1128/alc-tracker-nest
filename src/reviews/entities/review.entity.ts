@@ -20,7 +20,7 @@ export class DetailEvaluation {
   rating: number;
 
   @Column('json', { nullable: true })
-  notes: string[];
+  notes: string;
 
   @Column({ nullable: true })
   comment: string;
@@ -107,8 +107,8 @@ export class CocktailReviewModel extends BaseReviewModel {
   cocktail: CocktailModel;
 
   @Column('json', { nullable: false })
-  ingredients: string[];
+  ingredients: string;
 
   @Column('json', { nullable: false })
-  recipe: string[];
+  recipe: string;
 }
