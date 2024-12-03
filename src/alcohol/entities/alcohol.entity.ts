@@ -2,6 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -21,6 +23,7 @@ import {
   SpiritReviewModel,
   WineReviewModel,
 } from 'src/reviews/entities/review.entity';
+import { UserModel } from 'src/users/entities/user.entity';
 
 @Entity()
 export class AlcoholModel {
@@ -38,6 +41,10 @@ export class AlcoholModel {
     nullable: false,
   })
   name: string;
+
+  @ManyToOne(() => UserModel, (user) => user.alcohols)
+  @JoinColumn({ name: 'ownerId' })
+  owner: UserModel;
 
   // @OneToMany(() => ImageModel, (image) => image.spirit)
   // images: ImageModel[];

@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { GenderEnum } from '../const/gender.const';
 import { RoleEnum } from '../const/role.const';
+import { AlcoholModel } from 'src/alcohol/entities/alcohol.entity';
 import { BaseReviewModel } from 'src/reviews/entities/review.entity';
 
 @Entity()
@@ -53,4 +54,7 @@ export class UserModel {
 
   @OneToMany(() => BaseReviewModel, (review) => review.author)
   reviews: BaseReviewModel[];
+
+  @OneToMany(() => AlcoholModel, (alcohol) => alcohol.owner)
+  alcohols: AlcoholModel[];
 }
