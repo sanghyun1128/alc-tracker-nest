@@ -7,6 +7,7 @@ import {
   SpiritModel,
   WineModel,
   CocktailModel,
+  AlcoholModel,
 } from './alcohol/entities/alcohol.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -41,6 +42,7 @@ import { UsersModule } from './users/users.module';
         SpiritReviewModel,
         WineReviewModel,
         CocktailReviewModel,
+        AlcoholModel,
         SpiritModel,
         WineModel,
         CocktailModel,
