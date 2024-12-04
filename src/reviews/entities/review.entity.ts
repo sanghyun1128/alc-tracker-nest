@@ -111,4 +111,7 @@ export class CocktailReviewModel extends BaseReviewModel {
 
   @Column('json', { nullable: false })
   recipe: string;
+
+  @Column('float', { nullable: false })
+  alc: number;
 }

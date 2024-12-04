@@ -74,7 +74,7 @@ export class SpiritModel extends AlcoholModel {
   @Column({ length: 100, nullable: true })
   maker: string;
 
-  @Column({ nullable: true })
+  @Column('float', { nullable: true })
   alc: number;
 
   @Column({ nullable: true })
@@ -130,7 +130,7 @@ export class WineModel extends AlcoholModel {
   @Column({ length: 100, nullable: true })
   maker: string;
 
-  @Column({ nullable: true })
+  @Column('float', { nullable: true })
   alc: number;
 
   @Column({ nullable: true })
