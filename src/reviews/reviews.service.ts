@@ -50,6 +50,7 @@ export class ReviewsService {
   }
 
   async createSpiritReview(
+    authorId: number,
     rating: number,
     comment: string,
     pairing: string,
@@ -59,6 +60,9 @@ export class ReviewsService {
     bottleCondition: number,
   ) {
     const review = this.spiritReviewRepository.create({
+      author: {
+        id: authorId,
+      },
       rating,
       comment,
       pairing,
@@ -74,6 +78,7 @@ export class ReviewsService {
   }
 
   async createWineReview(
+    authorId: number,
     rating: number,
     comment: string,
     pairing: string,
@@ -83,6 +88,9 @@ export class ReviewsService {
     aeration: number,
   ) {
     const review = this.wineReviewRepository.create({
+      author: {
+        id: authorId,
+      },
       rating,
       comment,
       pairing,
@@ -98,6 +106,7 @@ export class ReviewsService {
   }
 
   async createCocktailReview(
+    authorId: number,
     rating: number,
     comment: string,
     pairing: string,
@@ -108,6 +117,9 @@ export class ReviewsService {
     recipe: string,
   ) {
     const review = this.cocktailReviewRepository.create({
+      author: {
+        id: authorId,
+      },
       rating,
       comment,
       pairing,

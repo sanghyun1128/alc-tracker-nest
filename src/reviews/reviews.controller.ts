@@ -29,6 +29,7 @@ export class ReviewsController {
 
   @Post('/spirit')
   createSpiritReview(
+    @Body('authorId') authorId: number,
     @Body('rating') rating: number,
     @Body('comment') comment: string,
     @Body('pairing') pairing: string,
@@ -38,6 +39,7 @@ export class ReviewsController {
     @Body('bottleCondition') bottleCondition: number,
   ) {
     return this.reviewsService.createSpiritReview(
+      authorId,
       rating,
       comment,
       pairing,
@@ -50,6 +52,7 @@ export class ReviewsController {
 
   @Post('/wine')
   createWineReview(
+    @Body('authorId') authorId: number,
     @Body('rating') rating: number,
     @Body('comment') comment: string,
     @Body('pairing') pairing: string,
@@ -59,6 +62,7 @@ export class ReviewsController {
     @Body('bottleCondition') bottleCondition: number,
   ) {
     return this.reviewsService.createWineReview(
+      authorId,
       rating,
       comment,
       pairing,
@@ -71,6 +75,7 @@ export class ReviewsController {
 
   @Post('/cocktail')
   createCocktailReview(
+    @Body('authorId') authorId: number,
     @Body('rating') rating: number,
     @Body('comment') comment: string,
     @Body('pairing') pairing: string,
@@ -81,6 +86,7 @@ export class ReviewsController {
     @Body('recipe') recipe: string,
   ) {
     return this.reviewsService.createCocktailReview(
+      authorId,
       rating,
       comment,
       pairing,
