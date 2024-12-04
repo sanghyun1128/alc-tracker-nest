@@ -57,6 +57,7 @@ export class AlcoholService {
   }
 
   async createSpirit(
+    ownerId: number,
     name: string,
     category: SpiritCategoryEnum,
     cask: CaskEnum,
@@ -67,6 +68,9 @@ export class AlcoholService {
     purchaseDate: Date,
   ) {
     const alcohol = this.spiritRepository.create({
+      owner: {
+        id: ownerId,
+      },
       name,
       category,
       cask,
@@ -83,6 +87,7 @@ export class AlcoholService {
   }
 
   async createWine(
+    ownerId: number,
     name: string,
     category: WineCategoryEnum,
     region: WineRegionEnum,
@@ -96,6 +101,9 @@ export class AlcoholService {
     purchaseDate: Date,
   ) {
     const alcohol = this.wineRepository.create({
+      owner: {
+        id: ownerId,
+      },
       name,
       category,
       region,
@@ -114,8 +122,15 @@ export class AlcoholService {
     return wine;
   }
 
-  async createCocktail(name: string, category: CocktailCategoryEnum) {
+  async createCocktail(
+    ownerId: number,
+    name: string,
+    category: CocktailCategoryEnum,
+  ) {
     const alcohol = this.cocktailRepository.create({
+      owner: {
+        id: ownerId,
+      },
       name,
       category,
     });

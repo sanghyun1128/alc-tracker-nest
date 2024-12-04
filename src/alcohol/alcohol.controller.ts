@@ -36,6 +36,7 @@ export class AlcoholController {
 
   @Post('/spirit')
   createSpirit(
+    @Body('ownerId') ownerId: number,
     @Body('name') name: string,
     @Body('category') category: SpiritCategoryEnum,
     @Body('cask') cask: CaskEnum,
@@ -46,6 +47,7 @@ export class AlcoholController {
     @Body('purchaseDate') purchaseDate: Date,
   ) {
     return this.alcoholService.createSpirit(
+      ownerId,
       name,
       category,
       cask,
@@ -59,6 +61,7 @@ export class AlcoholController {
 
   @Post('/wine')
   createWine(
+    @Body('ownerId') ownerId: number,
     @Body('name') name: string,
     @Body('category') category: WineCategoryEnum,
     @Body('region') region: WineRegionEnum,
@@ -72,6 +75,7 @@ export class AlcoholController {
     @Body('purchaseDate') purchaseDate: Date,
   ) {
     return this.alcoholService.createWine(
+      ownerId,
       name,
       category,
       region,
@@ -88,9 +92,10 @@ export class AlcoholController {
 
   @Post('/cocktail')
   createCocktail(
+    @Body('ownerId') ownerId: number,
     @Body('name') name: string,
     @Body('category') category: CocktailCategoryEnum,
   ) {
-    return this.alcoholService.createCocktail(name, category);
+    return this.alcoholService.createCocktail(ownerId, name, category);
   }
 }
