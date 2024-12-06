@@ -31,15 +31,21 @@ export class AlcoholService {
   ) {}
 
   async getAllSpirits() {
-    return this.spiritRepository.find();
+    return this.spiritRepository.find({
+      relations: ['owner'],
+    });
   }
 
   async getAllWines() {
-    return this.wineRepository.find();
+    return this.wineRepository.find({
+      relations: ['owner'],
+    });
   }
 
   async getAllCocktails() {
-    return this.cocktailRepository.find();
+    return this.cocktailRepository.find({
+      relations: ['owner'],
+    });
   }
 
   async getAlcoholById(id: number) {
@@ -47,6 +53,7 @@ export class AlcoholService {
       where: {
         id,
       },
+      relations: ['owner'],
     });
 
     if (!alcohol) {
