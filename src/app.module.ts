@@ -20,6 +20,7 @@ import {
 import { ReviewsModule } from './reviews/reviews.module';
 import { UserModel } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { UsersModule } from './users/users.module';
       ],
       synchronize: true,
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
