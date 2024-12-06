@@ -11,6 +11,7 @@ import {
 } from './alcohol/entities/alcohol.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import {
   BaseReviewModel,
   CocktailReviewModel,
@@ -20,7 +21,6 @@ import {
 import { ReviewsModule } from './reviews/reviews.module';
 import { UserModel } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
