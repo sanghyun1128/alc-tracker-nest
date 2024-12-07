@@ -12,32 +12,17 @@ export class AuthService {
     private readonly usersService: UsersService,
   ) {}
 
+  /**
+   * Login a user with email and password.
+   *
+   * @param user - An object containing the user's email and password.
+   * @returns An object containing the access token and refresh token.
+   * @throws UnauthorizedException if the user does not exist or the password is incorrect.
+   */
   async loginWithEmail(user: Pick<UserModel, 'email' | 'password'>) {
     const existingUser = await this.authWithEmailAndPassword(user);
 
     return this.loginUser(existingUser);
-  }
-
-  signToken(user: Pick<UserModel, 'email' | 'id'>, isRefreshToken: boolean) {
-    const payload = {
-      email: user.email,
-      sub: user.id,
-      type: isRefreshToken ? 'refresh' : 'access',
-    };
-
-    return this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET,
-      expiresIn: isRefreshToken
-        ? process.env.JWT_REFRESH_TOKEN_EXPIRATION
-        : process.env.JWT_ACCESS_TOKEN_EXPIRATION,
-    });
-  }
-
-  loginUser(user: Pick<UserModel, 'email' | 'id'>) {
-    return {
-      accessToken: this.signToken(user, false),
-      refreshToken: this.signToken(user, true),
-    };
   }
 
   async authWithEmailAndPassword(user: Pick<UserModel, 'email' | 'password'>) {
@@ -57,5 +42,27 @@ export class AuthService {
     }
 
     return existingUser;
+  }
+
+  loginUser(user: Pick<UserModel, 'email' | 'id'>) {
+    return {
+      accessToken: this.signToken(user, false),
+      refreshToken: this.signToken(user, true),
+    };
+  }
+
+  signToken(user: Pick<UserModel, 'email' | 'id'>, isRefreshToken: boolean) {
+    const payload = {
+      email: user.email,
+      sub: user.id,
+      type: isRefreshToken ? 'refresh' : 'access',
+    };
+
+    return this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: isRefreshToken
+        ? process.env.JWT_REFRESH_TOKEN_EXPIRATION
+        : process.env.JWT_ACCESS_TOKEN_EXPIRATION,
+    });
   }
 }
