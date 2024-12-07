@@ -13,6 +13,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import {
+  ENV_DB_HOST_KEY,
+  ENV_DB_NAME_KEY,
+  ENV_DB_PASSWORD_KEY,
+  ENV_DB_PORT_KEY,
+  ENV_DB_TYPE_KEY,
+  ENV_DB_USERNAME_KEY,
+} from './common/const/env-keys.const';
+import {
   BaseReviewModel,
   CocktailReviewModel,
   SpiritReviewModel,
@@ -32,12 +40,12 @@ import { UsersModule } from './users/users.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      type: process.env.DB_TYPE as any,
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT),
-      username: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DB,
+      type: process.env[ENV_DB_TYPE_KEY] as any,
+      host: process.env[ENV_DB_HOST_KEY],
+      port: +process.env[ENV_DB_PORT_KEY],
+      username: process.env[ENV_DB_USERNAME_KEY],
+      password: process.env[ENV_DB_PASSWORD_KEY],
+      database: process.env[ENV_DB_NAME_KEY],
       entities: [
         BaseReviewModel,
         SpiritReviewModel,
