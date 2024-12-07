@@ -11,21 +11,13 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
   ) {}
-  /**
-   * TODO: register with email
-   *  - email, pw, nickname...
-   * TODO: login with email
-   * TODO: loginUser
-   * TODO: signToken
-   * TODO: auth with email and pw
-   */
 
-  /**
-   * Payload
-   * 1) email
-   * 2) sub -> id
-   * 3) type : 'access' | 'refresh'
-   */
+  async loginWithEmail(user: Pick<UserModel, 'email' | 'password'>) {
+    const existingUser = await this.authWithEmailAndPassword(user);
+
+    return this.loginUser(existingUser);
+  }
+
   signToken(user: Pick<UserModel, 'email' | 'id'>, isRefreshToken: boolean) {
     const payload = {
       email: user.email,
