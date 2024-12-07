@@ -17,7 +17,6 @@ export class UserModel {
   email: string;
 
   @Column({
-    length: 30,
     nullable: false,
   })
   password: string;
