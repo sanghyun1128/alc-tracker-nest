@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Headers, Post } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 import { GenderEnum } from 'src/users/const/gender.const';
@@ -8,11 +8,12 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login/email')
-  loginWithEmail(
-    @Body('email') email: string,
-    @Body('password') password: string,
-  ) {
-    return this.authService.loginWithEmail({ email, password });
+  loginWithEmail(@Headers('authorization') rawToken: string) {
+    const token = this.authService.extractTokenFromHeader(rawToken, false);
+
+    const decodedToken = this.authService.decodeBasicToken(token);
+
+    return this.authService.loginWithEmail(decodedToken);
   }
 
   @Post('register/email')

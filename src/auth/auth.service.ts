@@ -99,4 +99,36 @@ export class AuthService {
         : +this.configService.get<string>(ENV_JWT_ACCESS_TOKEN_EXPIRATION),
     });
   }
+
+  extractTokenFromHeader(header: string, isBearer: boolean) {
+    const splittedHeader = header.split(' ');
+    const prefix = isBearer ? 'Bearer' : 'Basic';
+
+    if (splittedHeader.length !== 2 || splittedHeader[0] !== prefix) {
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    const token = splittedHeader[1];
+
+    return token;
+  }
+
+  decodeBasicToken(base64StringToken: string) {
+    const decodedToken = Buffer.from(base64StringToken, 'base64').toString(
+      'utf8',
+    );
+    const splittedToken = decodedToken.split(':');
+
+    if (splittedToken.length !== 2) {
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    const email = splittedToken[0];
+    const password = splittedToken[1];
+
+    return {
+      email,
+      password,
+    };
+  }
 }
