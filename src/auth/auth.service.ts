@@ -123,12 +123,40 @@ export class AuthService {
       throw new UnauthorizedException('Invalid token');
     }
 
-    const email = splittedToken[0];
-    const password = splittedToken[1];
+    const [email, password] = splittedToken;
 
     return {
       email,
       password,
     };
+  }
+
+  /**
+   * Generates a new access token using a valid refresh token.
+   *
+   * @param refreshToken - The refresh token used to generate a new access token.
+   * @returns A new access token.
+   * @throws UnauthorizedException if the provided token is not a valid refresh token.
+   */
+  refreshAccessToken(refreshToken: string) {
+    const decodedToken = this.verifyToken(refreshToken);
+
+    if (decodedToken.type !== 'refresh') {
+      throw new UnauthorizedException('Refresh token needed');
+    }
+
+    return this.signToken(
+      {
+        email: decodedToken.email,
+        id: decodedToken.sub,
+      },
+      false,
+    );
+  }
+
+  verifyToken(token: string) {
+    return this.jwtService.verify(token, {
+      secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
+    });
   }
 }
