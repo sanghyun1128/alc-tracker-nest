@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 
 import { AlcoholService } from './alcohol.service';
 import { CocktailCategoryEnum } from './const/cocktail.const';
@@ -30,8 +37,8 @@ export class AlcoholController {
   }
 
   @Get(':id')
-  getAlcoholById(@Param('id') id: string) {
-    return this.alcoholService.getAlcoholById(+id);
+  getAlcoholById(@Param('id', ParseIntPipe) id: number) {
+    return this.alcoholService.getAlcoholById(id);
   }
 
   @Post('/spirit')

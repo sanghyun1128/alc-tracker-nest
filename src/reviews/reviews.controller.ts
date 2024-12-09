@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 
 import { DetailEvaluation } from './entities/review.entity';
 import { ReviewsService } from './reviews.service';
@@ -23,8 +30,8 @@ export class ReviewsController {
   }
 
   @Get(':id')
-  getReviewById(@Param('id') id: string) {
-    return this.reviewsService.getReviewById(+id);
+  getReviewById(@Param('id', ParseIntPipe) id: number) {
+    return this.reviewsService.getReviewById(id);
   }
 
   @Post('/spirit')
