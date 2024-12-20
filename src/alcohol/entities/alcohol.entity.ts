@@ -1,13 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 import { CocktailCategoryEnum } from '../const/cocktail.const';
 import { CaskEnum, SpiritCategoryEnum } from '../const/spirit.const';
@@ -18,6 +9,7 @@ import {
   WineCategoryEnum,
   WineRegionEnum,
 } from '../const/wine.const';
+import { BaseModel } from 'src/common/entities/base.entity';
 import {
   CocktailReviewModel,
   SpiritReviewModel,
@@ -26,16 +18,7 @@ import {
 import { UserModel } from 'src/users/entities/user.entity';
 
 @Entity()
-export class AlcoholModel {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
+export class AlcoholModel extends BaseModel {
   @Column({
     length: 100,
     nullable: false,

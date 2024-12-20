@@ -1,15 +1,13 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 import { GenderEnum } from '../const/gender.const';
 import { RoleEnum } from '../const/role.const';
 import { AlcoholModel } from 'src/alcohol/entities/alcohol.entity';
+import { BaseModel } from 'src/common/entities/base.entity';
 import { BaseReviewModel } from 'src/reviews/entities/review.entity';
 
 @Entity()
-export class UserModel {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class UserModel extends BaseModel {
   @Column({
     unique: true,
     nullable: false,

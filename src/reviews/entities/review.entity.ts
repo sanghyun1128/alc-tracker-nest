@@ -1,18 +1,11 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 import {
   SpiritModel,
   WineModel,
   CocktailModel,
 } from 'src/alcohol/entities/alcohol.entity';
+import { BaseModel } from 'src/common/entities/base.entity';
 import { UserModel } from 'src/users/entities/user.entity';
 
 export abstract class DetailEvaluation {
@@ -27,16 +20,7 @@ export abstract class DetailEvaluation {
 }
 
 @Entity()
-export class BaseReviewModel {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
+export class BaseReviewModel extends BaseModel {
   @Column({
     nullable: false,
     default: 0,
