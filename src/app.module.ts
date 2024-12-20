@@ -12,6 +12,7 @@ import {
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { CommonModule } from './common/common.module';
 import {
   ENV_DB_HOST_KEY,
   ENV_DB_NAME_KEY,
@@ -60,6 +61,7 @@ import { UsersModule } from './users/users.module';
       synchronize: true,
     }),
     AuthModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
