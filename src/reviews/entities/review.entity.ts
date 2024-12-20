@@ -15,7 +15,7 @@ import {
 } from 'src/alcohol/entities/alcohol.entity';
 import { UserModel } from 'src/users/entities/user.entity';
 
-export class DetailEvaluation {
+export abstract class DetailEvaluation {
   @Column({ nullable: false, default: 0 })
   rating: number;
 
