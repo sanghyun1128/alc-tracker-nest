@@ -1,6 +1,7 @@
-import { Body, Controller, Headers, Post } from '@nestjs/common';
+import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
+import { BasicTokenGuard } from './guard/basic-token.guard';
 import { MaxStringLengthPipe, MinStringLengthPipe } from './pipe/length.pipe';
 import { GenderEnum } from 'src/users/const/gender.const';
 
@@ -9,6 +10,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login/email')
+  @UseGuards(BasicTokenGuard)
   postLoginWithEmail(@Headers('authorization') rawToken: string) {
     const token = this.authService.extractTokenFromHeader(rawToken, false);
 
