@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 @Injectable()
-export class MaxLengthPipe {
+export class MaxStringLengthPipe {
   /**
    * Creates an instance of MaxLengthPipe.
    * @param maxLength - The maximum allowed length(inclusive) for the value.
@@ -22,7 +22,7 @@ export class MaxLengthPipe {
 }
 
 @Injectable()
-export class MinLengthPipe {
+export class MinStringLengthPipe {
   /**
    * Creates an instance of MaxLengthPipe.
    * @param minLength - The minimum allowed length(inclusive) for the value.

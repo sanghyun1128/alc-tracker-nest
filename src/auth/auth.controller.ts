@@ -1,7 +1,7 @@
 import { Body, Controller, Headers, Post } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
-import { MaxLengthPipe, MinLengthPipe } from './pipe/length.pipe';
+import { MaxStringLengthPipe, MinStringLengthPipe } from './pipe/length.pipe';
 import { GenderEnum } from 'src/users/const/gender.const';
 
 @Controller('auth')
@@ -20,9 +20,9 @@ export class AuthController {
   @Post('register/email')
   postRegisterWithEmail(
     @Body('email') email: string,
-    @Body('password', new MinLengthPipe(8), new MaxLengthPipe(16))
+    @Body('password', new MinStringLengthPipe(8), new MaxStringLengthPipe(16))
     password: string,
-    @Body('nickname', new MinLengthPipe(3), new MaxLengthPipe(10))
+    @Body('nickname', new MinStringLengthPipe(3), new MaxStringLengthPipe(10))
     nickname: string,
     @Body('birth') birth: Date,
     @Body('gender') gender: GenderEnum,
