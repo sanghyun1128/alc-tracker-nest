@@ -5,10 +5,12 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 
 import { DetailEvaluation } from './entities/review.entity';
 import { ReviewsService } from './reviews.service';
+import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 
 @Controller('reviews')
 export class ReviewsController {
@@ -35,6 +37,7 @@ export class ReviewsController {
   }
 
   @Post('/spirit')
+  @UseGuards(AccessTokenGuard)
   postSpiritReview(
     @Body('authorId') authorId: number,
     @Body('rating') rating: number,
@@ -58,6 +61,7 @@ export class ReviewsController {
   }
 
   @Post('/wine')
+  @UseGuards(AccessTokenGuard)
   postWineReview(
     @Body('authorId') authorId: number,
     @Body('rating') rating: number,
@@ -81,6 +85,7 @@ export class ReviewsController {
   }
 
   @Post('/cocktail')
+  @UseGuards(AccessTokenGuard)
   postCocktailReview(
     @Body('authorId') authorId: number,
     @Body('rating') rating: number,

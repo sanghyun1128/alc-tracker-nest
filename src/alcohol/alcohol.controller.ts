@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 
 import { AlcoholService } from './alcohol.service';
@@ -16,6 +17,7 @@ import {
   WineCategoryEnum,
   WineRegionEnum,
 } from './const/wine.const';
+import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 
 @Controller('alcohol')
 export class AlcoholController {
@@ -42,6 +44,7 @@ export class AlcoholController {
   }
 
   @Post('/spirit')
+  @UseGuards(AccessTokenGuard)
   postSpirit(
     @Body('ownerId') ownerId: number,
     @Body('name') name: string,
@@ -67,6 +70,7 @@ export class AlcoholController {
   }
 
   @Post('/wine')
+  @UseGuards(AccessTokenGuard)
   postWine(
     @Body('ownerId') ownerId: number,
     @Body('name') name: string,
@@ -98,6 +102,7 @@ export class AlcoholController {
   }
 
   @Post('/cocktail')
+  @UseGuards(AccessTokenGuard)
   postCocktail(
     @Body('ownerId') ownerId: number,
     @Body('name') name: string,
