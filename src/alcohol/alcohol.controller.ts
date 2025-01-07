@@ -42,7 +42,7 @@ export class AlcoholController {
   }
 
   @Post('/spirit')
-  createSpirit(
+  postSpirit(
     @Body('ownerId') ownerId: number,
     @Body('name') name: string,
     @Body('category') category: SpiritCategoryEnum,
@@ -67,7 +67,7 @@ export class AlcoholController {
   }
 
   @Post('/wine')
-  createWine(
+  postWine(
     @Body('ownerId') ownerId: number,
     @Body('name') name: string,
     @Body('category') category: WineCategoryEnum,
@@ -98,7 +98,7 @@ export class AlcoholController {
   }
 
   @Post('/cocktail')
-  createCocktail(
+  postCocktail(
     @Body('ownerId') ownerId: number,
     @Body('name') name: string,
     @Body('category') category: CocktailCategoryEnum,
