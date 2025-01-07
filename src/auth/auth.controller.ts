@@ -2,6 +2,7 @@ import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 import { BasicTokenGuard } from './guard/basic-token.guard';
+import { RefreshTokenGuard } from './guard/bearer-token.guard';
 import { MaxStringLengthPipe, MinStringLengthPipe } from './pipe/length.pipe';
 import { GenderEnum } from 'src/users/const/gender.const';
 
@@ -39,13 +40,26 @@ export class AuthController {
   }
 
   @Post('token/access')
+  @UseGuards(RefreshTokenGuard)
   postTokenAccess(@Headers('authorization') rawToken: string) {
     const token = this.authService.extractTokenFromHeader(rawToken, true);
 
-    const newToken = this.authService.refreshAccessToken(token);
+    const newToken = this.authService.rotateToken(token, false);
 
     return {
       accessToken: newToken,
+    };
+  }
+
+  @Post('token/refresh')
+  @UseGuards(RefreshTokenGuard)
+  postTokenRefresh(@Headers('authorization') rawToken: string) {
+    const token = this.authService.extractTokenFromHeader(rawToken, true);
+
+    const newToken = this.authService.rotateToken(token, true);
+
+    return {
+      refreshToken: newToken,
     };
   }
 }
