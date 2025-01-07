@@ -1,11 +1,13 @@
 import {
   CanActivate,
   ExecutionContext,
+  Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 
 import { AuthService } from '../auth.service';
 
+@Injectable()
 export class BasicTokenGuard implements CanActivate {
   constructor(private readonly authService: AuthService) {}
 
