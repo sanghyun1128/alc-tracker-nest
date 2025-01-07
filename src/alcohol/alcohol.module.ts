@@ -9,6 +9,8 @@ import {
   SpiritModel,
   WineModel,
 } from './entities/alcohol.entity';
+import { AuthModule } from 'src/auth/auth.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import {
       WineModel,
       CocktailModel,
     ]),
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AlcoholController],
   providers: [AlcoholService],
