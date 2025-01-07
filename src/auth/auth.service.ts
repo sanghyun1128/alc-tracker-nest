@@ -138,8 +138,8 @@ export class AuthService {
    * @returns A new access token.
    * @throws UnauthorizedException if the provided token is not a valid refresh token.
    */
-  refreshAccessToken(refreshToken: string) {
-    const decodedToken = this.verifyToken(refreshToken);
+  rotateToken(token: string, isRefreshToken: boolean) {
+    const decodedToken = this.verifyToken(token);
 
     if (decodedToken.type !== 'refresh') {
       throw new UnauthorizedException('Refresh token needed');
@@ -150,7 +150,7 @@ export class AuthService {
         email: decodedToken.email,
         id: decodedToken.sub,
       },
-      false,
+      isRefreshToken,
     );
   }
 
