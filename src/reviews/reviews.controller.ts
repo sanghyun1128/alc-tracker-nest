@@ -35,7 +35,7 @@ export class ReviewsController {
   }
 
   @Post('/spirit')
-  createSpiritReview(
+  postSpiritReview(
     @Body('authorId') authorId: number,
     @Body('rating') rating: number,
     @Body('comment') comment: string,
@@ -58,7 +58,7 @@ export class ReviewsController {
   }
 
   @Post('/wine')
-  createWineReview(
+  postWineReview(
     @Body('authorId') authorId: number,
     @Body('rating') rating: number,
     @Body('comment') comment: string,
@@ -81,7 +81,7 @@ export class ReviewsController {
   }
 
   @Post('/cocktail')
-  createCocktailReview(
+  postCocktailReview(
     @Body('authorId') authorId: number,
     @Body('rating') rating: number,
     @Body('comment') comment: string,
