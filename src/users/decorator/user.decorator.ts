@@ -4,16 +4,24 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 
-export const User = createParamDecorator((data, context: ExecutionContext) => {
-  const request = context.switchToHttp().getRequest();
+import { UserModel } from '../entities/user.entity';
 
-  const user = request.user;
+export const User = createParamDecorator(
+  (data: keyof UserModel | undefined, context: ExecutionContext) => {
+    const request = context.switchToHttp().getRequest();
 
-  if (!user) {
-    throw new InternalServerErrorException(
-      'User decorator must use with AccessTokenGuard',
-    );
-  }
+    const user = request.user as UserModel;
 
-  return user;
-});
+    if (!user) {
+      throw new InternalServerErrorException(
+        'User decorator must use with AccessTokenGuard',
+      );
+    }
+
+    if (data) {
+      return user[data];
+    }
+
+    return user;
+  },
+);
