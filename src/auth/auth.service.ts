@@ -155,8 +155,12 @@ export class AuthService {
   }
 
   verifyToken(token: string) {
-    return this.jwtService.verify(token, {
-      secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
-    });
+    try {
+      return this.jwtService.verify(token, {
+        secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
+      });
+    } catch (error) {
+      throw new UnauthorizedException('Expired or invalid token');
+    }
   }
 }
