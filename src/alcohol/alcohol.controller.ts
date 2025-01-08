@@ -18,6 +18,8 @@ import {
   WineRegionEnum,
 } from './const/wine.const';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
+import { User } from 'src/users/decorator/user.decorator';
+import { UserModel } from 'src/users/entities/user.entity';
 
 @Controller('alcohol')
 export class AlcoholController {
@@ -46,7 +48,7 @@ export class AlcoholController {
   @Post('/spirit')
   @UseGuards(AccessTokenGuard)
   postSpirit(
-    @Body('ownerId') ownerId: number,
+    @User() user: UserModel,
     @Body('name') name: string,
     @Body('category') category: SpiritCategoryEnum,
     @Body('cask') cask: CaskEnum,
@@ -57,7 +59,7 @@ export class AlcoholController {
     @Body('purchaseDate') purchaseDate: Date,
   ) {
     return this.alcoholService.createSpirit(
-      ownerId,
+      user.id,
       name,
       category,
       cask,
@@ -72,7 +74,7 @@ export class AlcoholController {
   @Post('/wine')
   @UseGuards(AccessTokenGuard)
   postWine(
-    @Body('ownerId') ownerId: number,
+    @User() user: UserModel,
     @Body('name') name: string,
     @Body('category') category: WineCategoryEnum,
     @Body('region') region: WineRegionEnum,
@@ -86,7 +88,7 @@ export class AlcoholController {
     @Body('purchaseDate') purchaseDate: Date,
   ) {
     return this.alcoholService.createWine(
-      ownerId,
+      user.id,
       name,
       category,
       region,
@@ -104,10 +106,10 @@ export class AlcoholController {
   @Post('/cocktail')
   @UseGuards(AccessTokenGuard)
   postCocktail(
-    @Body('ownerId') ownerId: number,
+    @User() user: UserModel,
     @Body('name') name: string,
     @Body('category') category: CocktailCategoryEnum,
   ) {
-    return this.alcoholService.createCocktail(ownerId, name, category);
+    return this.alcoholService.createCocktail(user.id, name, category);
   }
 }
