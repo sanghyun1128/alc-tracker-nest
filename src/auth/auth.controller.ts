@@ -25,7 +25,7 @@ export class AuthController {
     @Body('email') email: string,
     @Body('password', new MinStringLengthPipe(8), new MaxStringLengthPipe(16))
     password: string,
-    @Body('nickname', new MinStringLengthPipe(3), new MaxStringLengthPipe(10))
+    @Body('nickname', new MinStringLengthPipe(2), new MaxStringLengthPipe(20))
     nickname: string,
     @Body('birth') birth: Date,
     @Body('gender') gender: GenderEnum,
