@@ -9,14 +9,9 @@ import {
 } from '@nestjs/common';
 
 import { AlcoholService } from './alcohol.service';
-import { CocktailCategoryEnum } from './const/cocktail.const';
-import { CaskEnum, SpiritCategoryEnum } from './const/spirit.const';
-import {
-  CombinedAppellationType,
-  GrapeVarietyEnum,
-  WineCategoryEnum,
-  WineRegionEnum,
-} from './const/wine.const';
+import { CreateCocktailDto } from './dto/create-cocktail.dto';
+import { CreateSpiritDto } from './dto/create-spirit.dto';
+import { CreateWineDto } from './dto/create-wine.dto';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { User } from 'src/users/decorator/user.decorator';
 import { UserModel } from 'src/users/entities/user.entity';
@@ -49,67 +44,23 @@ export class AlcoholController {
   @UseGuards(AccessTokenGuard)
   postSpirit(
     @User('id') userId: UserModel['id'],
-    @Body('name') name: string,
-    @Body('category') category: SpiritCategoryEnum,
-    @Body('cask') cask: CaskEnum,
-    @Body('maker') maker: string,
-    @Body('alc') alc: number,
-    @Body('price') price: number,
-    @Body('purchaseLocation') purchaseLocation: string,
-    @Body('purchaseDate') purchaseDate: Date,
+    @Body() dto: CreateSpiritDto,
   ) {
-    return this.alcoholService.createSpirit(
-      userId,
-      name,
-      category,
-      cask,
-      maker,
-      alc,
-      price,
-      purchaseLocation,
-      purchaseDate,
-    );
+    return this.alcoholService.createSpirit(userId, dto);
   }
 
   @Post('/wine')
   @UseGuards(AccessTokenGuard)
-  postWine(
-    @User('id') userId: UserModel['id'],
-    @Body('name') name: string,
-    @Body('category') category: WineCategoryEnum,
-    @Body('region') region: WineRegionEnum,
-    @Body('appellation') appellation: CombinedAppellationType,
-    @Body('grape') grape: GrapeVarietyEnum,
-    @Body('vintage') vintage: number,
-    @Body('maker') maker: string,
-    @Body('alc') alc: number,
-    @Body('price') price: number,
-    @Body('purchaseLocation') purchaseLocation: string,
-    @Body('purchaseDate') purchaseDate: Date,
-  ) {
-    return this.alcoholService.createWine(
-      userId,
-      name,
-      category,
-      region,
-      appellation,
-      grape,
-      vintage,
-      maker,
-      alc,
-      price,
-      purchaseLocation,
-      purchaseDate,
-    );
+  postWine(@User('id') userId: UserModel['id'], @Body() dto: CreateWineDto) {
+    return this.alcoholService.createWine(userId, dto);
   }
 
   @Post('/cocktail')
   @UseGuards(AccessTokenGuard)
   postCocktail(
     @User('id') userId: UserModel['id'],
-    @Body('name') name: string,
-    @Body('category') category: CocktailCategoryEnum,
+    @Body() dto: CreateCocktailDto,
   ) {
-    return this.alcoholService.createCocktail(userId, name, category);
+    return this.alcoholService.createCocktail(userId, dto);
   }
 }

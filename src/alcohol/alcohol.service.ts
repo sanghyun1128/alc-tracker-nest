@@ -2,14 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { CocktailCategoryEnum } from './const/cocktail.const';
-import { CaskEnum, SpiritCategoryEnum } from './const/spirit.const';
-import {
-  CombinedAppellationType,
-  GrapeVarietyEnum,
-  WineCategoryEnum,
-  WineRegionEnum,
-} from './const/wine.const';
+import { CreateCocktailDto } from './dto/create-cocktail.dto';
+import { CreateSpiritDto } from './dto/create-spirit.dto';
+import { CreateWineDto } from './dto/create-wine.dto';
 import {
   AlcoholModel,
   CocktailModel,
@@ -63,29 +58,12 @@ export class AlcoholService {
     return alcohol;
   }
 
-  async createSpirit(
-    ownerId: number,
-    name: string,
-    category: SpiritCategoryEnum,
-    cask: CaskEnum,
-    maker: string,
-    alc: number,
-    price: number,
-    purchaseLocation: string,
-    purchaseDate: Date,
-  ) {
+  async createSpirit(ownerId: number, spiritDto: CreateSpiritDto) {
     const alcohol = this.spiritRepository.create({
       owner: {
         id: ownerId,
       },
-      name,
-      category,
-      cask,
-      maker,
-      alc,
-      price,
-      purchaseLocation,
-      purchaseDate,
+      ...spiritDto,
     });
 
     const spirit = this.spiritRepository.save(alcohol);
@@ -93,35 +71,12 @@ export class AlcoholService {
     return spirit;
   }
 
-  async createWine(
-    ownerId: number,
-    name: string,
-    category: WineCategoryEnum,
-    region: WineRegionEnum,
-    appellation: CombinedAppellationType,
-    grape: GrapeVarietyEnum,
-    vintage: number,
-    maker: string,
-    alc: number,
-    price: number,
-    purchaseLocation: string,
-    purchaseDate: Date,
-  ) {
+  async createWine(ownerId: number, wineDto: CreateWineDto) {
     const alcohol = this.wineRepository.create({
       owner: {
         id: ownerId,
       },
-      name,
-      category,
-      region,
-      appellation,
-      grape,
-      vintage,
-      maker,
-      alc,
-      price,
-      purchaseLocation,
-      purchaseDate,
+      ...wineDto,
     });
 
     const wine = this.wineRepository.save(alcohol);
@@ -129,17 +84,12 @@ export class AlcoholService {
     return wine;
   }
 
-  async createCocktail(
-    ownerId: number,
-    name: string,
-    category: CocktailCategoryEnum,
-  ) {
+  async createCocktail(ownerId: number, cocktailDto: CreateCocktailDto) {
     const alcohol = this.cocktailRepository.create({
       owner: {
         id: ownerId,
       },
-      name,
-      category,
+      ...cocktailDto,
     });
 
     const cocktail = this.cocktailRepository.save(alcohol);
