@@ -48,7 +48,7 @@ export class AlcoholController {
   @Post('/spirit')
   @UseGuards(AccessTokenGuard)
   postSpirit(
-    @User() user: UserModel,
+    @User('id') userId: UserModel['id'],
     @Body('name') name: string,
     @Body('category') category: SpiritCategoryEnum,
     @Body('cask') cask: CaskEnum,
@@ -59,7 +59,7 @@ export class AlcoholController {
     @Body('purchaseDate') purchaseDate: Date,
   ) {
     return this.alcoholService.createSpirit(
-      user.id,
+      userId,
       name,
       category,
       cask,
@@ -74,7 +74,7 @@ export class AlcoholController {
   @Post('/wine')
   @UseGuards(AccessTokenGuard)
   postWine(
-    @User() user: UserModel,
+    @User('id') userId: UserModel['id'],
     @Body('name') name: string,
     @Body('category') category: WineCategoryEnum,
     @Body('region') region: WineRegionEnum,
@@ -88,7 +88,7 @@ export class AlcoholController {
     @Body('purchaseDate') purchaseDate: Date,
   ) {
     return this.alcoholService.createWine(
-      user.id,
+      userId,
       name,
       category,
       region,
@@ -106,10 +106,10 @@ export class AlcoholController {
   @Post('/cocktail')
   @UseGuards(AccessTokenGuard)
   postCocktail(
-    @User() user: UserModel,
+    @User('id') userId: UserModel['id'],
     @Body('name') name: string,
     @Body('category') category: CocktailCategoryEnum,
   ) {
-    return this.alcoholService.createCocktail(user.id, name, category);
+    return this.alcoholService.createCocktail(userId, name, category);
   }
 }
