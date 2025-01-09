@@ -33,8 +33,9 @@ export class MinStringLengthPipe {
     value = value.toString();
 
     if (value.length < this.minLength) {
-      throw new BadRequestException(`
-        Value must be more than ${this.minLength} characters`);
+      throw new BadRequestException(
+        `Value must be more than ${this.minLength} characters`,
+      );
     }
 
     return value;
