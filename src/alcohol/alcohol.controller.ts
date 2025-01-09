@@ -4,8 +4,8 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
-  Put,
   UseGuards,
 } from '@nestjs/common';
 
@@ -66,9 +66,9 @@ export class AlcoholController {
     return this.alcoholService.createCocktail(userId, dto);
   }
 
-  @Put('/spirit/:id')
+  @Patch('/spirit/:id')
   @UseGuards(AccessTokenGuard)
-  putSpirit(
+  patchSpirit(
     @Param('id', ParseIntPipe) id: number,
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateSpiritDto,
