@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CreateSpiritDto } from './dto/create-spirit.dto';
 import { CreateWineDto } from './dto/create-wine.dto';
+import { UpdateSpiritDto } from './dto/update-spirit.dto';
 import {
   AlcoholModel,
   CocktailModel,
@@ -26,19 +27,19 @@ export class AlcoholService {
   ) {}
 
   async getAllSpirits() {
-    return this.spiritRepository.find({
+    return await this.spiritRepository.find({
       relations: ['owner'],
     });
   }
 
   async getAllWines() {
-    return this.wineRepository.find({
+    return await this.wineRepository.find({
       relations: ['owner'],
     });
   }
 
   async getAllCocktails() {
-    return this.cocktailRepository.find({
+    return await this.cocktailRepository.find({
       relations: ['owner'],
     });
   }
@@ -66,7 +67,7 @@ export class AlcoholService {
       ...spiritDto,
     });
 
-    const spirit = this.spiritRepository.save(alcohol);
+    const spirit = await this.spiritRepository.save(alcohol);
 
     return spirit;
   }
@@ -79,7 +80,7 @@ export class AlcoholService {
       ...wineDto,
     });
 
-    const wine = this.wineRepository.save(alcohol);
+    const wine = await this.wineRepository.save(alcohol);
 
     return wine;
   }
@@ -92,8 +93,30 @@ export class AlcoholService {
       ...cocktailDto,
     });
 
-    const cocktail = this.cocktailRepository.save(alcohol);
+    const cocktail = await this.cocktailRepository.save(alcohol);
 
     return cocktail;
+  }
+
+  async updateSpirit(id: number, ownerId: number, spiritDto: UpdateSpiritDto) {
+    const spirit = await this.spiritRepository.findOne({
+      where: {
+        id,
+        owner: {
+          id: ownerId,
+        },
+      },
+    });
+
+    if (!spirit) {
+      throw new NotFoundException(`Spirit with id ${id} not found`);
+    }
+
+    const updatedSpirit = await this.spiritRepository.save({
+      ...spirit,
+      ...spiritDto,
+    });
+
+    return updatedSpirit;
   }
 }

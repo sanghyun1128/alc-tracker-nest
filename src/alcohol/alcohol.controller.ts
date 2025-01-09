@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 
@@ -12,6 +13,7 @@ import { AlcoholService } from './alcohol.service';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CreateSpiritDto } from './dto/create-spirit.dto';
 import { CreateWineDto } from './dto/create-wine.dto';
+import { UpdateSpiritDto } from './dto/update-spirit.dto';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { User } from 'src/users/decorator/user.decorator';
 import { UserModel } from 'src/users/entities/user.entity';
@@ -62,5 +64,15 @@ export class AlcoholController {
     @Body() dto: CreateCocktailDto,
   ) {
     return this.alcoholService.createCocktail(userId, dto);
+  }
+
+  @Put('/spirit/:id')
+  @UseGuards(AccessTokenGuard)
+  putSpirit(
+    @Param('id', ParseIntPipe) id: number,
+    @User('id') userId: UserModel['id'],
+    @Body() dto: UpdateSpiritDto,
+  ) {
+    return this.alcoholService.updateSpirit(id, userId, dto);
   }
 }
