@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
+import { RegisterUserDto } from './dto/register-user.dto';
 import {
   ENV_JWT_ACCESS_TOKEN_EXPIRATION,
   ENV_JWT_HASH_ROUNDS_KEY,
@@ -27,12 +28,7 @@ export class AuthService {
    * @returns An object containing the access token and refresh token.
    * @throws BadRequestException if the email or nickname already exists.
    */
-  async registerWithEmail(
-    user: Pick<
-      UserModel,
-      'nickname' | 'email' | 'password' | 'birth' | 'gender'
-    >,
-  ) {
+  async registerWithEmail(user: RegisterUserDto) {
     const hashedPassword = await bcrypt.hash(
       user.password,
       +this.configService.get<string>(ENV_JWT_HASH_ROUNDS_KEY),

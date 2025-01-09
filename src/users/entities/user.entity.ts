@@ -1,3 +1,5 @@
+import { Type } from 'class-transformer';
+import { IsDate, IsEmail, IsEnum, IsString } from 'class-validator';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 import { GenderEnum } from '../const/gender.const';
@@ -12,11 +14,14 @@ export class UserModel extends BaseModel {
     unique: true,
     nullable: false,
   })
+  @IsString()
+  @IsEmail()
   email: string;
 
   @Column({
     nullable: false,
   })
+  @IsString()
   password: string;
 
   @Column({
@@ -24,6 +29,7 @@ export class UserModel extends BaseModel {
     unique: true,
     nullable: false,
   })
+  @IsString()
   nickname: string;
 
   //TODO: ADMIN이 함부로 설정되지 않도록 조치 필요
@@ -41,12 +47,15 @@ export class UserModel extends BaseModel {
     default: GenderEnum.OTHER,
     nullable: false,
   })
+  @IsEnum(GenderEnum)
   gender: GenderEnum;
 
   @Column({
     type: 'date',
     nullable: false,
   })
+  @IsDate()
+  @Type(() => Date)
   birth: Date;
 
   @OneToMany(() => BaseReviewModel, (review) => review.author)
