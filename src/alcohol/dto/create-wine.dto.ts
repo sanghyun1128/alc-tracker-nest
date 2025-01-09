@@ -1,42 +1,17 @@
-import { IsEnum, IsNumber, IsString, IsDate } from 'class-validator';
+import { PickType } from '@nestjs/mapped-types';
 
-import {
-  CombinedAppellationType,
-  GrapeVarietyEnum,
-  WineCategoryEnum,
-  WineRegionEnum,
-} from '../const/wine.const';
+import { WineModel } from '../entities/alcohol.entity';
 
-export class CreateWineDto {
-  @IsString()
-  name: string;
-
-  @IsEnum(WineCategoryEnum)
-  category: WineCategoryEnum;
-
-  @IsEnum(WineRegionEnum)
-  region: WineRegionEnum;
-
-  appellation: CombinedAppellationType;
-
-  @IsEnum(GrapeVarietyEnum)
-  grape: GrapeVarietyEnum;
-
-  @IsNumber()
-  vintage: number;
-
-  @IsString()
-  maker: string;
-
-  @IsNumber()
-  alc: number;
-
-  @IsNumber()
-  price: number;
-
-  @IsString()
-  purchaseLocation: string;
-
-  @IsDate()
-  purchaseDate?: Date;
-}
+export class CreateWineDto extends PickType(WineModel, [
+  'name',
+  'category',
+  'region',
+  'appellation',
+  'grape',
+  'vintage',
+  'maker',
+  'alc',
+  'price',
+  'purchaseLocation',
+  'purchaseDate',
+] as const) {}

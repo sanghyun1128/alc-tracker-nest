@@ -1,29 +1,14 @@
-import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
+import { PickType } from '@nestjs/mapped-types';
 
-import { CaskEnum, SpiritCategoryEnum } from '../const/spirit.const';
+import { SpiritModel } from '../entities/alcohol.entity';
 
-export class CreateSpiritDto {
-  @IsString()
-  name: string;
-
-  @IsEnum(SpiritCategoryEnum)
-  category: SpiritCategoryEnum;
-
-  @IsEnum(CaskEnum)
-  cask: CaskEnum;
-
-  @IsString()
-  maker: string;
-
-  @IsNumber()
-  alc: number;
-
-  @IsNumber()
-  price: number;
-
-  @IsString()
-  purchaseLocation: string;
-
-  @IsDate()
-  purchaseDate: Date;
-}
+export class CreateSpiritDto extends PickType(SpiritModel, [
+  'name',
+  'category',
+  'cask',
+  'maker',
+  'alc',
+  'price',
+  'purchaseLocation',
+  'purchaseDate',
+] as const) {}

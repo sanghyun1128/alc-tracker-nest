@@ -1,11 +1,8 @@
-import { IsEnum, IsString } from 'class-validator';
+import { PickType } from '@nestjs/mapped-types';
 
-import { CocktailCategoryEnum } from '../const/cocktail.const';
+import { CocktailModel } from '../entities/alcohol.entity';
 
-export class CreateCocktailDto {
-  @IsString()
-  name: string;
-
-  @IsEnum(CocktailCategoryEnum)
-  category: CocktailCategoryEnum;
-}
+export class CreateCocktailDto extends PickType(CocktailModel, [
+  'name',
+  'category',
+] as const) {}

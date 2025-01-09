@@ -1,3 +1,4 @@
+import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 import { CocktailCategoryEnum } from '../const/cocktail.const';
@@ -23,6 +24,7 @@ export class AlcoholModel extends BaseModel {
     length: 100,
     nullable: false,
   })
+  @IsString()
   name: string;
 
   @ManyToOne(() => UserModel, (user) => user.alcohols)
@@ -44,6 +46,7 @@ export class SpiritModel extends AlcoholModel {
     default: SpiritCategoryEnum.OTHER,
     nullable: false,
   })
+  @IsEnum(SpiritCategoryEnum)
   category: SpiritCategoryEnum;
 
   @Column({
@@ -52,21 +55,27 @@ export class SpiritModel extends AlcoholModel {
     default: CaskEnum.OTHER,
     nullable: false,
   })
+  @IsEnum(CaskEnum)
   cask: CaskEnum;
 
   @Column({ length: 100, nullable: true })
+  @IsString()
   maker: string;
 
   @Column('float', { nullable: true })
+  @IsNumber()
   alc: number;
 
   @Column({ nullable: true })
+  @IsNumber()
   price: number;
 
   @Column({ length: 100, nullable: true })
+  @IsString()
   purchaseLocation: string;
 
   @Column({ type: 'date', nullable: true })
+  @IsDate()
   purchaseDate: Date;
 }
 
@@ -81,6 +90,7 @@ export class WineModel extends AlcoholModel {
     default: WineCategoryEnum.OTHER,
     nullable: false,
   })
+  @IsEnum(WineCategoryEnum)
   category: WineCategoryEnum;
 
   @Column({
@@ -89,6 +99,7 @@ export class WineModel extends AlcoholModel {
     default: WineRegionEnum.OTHER,
     nullable: false,
   })
+  @IsEnum(WineRegionEnum)
   region: WineRegionEnum;
 
   @Column({
@@ -97,6 +108,7 @@ export class WineModel extends AlcoholModel {
     default: CombinedAppellationEnum.OTHER,
     nullable: false,
   })
+  @IsEnum(CombinedAppellationEnum)
   appellation: CombinedAppellationType;
 
   @Column({
@@ -105,24 +117,31 @@ export class WineModel extends AlcoholModel {
     default: GrapeVarietyEnum.OTHER,
     nullable: false,
   })
+  @IsEnum(GrapeVarietyEnum)
   grape: GrapeVarietyEnum;
 
   @Column({ nullable: true })
+  @IsNumber()
   vintage: number;
 
   @Column({ length: 100, nullable: true })
+  @IsString()
   maker: string;
 
   @Column('float', { nullable: true })
+  @IsNumber()
   alc: number;
 
   @Column({ nullable: true })
+  @IsNumber()
   price: number;
 
   @Column({ length: 100, nullable: true })
+  @IsString()
   purchaseLocation: string;
 
   @Column({ type: 'date', nullable: true })
+  @IsDate()
   purchaseDate: Date;
 }
 
@@ -137,5 +156,6 @@ export class CocktailModel extends AlcoholModel {
     default: CocktailCategoryEnum.CLASSIC,
     nullable: false,
   })
+  @IsEnum(CocktailCategoryEnum)
   category: CocktailCategoryEnum;
 }
