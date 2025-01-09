@@ -41,15 +41,15 @@ export class UsersService {
       gender: user.gender,
     });
 
-    return this.usersRepository.save(newUser);
+    return await this.usersRepository.save(newUser);
   }
 
   //FIXME: test code
   async getAllUsers() {
-    return this.usersRepository.find();
+    return await this.usersRepository.find();
   }
 
   async getUserByEmail(email: string) {
-    return this.usersRepository.findOne({ where: { email } });
+    return await this.usersRepository.findOne({ where: { email } });
   }
 }

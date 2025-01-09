@@ -24,15 +24,15 @@ export class ReviewsService {
   ) {}
 
   async getAllSpiritReviews() {
-    return this.spiritReviewRepository.find();
+    return await this.spiritReviewRepository.find();
   }
 
   async getAllWineReviews() {
-    return this.wineReviewRepository.find();
+    return await this.wineReviewRepository.find();
   }
 
   async getAllCocktailReviews() {
-    return this.cocktailReviewRepository.find();
+    return await this.cocktailReviewRepository.find();
   }
 
   async getReviewById(id: number) {
@@ -72,7 +72,7 @@ export class ReviewsService {
       bottleCondition,
     });
 
-    const spiritReview = this.spiritReviewRepository.save(review);
+    const spiritReview = await this.spiritReviewRepository.save(review);
 
     return spiritReview;
   }
@@ -100,7 +100,7 @@ export class ReviewsService {
       aeration,
     });
 
-    const wineReview = this.wineReviewRepository.save(review);
+    const wineReview = await this.wineReviewRepository.save(review);
 
     return wineReview;
   }
@@ -130,7 +130,7 @@ export class ReviewsService {
       recipe,
     });
 
-    const cocktailReview = this.cocktailReviewRepository.save(review);
+    const cocktailReview = await this.cocktailReviewRepository.save(review);
 
     return cocktailReview;
   }
