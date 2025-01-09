@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsEmail, IsEnum, IsString } from 'class-validator';
+import { IsDate, IsEmail, IsEnum, IsString, Length } from 'class-validator';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 import { GenderEnum } from '../const/gender.const';
@@ -22,6 +22,7 @@ export class UserModel extends BaseModel {
     nullable: false,
   })
   @IsString()
+  @Length(8, 16)
   password: string;
 
   @Column({
@@ -30,6 +31,7 @@ export class UserModel extends BaseModel {
     nullable: false,
   })
   @IsString()
+  @Length(2, 20)
   nickname: string;
 
   //TODO: ADMIN이 함부로 설정되지 않도록 조치 필요
