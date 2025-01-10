@@ -6,11 +6,13 @@ import { GenderEnum } from '../const/gender.const';
 import { RoleEnum } from '../const/role.const';
 import { AlcoholModel } from 'src/alcohol/entities/alcohol.entity';
 import { BaseModel } from 'src/common/entities/base.entity';
-import { dateValidationMessage } from 'src/common/validation-message/date-validation.message';
-import { emailValidationMessage } from 'src/common/validation-message/email-validation.message';
-import { enumValidationMessage } from 'src/common/validation-message/enum-validation.message';
-import { lengthValidationMessage } from 'src/common/validation-message/length-validation.message';
-import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
+import {
+  emailValidationMessage,
+  stringValidationMessage,
+  enumValidationMessage,
+  dateValidationMessage,
+  lengthValidationMessage,
+} from 'src/common/validation-message';
 import { BaseReviewModel } from 'src/reviews/entities/review.entity';
 
 @Entity()

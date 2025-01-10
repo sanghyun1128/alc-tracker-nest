@@ -11,10 +11,12 @@ import {
   WineRegionEnum,
 } from '../const/wine.const';
 import { BaseModel } from 'src/common/entities/base.entity';
-import { dateValidationMessage } from 'src/common/validation-message/date-validation.message';
-import { enumValidationMessage } from 'src/common/validation-message/enum-validation.message';
-import { numberValidationMessage } from 'src/common/validation-message/number-validation.message';
-import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
+import {
+  stringValidationMessage,
+  numberValidationMessage,
+  enumValidationMessage,
+  dateValidationMessage,
+} from 'src/common/validation-message';
 import {
   CocktailReviewModel,
   SpiritReviewModel,
