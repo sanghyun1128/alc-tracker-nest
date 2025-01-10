@@ -6,6 +6,11 @@ import { GenderEnum } from '../const/gender.const';
 import { RoleEnum } from '../const/role.const';
 import { AlcoholModel } from 'src/alcohol/entities/alcohol.entity';
 import { BaseModel } from 'src/common/entities/base.entity';
+import { dateValidationMessage } from 'src/common/validation-message/date-validation.message';
+import { emailValidationMessage } from 'src/common/validation-message/email-validation.message';
+import { enumValidationMessage } from 'src/common/validation-message/enum-validation.message';
+import { lengthValidationMessage } from 'src/common/validation-message/length-validation.message';
+import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
 import { BaseReviewModel } from 'src/reviews/entities/review.entity';
 
 @Entity()
@@ -14,15 +19,17 @@ export class UserModel extends BaseModel {
     unique: true,
     nullable: false,
   })
-  @IsString()
-  @IsEmail()
+  @IsString({ message: stringValidationMessage })
+  @IsEmail({}, { message: emailValidationMessage })
   email: string;
 
   @Column({
     nullable: false,
   })
-  @IsString()
-  @Length(8, 16)
+  @IsString({ message: stringValidationMessage })
+  @Length(8, 16, {
+    message: lengthValidationMessage,
+  })
   password: string;
 
   @Column({
@@ -30,8 +37,10 @@ export class UserModel extends BaseModel {
     unique: true,
     nullable: false,
   })
-  @IsString()
-  @Length(2, 20)
+  @IsString({ message: stringValidationMessage })
+  @Length(2, 20, {
+    message: lengthValidationMessage,
+  })
   nickname: string;
 
   //TODO: ADMIN이 함부로 설정되지 않도록 조치 필요
@@ -49,14 +58,18 @@ export class UserModel extends BaseModel {
     default: GenderEnum.OTHER,
     nullable: false,
   })
-  @IsEnum(GenderEnum)
+  @IsEnum(GenderEnum, {
+    message: enumValidationMessage,
+  })
   gender: GenderEnum;
 
   @Column({
     type: 'date',
     nullable: false,
   })
-  @IsDate()
+  @IsDate({
+    message: dateValidationMessage,
+  })
   @Type(() => Date)
   birth: Date;
 
