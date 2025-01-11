@@ -38,7 +38,7 @@ export class AlcoholController {
   }
 
   @Get(':id')
-  getAlcoholById(@Param('id', ParseIntPipe) id: number) {
+  getAlcoholById(@Param('id', ParseIntPipe) id: string) {
     return this.alcoholService.getAlcoholById(id);
   }
 
@@ -69,7 +69,7 @@ export class AlcoholController {
   @Patch('/spirit/:id')
   @UseGuards(AccessTokenGuard)
   patchSpirit(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateSpiritDto,
   ) {

@@ -35,7 +35,7 @@ export class ReviewsService {
     return await this.cocktailReviewRepository.find();
   }
 
-  async getReviewById(id: number) {
+  async getReviewById(id: string) {
     const review = await this.reviewRepository.findOne({
       where: {
         id,
@@ -50,7 +50,7 @@ export class ReviewsService {
   }
 
   async createSpiritReview(
-    authorId: number,
+    authorId: string,
     rating: number,
     comment: string,
     pairing: string,
@@ -78,7 +78,7 @@ export class ReviewsService {
   }
 
   async createWineReview(
-    authorId: number,
+    authorId: string,
     rating: number,
     comment: string,
     pairing: string,
@@ -106,7 +106,7 @@ export class ReviewsService {
   }
 
   async createCocktailReview(
-    authorId: number,
+    authorId: string,
     rating: number,
     comment: string,
     pairing: string,

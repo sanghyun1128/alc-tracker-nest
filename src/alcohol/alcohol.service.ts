@@ -44,7 +44,7 @@ export class AlcoholService {
     });
   }
 
-  async getAlcoholById(id: number) {
+  async getAlcoholById(id: string) {
     const alcohol = await this.alcoholRepository.findOne({
       where: {
         id,
@@ -59,7 +59,7 @@ export class AlcoholService {
     return alcohol;
   }
 
-  async createSpirit(ownerId: number, spiritDto: CreateSpiritDto) {
+  async createSpirit(ownerId: string, spiritDto: CreateSpiritDto) {
     const alcohol = this.spiritRepository.create({
       owner: {
         id: ownerId,
@@ -72,7 +72,7 @@ export class AlcoholService {
     return spirit;
   }
 
-  async createWine(ownerId: number, wineDto: CreateWineDto) {
+  async createWine(ownerId: string, wineDto: CreateWineDto) {
     const alcohol = this.wineRepository.create({
       owner: {
         id: ownerId,
@@ -85,7 +85,7 @@ export class AlcoholService {
     return wine;
   }
 
-  async createCocktail(ownerId: number, cocktailDto: CreateCocktailDto) {
+  async createCocktail(ownerId: string, cocktailDto: CreateCocktailDto) {
     const alcohol = this.cocktailRepository.create({
       owner: {
         id: ownerId,
@@ -98,7 +98,7 @@ export class AlcoholService {
     return cocktail;
   }
 
-  async updateSpirit(id: number, ownerId: number, spiritDto: UpdateSpiritDto) {
+  async updateSpirit(id: string, ownerId: string, spiritDto: UpdateSpiritDto) {
     const spirit = await this.spiritRepository.findOne({
       where: {
         id,

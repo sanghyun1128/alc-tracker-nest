@@ -32,14 +32,14 @@ export class ReviewsController {
   }
 
   @Get(':id')
-  getReviewById(@Param('id', ParseIntPipe) id: number) {
+  getReviewById(@Param('id', ParseIntPipe) id: string) {
     return this.reviewsService.getReviewById(id);
   }
 
   @Post('/spirit')
   @UseGuards(AccessTokenGuard)
   postSpiritReview(
-    @Body('authorId') authorId: number,
+    @Body('authorId') authorId: string,
     @Body('rating') rating: number,
     @Body('comment') comment: string,
     @Body('pairing') pairing: string,
@@ -63,7 +63,7 @@ export class ReviewsController {
   @Post('/wine')
   @UseGuards(AccessTokenGuard)
   postWineReview(
-    @Body('authorId') authorId: number,
+    @Body('authorId') authorId: string,
     @Body('rating') rating: number,
     @Body('comment') comment: string,
     @Body('pairing') pairing: string,
@@ -87,7 +87,7 @@ export class ReviewsController {
   @Post('/cocktail')
   @UseGuards(AccessTokenGuard)
   postCocktailReview(
-    @Body('authorId') authorId: number,
+    @Body('authorId') authorId: string,
     @Body('rating') rating: number,
     @Body('comment') comment: string,
     @Body('pairing') pairing: string,

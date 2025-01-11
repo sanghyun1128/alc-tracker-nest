@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import {
   CreateDateColumn,
   PrimaryGeneratedColumn,
@@ -5,12 +6,14 @@ import {
 } from 'typeorm';
 
 export abstract class BaseModel {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @CreateDateColumn()
+  @Exclude()
   createdAt: Date;
 
   @UpdateDateColumn()
+  @Exclude()
   updatedAt: Date;
 }
