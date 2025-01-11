@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Exclude, Type } from 'class-transformer';
 import { IsDate, IsEmail, IsEnum, IsString, Length } from 'class-validator';
 import { Column, Entity, OneToMany } from 'typeorm';
 
@@ -32,6 +32,7 @@ export class UserModel extends BaseModel {
   @Length(8, 16, {
     message: lengthValidationMessage,
   })
+  @Exclude()
   password: string;
 
   @Column({
