@@ -7,13 +7,12 @@ import {
 
 export abstract class BaseModel {
   @PrimaryGeneratedColumn('uuid')
+  @Exclude()
   id: string;
 
   @CreateDateColumn()
-  @Exclude()
   createdAt: Date;
 
   @UpdateDateColumn()
-  @Exclude()
   updatedAt: Date;
 }
