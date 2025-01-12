@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, Repository } from 'typeorm';
 
+import { CaskEnum, SpiritCategoryEnum } from './const/spirit.const';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CreateSpiritDto } from './dto/create-spirit.dto';
 import { CreateWineDto } from './dto/create-wine.dto';
@@ -158,5 +159,24 @@ export class AlcoholService {
     return {
       data: alcohols,
     };
+  }
+
+  //TODO: Test code
+  async generateTestData(userId: string) {
+    const purchaseDate = new Date('2020-11-28');
+
+    for (let i = 0; i < 100; i++) {
+      purchaseDate.setDate(purchaseDate.getDate() - i);
+      await this.createSpirit(userId, {
+        name: `Test Spirit ${i}`,
+        category: SpiritCategoryEnum[i % 17],
+        cask: CaskEnum[i % 9],
+        maker: '',
+        alc: 40 + i / 10,
+        price: 100000 + i * 10,
+        purchaseLocation: `Test Location ${i}`,
+        purchaseDate: purchaseDate,
+      });
+    }
   }
 }

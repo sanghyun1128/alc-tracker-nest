@@ -82,4 +82,13 @@ export class AlcoholController {
   ) {
     return this.alcoholService.updateSpirit(id, userId, dto);
   }
+
+  //TODO: Test code
+  @Post('/test/many')
+  @UseGuards(AccessTokenGuard)
+  async postManyAlcohols(@User() user: UserModel) {
+    await this.alcoholService.generateTestData(user.id);
+
+    return true;
+  }
 }
