@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository } from 'typeorm';
+import { FindOptionsWhere, LessThan, MoreThan, Repository } from 'typeorm';
 
 import { CaskEnum, SpiritCategoryEnum } from './const/spirit.const';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
@@ -9,6 +9,7 @@ import { CreateWineDto } from './dto/create-wine.dto';
 import { PaginateAlcoholDto } from './dto/paginate-alcohol.dto';
 import { UpdateSpiritDto } from './dto/update-spirit.dto';
 import { CocktailModel, SpiritModel, WineModel } from './entities/alcohol.entity';
+import { MAX_INTEGER } from 'src/common/const/database.const';
 import { HOST, PROTOCOL } from 'src/common/const/env-keys.const';
 
 @Injectable()
@@ -23,11 +24,16 @@ export class AlcoholService {
   ) {}
 
   async getAllSpirits(dto: PaginateAlcoholDto) {
-    const spirits = await this.spiritRepository.find({
-      where: {
-        alcoholIndex: MoreThan(dto.where__alcoholIndex_more_than ?? 0),
-      },
+    const where: FindOptionsWhere<SpiritModel> = {};
 
+    if (dto.order__createdAt === 'ASC') {
+      where.alcoholIndex = MoreThan(dto.where__cursor ?? 0);
+    } else if (dto.order__createdAt === 'DESC') {
+      where.alcoholIndex = LessThan(dto.where__cursor ?? MAX_INTEGER);
+    }
+
+    const spirits = await this.spiritRepository.find({
+      where,
       order: {
         createdAt: dto.order__createdAt,
       },
@@ -42,19 +48,17 @@ export class AlcoholService {
     if (nextUrl) {
       for (const key in dto) {
         if (dto[key]) {
-          if (key !== 'where__alcoholIndex_more_than') {
+          if (key !== 'where__cursor') {
             nextUrl.searchParams.append(key, dto[key]);
           }
         }
       }
-      nextUrl.searchParams.append('where__alcoholIndex_more_than', lastItem.alcoholIndex.toString());
+
+      nextUrl.searchParams.append('where__cursor', lastItem.alcoholIndex.toString());
     }
 
     return {
       data: spirits,
-      cursor: {
-        after: lastItem.alcoholIndex ?? null,
-      },
       count: spirits.length,
       next: nextUrl ? decodeURIComponent(nextUrl.toString()) : null,
     };
