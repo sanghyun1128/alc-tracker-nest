@@ -1,16 +1,15 @@
-import { IsDate, IsEnum, IsNumber, IsOptional } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional } from 'class-validator';
 
 import { OrderEnum } from '../const/pagination.const';
 import {
-  dateValidationMessage,
   enumValidationMessage,
   numberValidationMessage,
 } from 'src/common/validation-message';
 
 export class PaginateAlcoholDto {
-  @IsDate({ message: dateValidationMessage })
+  @IsNumber({}, { message: numberValidationMessage })
   @IsOptional()
-  where__createdAt_more_than?: Date;
+  where__alcoholIndex_more_than?: number;
 
   @IsEnum(OrderEnum, {
     message: enumValidationMessage,
