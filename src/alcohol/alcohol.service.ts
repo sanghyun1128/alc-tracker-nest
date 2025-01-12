@@ -35,7 +35,7 @@ export class AlcoholService {
       take: dto.take,
     });
 
-    const lastItem = spirits.length > 0 ? spirits[spirits.length - 1] : null;
+    const lastItem = spirits.length > 0 && spirits.length === dto.take ? spirits[spirits.length - 1] : null;
 
     const nextUrl = lastItem ? new URL(`${PROTOCOL}://${HOST}/alcohol/spirit`) : null;
 
