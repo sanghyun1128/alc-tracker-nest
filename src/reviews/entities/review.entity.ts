@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 import {
   SpiritModel,
@@ -26,8 +20,8 @@ export abstract class DetailEvaluation {
 }
 
 export class BaseReviewModel extends BaseModel {
-  @PrimaryGeneratedColumn('increment')
-  reviewId: number;
+  @Column({ type: 'int', unique: true, generated: 'increment' })
+  reviewIndex: number;
 
   @Column({
     nullable: false,
