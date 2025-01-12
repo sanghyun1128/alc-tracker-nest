@@ -25,10 +25,22 @@ export class AlcoholService {
     private readonly cocktailRepository: Repository<CocktailModel>,
   ) {}
 
-  async getAllSpirits() {
-    return await this.spiritRepository.find({
-      relations: ['owner'],
+  async getAllSpirits(dto: PaginateAlcoholDto) {
+    const alcohols = await this.spiritRepository.find({
+      where: {
+        createdAt: MoreThan(dto.where__createdAt_more_than ?? new Date(0)),
+      },
+
+      order: {
+        createdAt: dto.order__createdAt,
+      },
+
+      take: dto.take,
     });
+
+    return {
+      data: alcohols,
+    };
   }
 
   async getAllWines() {
@@ -141,24 +153,6 @@ export class AlcoholService {
     });
 
     return updatedSpirit;
-  }
-
-  async paginateAlcohol(dto: PaginateAlcoholDto) {
-    const alcohols = await this.spiritRepository.find({
-      where: {
-        createdAt: MoreThan(dto.where__createdAt_more_than ?? new Date(0)),
-      },
-
-      order: {
-        createdAt: dto.order__createdAt,
-      },
-
-      take: dto.take,
-    });
-
-    return {
-      data: alcohols,
-    };
   }
 
   //TODO: Test code

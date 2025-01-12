@@ -24,14 +24,9 @@ import { UserModel } from 'src/users/entities/user.entity';
 export class AlcoholController {
   constructor(private readonly alcoholService: AlcoholService) {}
 
-  @Get('/all')
-  getAllAlcohol(@Query() query: PaginateAlcoholDto) {
-    return this.alcoholService.paginateAlcohol(query);
-  }
-
   @Get('/spirit')
-  getAllSpirits() {
-    return this.alcoholService.getAllSpirits();
+  getAllSpirits(@Query() query: PaginateAlcoholDto) {
+    return this.alcoholService.getAllSpirits(query);
   }
 
   @Get('/wine')
