@@ -13,6 +13,7 @@ import {
   SpiritModel,
   WineModel,
 } from './entities/alcohol.entity';
+import { HOST, PROTOCOL } from 'src/common/const/env-keys.const';
 
 @Injectable()
 export class AlcoholService {
@@ -26,9 +27,9 @@ export class AlcoholService {
   ) {}
 
   async getAllSpirits(dto: PaginateAlcoholDto) {
-    const alcohols = await this.spiritRepository.find({
+    const spirits = await this.spiritRepository.find({
       where: {
-        createdAt: MoreThan(dto.where__createdAt_more_than ?? new Date(0)),
+        alcoholIndex: MoreThan(dto.where__alcoholIndex_more_than ?? 0),
       },
 
       order: {
@@ -38,8 +39,33 @@ export class AlcoholService {
       take: dto.take,
     });
 
+    const lastItem = spirits.length > 0 ? spirits[spirits.length - 1] : null;
+
+    const nextUrl = lastItem
+      ? new URL(`${PROTOCOL}://${HOST}/alcohol/spirit`)
+      : null;
+
+    if (nextUrl) {
+      for (const key in dto) {
+        if (dto[key]) {
+          if (key !== 'where__alcoholIndex_more_than') {
+            nextUrl.searchParams.append(key, dto[key]);
+          }
+        }
+      }
+      nextUrl.searchParams.append(
+        'where__alcoholIndex_more_than',
+        lastItem.alcoholIndex.toString(),
+      );
+    }
+
     return {
-      data: alcohols,
+      data: spirits,
+      cursor: {
+        after: lastItem,
+      },
+      count: spirits.length,
+      next: nextUrl ? decodeURIComponent(nextUrl.toString()) : null,
     };
   }
 
