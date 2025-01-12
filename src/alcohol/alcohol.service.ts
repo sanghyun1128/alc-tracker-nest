@@ -53,7 +53,7 @@ export class AlcoholService {
     return {
       data: spirits,
       cursor: {
-        after: lastItem,
+        after: lastItem ? lastItem.alcoholIndex : null,
       },
       count: spirits.length,
       next: nextUrl ? decodeURIComponent(nextUrl.toString()) : null,
