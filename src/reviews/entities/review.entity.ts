@@ -1,10 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
-import {
-  SpiritModel,
-  WineModel,
-  CocktailModel,
-} from 'src/alcohol/entities/alcohol.entity';
+import { SpiritModel, WineModel, CocktailModel } from 'src/alcohol/entities/alcohol.entity';
 import { BaseModel } from 'src/common/entities/base.entity';
 import { UserModel } from 'src/users/entities/user.entity';
 

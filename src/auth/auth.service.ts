@@ -29,10 +29,7 @@ export class AuthService {
    * @throws BadRequestException if the email or nickname already exists.
    */
   async registerWithEmail(user: RegisterUserDto) {
-    const hashedPassword = await bcrypt.hash(
-      user.password,
-      +this.configService.get<string>(ENV_JWT_HASH_ROUNDS_KEY),
-    );
+    const hashedPassword = await bcrypt.hash(user.password, +this.configService.get<string>(ENV_JWT_HASH_ROUNDS_KEY));
 
     const newUser = await this.usersService.createUser({
       ...user,
@@ -62,10 +59,7 @@ export class AuthService {
       throw new UnauthorizedException('Not existing user');
     }
 
-    const isPasswordMatched = await bcrypt.compare(
-      user.password,
-      existingUser.password,
-    );
+    const isPasswordMatched = await bcrypt.compare(user.password, existingUser.password);
 
     if (!isPasswordMatched) {
       throw new UnauthorizedException('Password is not matched');
@@ -110,9 +104,7 @@ export class AuthService {
   }
 
   decodeBasicToken(base64StringToken: string) {
-    const decodedToken = Buffer.from(base64StringToken, 'base64').toString(
-      'utf8',
-    );
+    const decodedToken = Buffer.from(base64StringToken, 'base64').toString('utf8');
     const splittedToken = decodedToken.split(':');
 
     if (splittedToken.length !== 2) {

@@ -11,12 +11,7 @@ export class UsersService {
     private readonly usersRepository: Repository<UserModel>,
   ) {}
 
-  async createUser(
-    user: Pick<
-      UserModel,
-      'nickname' | 'email' | 'password' | 'birth' | 'gender'
-    >,
-  ) {
+  async createUser(user: Pick<UserModel, 'nickname' | 'email' | 'password' | 'birth' | 'gender'>) {
     const nicknameExists = await this.usersRepository.findOne({
       where: { nickname: user.nickname },
     });

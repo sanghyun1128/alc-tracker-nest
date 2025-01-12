@@ -4,12 +4,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AlcoholModule } from './alcohol/alcohol.module';
-import {
-  SpiritModel,
-  WineModel,
-  CocktailModel,
-  AlcoholModel,
-} from './alcohol/entities/alcohol.entity';
+import { SpiritModel, WineModel, CocktailModel, AlcoholModel } from './alcohol/entities/alcohol.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';

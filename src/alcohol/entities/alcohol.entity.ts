@@ -17,11 +17,7 @@ import {
   enumValidationMessage,
   dateValidationMessage,
 } from 'src/common/validation-message';
-import {
-  CocktailReviewModel,
-  SpiritReviewModel,
-  WineReviewModel,
-} from 'src/reviews/entities/review.entity';
+import { CocktailReviewModel, SpiritReviewModel, WineReviewModel } from 'src/reviews/entities/review.entity';
 import { UserModel } from 'src/users/entities/user.entity';
 
 export class AlcoholModel extends BaseModel {

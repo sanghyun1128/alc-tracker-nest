@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  Patch,
-  Post,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 
 import { AlcoholService } from './alcohol.service';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
@@ -46,10 +36,7 @@ export class AlcoholController {
 
   @Post('/spirit')
   @UseGuards(AccessTokenGuard)
-  postSpirit(
-    @User('id') userId: UserModel['id'],
-    @Body() dto: CreateSpiritDto,
-  ) {
+  postSpirit(@User('id') userId: UserModel['id'], @Body() dto: CreateSpiritDto) {
     return this.alcoholService.createSpirit(userId, dto);
   }
 
@@ -61,10 +48,7 @@ export class AlcoholController {
 
   @Post('/cocktail')
   @UseGuards(AccessTokenGuard)
-  postCocktail(
-    @User('id') userId: UserModel['id'],
-    @Body() dto: CreateCocktailDto,
-  ) {
+  postCocktail(@User('id') userId: UserModel['id'], @Body() dto: CreateCocktailDto) {
     return this.alcoholService.createCocktail(userId, dto);
   }
 

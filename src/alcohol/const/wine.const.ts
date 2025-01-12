@@ -159,5 +159,4 @@ export const CombinedAppellationEnum = {
   ...OtherAppellationEnum,
 } as const;
 
-export type CombinedAppellationType =
-  (typeof CombinedAppellationEnum)[keyof typeof CombinedAppellationEnum];
+export type CombinedAppellationType = (typeof CombinedAppellationEnum)[keyof typeof CombinedAppellationEnum];

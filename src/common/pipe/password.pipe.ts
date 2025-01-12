@@ -1,9 +1,4 @@
-import {
-  ArgumentMetadata,
-  BadRequestException,
-  Injectable,
-  PipeTransform,
-} from '@nestjs/common';
+import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 
 @Injectable()
 export class PasswordPipe implements PipeTransform {
@@ -11,9 +6,7 @@ export class PasswordPipe implements PipeTransform {
     value = value.toString();
 
     if (value.length > 16 || value.length < 8) {
-      throw new BadRequestException(
-        'Password must be between 8 and 16 characters',
-      );
+      throw new BadRequestException('Password must be between 8 and 16 characters');
     }
 
     return value;

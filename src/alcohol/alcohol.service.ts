@@ -8,11 +8,7 @@ import { CreateSpiritDto } from './dto/create-spirit.dto';
 import { CreateWineDto } from './dto/create-wine.dto';
 import { PaginateAlcoholDto } from './dto/paginate-alcohol.dto';
 import { UpdateSpiritDto } from './dto/update-spirit.dto';
-import {
-  CocktailModel,
-  SpiritModel,
-  WineModel,
-} from './entities/alcohol.entity';
+import { CocktailModel, SpiritModel, WineModel } from './entities/alcohol.entity';
 import { HOST, PROTOCOL } from 'src/common/const/env-keys.const';
 
 @Injectable()
@@ -41,9 +37,7 @@ export class AlcoholService {
 
     const lastItem = spirits.length > 0 ? spirits[spirits.length - 1] : null;
 
-    const nextUrl = lastItem
-      ? new URL(`${PROTOCOL}://${HOST}/alcohol/spirit`)
-      : null;
+    const nextUrl = lastItem ? new URL(`${PROTOCOL}://${HOST}/alcohol/spirit`) : null;
 
     if (nextUrl) {
       for (const key in dto) {
@@ -53,10 +47,7 @@ export class AlcoholService {
           }
         }
       }
-      nextUrl.searchParams.append(
-        'where__alcoholIndex_more_than',
-        lastItem.alcoholIndex.toString(),
-      );
+      nextUrl.searchParams.append('where__alcoholIndex_more_than', lastItem.alcoholIndex.toString());
     }
 
     return {

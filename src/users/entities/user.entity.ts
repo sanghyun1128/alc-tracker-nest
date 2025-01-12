@@ -4,11 +4,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 
 import { GenderEnum } from '../const/gender.const';
 import { RoleEnum } from '../const/role.const';
-import {
-  CocktailModel,
-  SpiritModel,
-  WineModel,
-} from 'src/alcohol/entities/alcohol.entity';
+import { CocktailModel, SpiritModel, WineModel } from 'src/alcohol/entities/alcohol.entity';
 import { BaseModel } from 'src/common/entities/base.entity';
 import {
   emailValidationMessage,
@@ -17,11 +13,7 @@ import {
   dateValidationMessage,
   lengthValidationMessage,
 } from 'src/common/validation-message';
-import {
-  CocktailReviewModel,
-  SpiritReviewModel,
-  WineReviewModel,
-} from 'src/reviews/entities/review.entity';
+import { CocktailReviewModel, SpiritReviewModel, WineReviewModel } from 'src/reviews/entities/review.entity';
 
 @Entity()
 export class UserModel extends BaseModel {
@@ -101,10 +93,7 @@ export class UserModel extends BaseModel {
   @OneToMany(() => WineModel, (wine) => wine.owner)
   wines: WineModel[];
 
-  @OneToMany(
-    () => CocktailReviewModel,
-    (cocktailReview) => cocktailReview.author,
-  )
+  @OneToMany(() => CocktailReviewModel, (cocktailReview) => cocktailReview.author)
   cocktailReviews: CocktailReviewModel[];
 
   @OneToMany(() => CocktailModel, (cocktail) => cocktail.owner)

@@ -1,10 +1,7 @@
 import { IsEnum, IsNumber, IsOptional } from 'class-validator';
 
 import { OrderEnum } from '../const/pagination.const';
-import {
-  enumValidationMessage,
-  numberValidationMessage,
-} from 'src/common/validation-message';
+import { enumValidationMessage, numberValidationMessage } from 'src/common/validation-message';
 
 export class PaginateAlcoholDto {
   @IsNumber({}, { message: numberValidationMessage })
