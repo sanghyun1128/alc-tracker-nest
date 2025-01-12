@@ -1,5 +1,12 @@
 import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { CocktailCategoryEnum } from '../const/cocktail.const';
 import { CaskEnum, SpiritCategoryEnum } from '../const/spirit.const';
@@ -25,6 +32,9 @@ import {
 import { UserModel } from 'src/users/entities/user.entity';
 
 export class AlcoholModel extends BaseModel {
+  @PrimaryGeneratedColumn('increment')
+  alcoholId: number;
+
   @Column({
     length: 100,
     nullable: false,

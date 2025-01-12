@@ -1,6 +1,6 @@
 import { Exclude, Type } from 'class-transformer';
 import { IsDate, IsEmail, IsEnum, IsString, Length } from 'class-validator';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { GenderEnum } from '../const/gender.const';
 import { RoleEnum } from '../const/role.const';
@@ -25,6 +25,9 @@ import {
 
 @Entity()
 export class UserModel extends BaseModel {
+  @PrimaryGeneratedColumn('increment')
+  userId: number;
+
   @Column({
     unique: true,
     nullable: false,
