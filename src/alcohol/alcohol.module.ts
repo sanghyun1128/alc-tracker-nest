@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AlcoholController } from './alcohol.controller';
 import { AlcoholService } from './alcohol.service';
 import {
-  AlcoholModel,
   CocktailModel,
   SpiritModel,
   WineModel,
@@ -14,12 +13,7 @@ import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      AlcoholModel,
-      SpiritModel,
-      WineModel,
-      CocktailModel,
-    ]),
+    TypeOrmModule.forFeature([SpiritModel, WineModel, CocktailModel]),
     AuthModule,
     UsersModule,
   ],

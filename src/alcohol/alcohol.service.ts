@@ -1,13 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CreateSpiritDto } from './dto/create-spirit.dto';
 import { CreateWineDto } from './dto/create-wine.dto';
+import { PaginateAlcoholDto } from './dto/paginate-alcohol.dto';
 import { UpdateSpiritDto } from './dto/update-spirit.dto';
 import {
-  AlcoholModel,
   CocktailModel,
   SpiritModel,
   WineModel,
@@ -16,8 +16,6 @@ import {
 @Injectable()
 export class AlcoholService {
   constructor(
-    @InjectRepository(AlcoholModel)
-    private readonly alcoholRepository: Repository<AlcoholModel>,
     @InjectRepository(SpiritModel)
     private readonly spiritRepository: Repository<SpiritModel>,
     @InjectRepository(WineModel)
@@ -45,18 +43,42 @@ export class AlcoholService {
   }
 
   async getAlcoholById(id: string) {
-    const alcohol = await this.alcoholRepository.findOne({
+    const spirit = await this.spiritRepository.findOne({
       where: {
         id,
       },
       relations: ['owner'],
     });
 
-    if (!alcohol) {
-      throw new NotFoundException(`Alcohol with id ${id} not found`);
+    if (spirit) {
+      return spirit;
     }
 
-    return alcohol;
+    const wine = await this.wineRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ['owner'],
+    });
+
+    if (wine) {
+      return wine;
+    }
+
+    const cocktail = await this.cocktailRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ['owner'],
+    });
+
+    if (cocktail) {
+      return cocktail;
+    }
+
+    if (!cocktail && !spirit && !wine) {
+      throw new NotFoundException(`Alcohol with id ${id} not found`);
+    }
   }
 
   async createSpirit(ownerId: string, spiritDto: CreateSpiritDto) {
@@ -118,5 +140,23 @@ export class AlcoholService {
     });
 
     return updatedSpirit;
+  }
+
+  async paginateAlcohol(dto: PaginateAlcoholDto) {
+    const alcohols = await this.spiritRepository.find({
+      where: {
+        createdAt: MoreThan(dto.where__createdAt_more_than ?? new Date(0)),
+      },
+
+      order: {
+        createdAt: dto.order__createdAt,
+      },
+
+      take: dto.take,
+    });
+
+    return {
+      data: alcohols,
+    };
   }
 }

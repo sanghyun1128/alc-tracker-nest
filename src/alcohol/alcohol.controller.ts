@@ -6,6 +6,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
@@ -13,6 +14,7 @@ import { AlcoholService } from './alcohol.service';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CreateSpiritDto } from './dto/create-spirit.dto';
 import { CreateWineDto } from './dto/create-wine.dto';
+import { PaginateAlcoholDto } from './dto/paginate-alcohol.dto';
 import { UpdateSpiritDto } from './dto/update-spirit.dto';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { User } from 'src/users/decorator/user.decorator';
@@ -21,6 +23,11 @@ import { UserModel } from 'src/users/entities/user.entity';
 @Controller('alcohol')
 export class AlcoholController {
   constructor(private readonly alcoholService: AlcoholService) {}
+
+  @Get('/all')
+  getAllAlcohol(@Query() query: PaginateAlcoholDto) {
+    return this.alcoholService.paginateAlcohol(query);
+  }
 
   @Get('/spirit')
   getAllSpirits() {
