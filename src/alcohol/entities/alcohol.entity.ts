@@ -1,4 +1,3 @@
-import { Type } from 'class-transformer';
 import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
@@ -104,7 +103,6 @@ export class SpiritModel extends AlcoholModel {
   @IsDate({
     message: dateValidationMessage,
   })
-  @Type(() => Date)
   purchaseDate: Date;
 }
 

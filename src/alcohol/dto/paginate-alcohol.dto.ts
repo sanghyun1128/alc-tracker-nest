@@ -1,4 +1,3 @@
-import { Type } from 'class-transformer';
 import { IsDate, IsEnum, IsNumber, IsOptional } from 'class-validator';
 
 import { OrderEnum } from '../const/pagination.const';
@@ -10,7 +9,6 @@ import {
 
 export class PaginateAlcoholDto {
   @IsDate({ message: dateValidationMessage })
-  @Type(() => Date)
   @IsOptional()
   where__createdAt_more_than?: Date;
 
