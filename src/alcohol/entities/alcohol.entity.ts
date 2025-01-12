@@ -25,7 +25,6 @@ import {
 } from 'src/reviews/entities/review.entity';
 import { UserModel } from 'src/users/entities/user.entity';
 
-@Entity()
 export class AlcoholModel extends BaseModel {
   @Column({
     length: 100,

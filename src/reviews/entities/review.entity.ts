@@ -19,7 +19,6 @@ export abstract class DetailEvaluation {
   comment: string;
 }
 
-@Entity()
 export class BaseReviewModel extends BaseModel {
   @Column({
     nullable: false,
