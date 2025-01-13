@@ -6,6 +6,10 @@ import { enumValidationMessage, numberValidationMessage } from 'src/common/valid
 export class PaginateAlcoholDto {
   @IsNumber({}, { message: numberValidationMessage })
   @IsOptional()
+  page?: number;
+
+  @IsNumber({}, { message: numberValidationMessage })
+  @IsOptional()
   where__cursor?: number;
 
   @IsEnum(OrderEnum, {

@@ -23,7 +23,7 @@ export class AlcoholService {
     private readonly cocktailRepository: Repository<CocktailModel>,
   ) {}
 
-  async getAllSpirits(dto: PaginateAlcoholDto) {
+  async cursorPagination(dto: PaginateAlcoholDto) {
     const where: FindOptionsWhere<SpiritModel> = {};
 
     if (dto.order__createdAt === 'ASC') {
@@ -62,6 +62,30 @@ export class AlcoholService {
       count: spirits.length,
       next: nextUrl ? decodeURIComponent(nextUrl.toString()) : null,
     };
+  }
+
+  async pagePagination(dto: PaginateAlcoholDto) {
+    const [spirits, total] = await this.spiritRepository.findAndCount({
+      order: {
+        createdAt: dto.order__createdAt,
+      },
+      take: dto.take,
+      skip: (dto.page - 1) * dto.take,
+    });
+
+    return {
+      data: spirits,
+      count: spirits.length,
+      total: total,
+    };
+  }
+
+  async getAllSpirits(dto: PaginateAlcoholDto) {
+    if (dto.page) {
+      return await this.pagePagination(dto);
+    } else {
+      return await this.cursorPagination(dto);
+    }
   }
 
   async getAllWines() {
