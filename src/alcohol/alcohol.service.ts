@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, LessThan, MoreThan, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { CaskEnum, SpiritCategoryEnum } from './const/spirit.const';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
@@ -9,8 +9,7 @@ import { CreateWineDto } from './dto/create-wine.dto';
 import { PaginateAlcoholDto } from './dto/paginate-alcohol.dto';
 import { UpdateSpiritDto } from './dto/update-spirit.dto';
 import { CocktailModel, SpiritModel, WineModel } from './entities/alcohol.entity';
-import { MAX_INTEGER } from 'src/common/const/database.const';
-import { HOST, PROTOCOL } from 'src/common/const/env-keys.const';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class AlcoholService {
@@ -21,48 +20,9 @@ export class AlcoholService {
     private readonly wineRepository: Repository<WineModel>,
     @InjectRepository(CocktailModel)
     private readonly cocktailRepository: Repository<CocktailModel>,
+
+    private readonly commonService: CommonService,
   ) {}
-
-  async cursorPagination(dto: PaginateAlcoholDto) {
-    const where: FindOptionsWhere<SpiritModel> = {};
-
-    if (dto.order__createdAt === 'ASC') {
-      where.alcoholIndex = MoreThan(dto.where__cursor ?? 0);
-    } else if (dto.order__createdAt === 'DESC') {
-      where.alcoholIndex = LessThan(dto.where__cursor ?? MAX_INTEGER);
-    }
-
-    const spirits = await this.spiritRepository.find({
-      where,
-      order: {
-        createdAt: dto.order__createdAt,
-      },
-
-      take: dto.take,
-    });
-
-    const lastItem = spirits.length > 0 && spirits.length === dto.take ? spirits[spirits.length - 1] : null;
-
-    const nextUrl = lastItem ? new URL(`${PROTOCOL}://${HOST}/alcohol/spirit`) : null;
-
-    if (nextUrl) {
-      for (const key in dto) {
-        if (dto[key]) {
-          if (key !== 'where__cursor') {
-            nextUrl.searchParams.append(key, dto[key]);
-          }
-        }
-      }
-
-      nextUrl.searchParams.append('where__cursor', lastItem.alcoholIndex.toString());
-    }
-
-    return {
-      data: spirits,
-      count: spirits.length,
-      next: nextUrl ? decodeURIComponent(nextUrl.toString()) : null,
-    };
-  }
 
   async pagePagination(dto: PaginateAlcoholDto) {
     const [spirits, total] = await this.spiritRepository.findAndCount({
@@ -81,11 +41,7 @@ export class AlcoholService {
   }
 
   async getAllSpirits(dto: PaginateAlcoholDto) {
-    if (dto.page) {
-      return await this.pagePagination(dto);
-    } else {
-      return await this.cursorPagination(dto);
-    }
+    return this.commonService.paginate(dto, this.spiritRepository, {}, 'alcohol/spirit');
   }
 
   async getAllWines() {
