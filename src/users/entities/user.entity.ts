@@ -17,9 +17,6 @@ import { CocktailReviewModel, SpiritReviewModel, WineReviewModel } from 'src/rev
 
 @Entity()
 export class UserModel extends BaseModel {
-  @Column({ type: 'int', unique: true, generated: 'increment' })
-  userIndex: number;
-
   @Column({
     unique: true,
     nullable: false,

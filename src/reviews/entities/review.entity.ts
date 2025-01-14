@@ -16,9 +16,6 @@ export abstract class DetailEvaluation {
 }
 
 export class BaseReviewModel extends BaseModel {
-  @Column({ type: 'int', unique: true, generated: 'increment' })
-  reviewIndex: number;
-
   @Column({
     nullable: false,
     default: 0,
