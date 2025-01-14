@@ -6,5 +6,6 @@ import { CommonService } from './common.service';
 @Module({
   controllers: [CommonController],
   providers: [CommonService],
+  exports: [CommonService],
 })
 export class CommonModule {}
