@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import multer from 'multer';
+import * as multer from 'multer';
 import { extname } from 'path';
 import { v4 as uuidV4 } from 'uuid';
 
