@@ -24,22 +24,6 @@ export class AlcoholService {
     private readonly commonService: CommonService,
   ) {}
 
-  async pagePagination(dto: PaginateAlcoholDto) {
-    const [spirits, total] = await this.spiritRepository.findAndCount({
-      order: {
-        createdAt: dto.order__createdAt,
-      },
-      take: dto.take,
-      skip: (dto.page - 1) * dto.take,
-    });
-
-    return {
-      data: spirits,
-      count: spirits.length,
-      total: total,
-    };
-  }
-
   async getAllSpirits(dto: PaginateAlcoholDto) {
     return this.commonService.paginate(dto, this.spiritRepository, {}, 'alcohol/spirit');
   }
