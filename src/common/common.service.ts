@@ -20,6 +20,67 @@ export class CommonService {
     }
   }
 
+  private async pagePaginate<T extends BaseModel>(
+    dto: BasePaginationDto,
+    repository: Repository<T>,
+    overrideFindOptions: FindManyOptions<T> = {},
+  ) {
+    const findOptions = this.composeFindOptions<T>(dto);
+
+    const [results, count] = await repository.findAndCount({
+      ...findOptions,
+      ...overrideFindOptions,
+    });
+
+    return {
+      data: results,
+      total: count,
+    };
+  }
+
+  private async cursorPaginate<T extends BaseModel>(
+    dto: BasePaginationDto,
+    repository: Repository<T>,
+    overrideFindOptions: FindManyOptions<T> = {},
+    path: string,
+  ) {
+    const findOptions = this.composeFindOptions<T>(dto);
+
+    const results = await repository.find({
+      ...findOptions,
+      ...overrideFindOptions,
+    });
+
+    const lastItem = results.length > 0 && results.length === dto.take ? results[results.length - 1] : null;
+
+    const nextUrl = lastItem ? new URL(`${PROTOCOL}://${HOST}/${path}`) : null;
+
+    if (nextUrl) {
+      for (const key of Object.keys(dto)) {
+        if (dto[key]) {
+          if (key !== 'where__index__more_than' && key !== 'where__index__less_than') {
+            nextUrl.searchParams.append(key, dto[key]);
+          }
+        }
+      }
+
+      //TODO: where__index and order__createdAt should be dynamic
+      //FIXME: if where__index is not present, it should be added
+      const key = 'where__index__' + (dto.order__createdAt === 'ASC' ? 'more_than' : 'less_than');
+
+      nextUrl.searchParams.append(key, lastItem.index.toString());
+    }
+
+    return {
+      data: results,
+      cursor: {
+        after: lastItem ? lastItem.index : null,
+      },
+      count: results.length,
+      next: nextUrl,
+    };
+  }
+
   private composeFindOptions<T extends BaseModel>(dto: BasePaginationDto): FindManyOptions<T> {
     let where: FindOptionsWhere<T> = {};
     let order: FindOptionsOrder<T> = {};
@@ -66,70 +127,13 @@ export class CommonService {
 
       if (operator === 'between') {
         options[field] = FILTER_MAPPER[operator](values[0], values[1]);
+      } else if (operator === 'i_like') {
+        options[field] = FILTER_MAPPER[operator](`%${value}%`);
       } else {
         options[field] = FILTER_MAPPER[operator](value);
       }
     }
 
     return options;
-  }
-
-  private async pagePaginate<T extends BaseModel>(
-    dto: BasePaginationDto,
-    repository: Repository<T>,
-    overrideFindOptions: FindManyOptions<T> = {},
-  ) {
-    const findOptions = this.composeFindOptions<T>(dto);
-
-    const [results, count] = await repository.findAndCount({
-      ...findOptions,
-      ...overrideFindOptions,
-    });
-
-    return {
-      data: results,
-      total: count,
-    };
-  }
-
-  private async cursorPaginate<T extends BaseModel>(
-    dto: BasePaginationDto,
-    repository: Repository<T>,
-    overrideFindOptions: FindManyOptions<T> = {},
-    path: string,
-  ) {
-    const findOptions = this.composeFindOptions<T>(dto);
-
-    const results = await repository.find({
-      ...findOptions,
-      ...overrideFindOptions,
-    });
-
-    const lastItem = results.length > 0 && results.length === dto.take ? results[results.length - 1] : null;
-
-    const nextUrl = lastItem ? new URL(`${PROTOCOL}://${HOST}/${path}`) : null;
-
-    if (nextUrl) {
-      for (const key of Object.keys(dto)) {
-        if (dto[key]) {
-          if (key !== 'where__index__more_than' && key !== 'where__index__less_than') {
-            nextUrl.searchParams.append(key, dto[key]);
-          }
-        }
-      }
-
-      const key = 'where__index__' + (dto.where__index__more_than ? 'more_than' : 'less_than');
-
-      nextUrl.searchParams.append(key, lastItem.index.toString());
-    }
-
-    return {
-      data: results,
-      cursor: {
-        after: lastItem ? lastItem.index : null,
-      },
-      count: results.length,
-      next: nextUrl,
-    };
   }
 }
