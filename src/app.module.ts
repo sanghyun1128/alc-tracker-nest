@@ -1,6 +1,7 @@
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AlcoholModule } from './alcohol/alcohol.module';
@@ -17,6 +18,7 @@ import {
   ENV_DB_TYPE_KEY,
   ENV_DB_USERNAME_KEY,
 } from './common/const/env-keys.const';
+import { PUBLIC_FOLDER_PATH } from './common/const/path.const';
 import {
   BaseReviewModel,
   CocktailReviewModel,
@@ -32,6 +34,10 @@ import { UsersModule } from './users/users.module';
     ReviewsModule,
     AlcoholModule,
     UsersModule,
+    ServeStaticModule.forRoot({
+      rootPath: PUBLIC_FOLDER_PATH,
+      serveRoot: '/public',
+    }),
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
