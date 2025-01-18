@@ -45,8 +45,7 @@ export class SpiritModel extends AlcoholModel {
   @Column({
     type: 'enum',
     enum: Object.values(SpiritCategoryEnum),
-    default: SpiritCategoryEnum.OTHER,
-    nullable: false,
+    nullable: true,
   })
   @IsEnum(SpiritCategoryEnum, {
     message: enumValidationMessage,
@@ -56,8 +55,7 @@ export class SpiritModel extends AlcoholModel {
   @Column({
     type: 'enum',
     enum: Object.values(CaskEnum),
-    default: CaskEnum.OTHER,
-    nullable: false,
+    nullable: true,
   })
   @IsEnum(CaskEnum, {
     message: enumValidationMessage,
@@ -106,8 +104,7 @@ export class WineModel extends AlcoholModel {
   @Column({
     type: 'enum',
     enum: Object.values(WineCategoryEnum),
-    default: WineCategoryEnum.OTHER,
-    nullable: false,
+    nullable: true,
   })
   @IsEnum(WineCategoryEnum, {
     message: enumValidationMessage,
@@ -117,8 +114,7 @@ export class WineModel extends AlcoholModel {
   @Column({
     type: 'enum',
     enum: Object.values(WineRegionEnum),
-    default: WineRegionEnum.OTHER,
-    nullable: false,
+    nullable: true,
   })
   @IsEnum(WineRegionEnum, {
     message: enumValidationMessage,
@@ -128,8 +124,7 @@ export class WineModel extends AlcoholModel {
   @Column({
     type: 'enum',
     enum: Object.values(CombinedAppellationEnum),
-    default: CombinedAppellationEnum.OTHER,
-    nullable: false,
+    nullable: true,
   })
   @IsEnum(CombinedAppellationEnum, {
     message: enumValidationMessage,
@@ -139,8 +134,7 @@ export class WineModel extends AlcoholModel {
   @Column({
     type: 'enum',
     enum: Object.values(GrapeVarietyEnum),
-    default: GrapeVarietyEnum.OTHER,
-    nullable: false,
+    nullable: true,
   })
   @IsEnum(GrapeVarietyEnum, {
     message: enumValidationMessage,
@@ -198,8 +192,7 @@ export class CocktailModel extends AlcoholModel {
   @Column({
     type: 'enum',
     enum: Object.values(CocktailCategoryEnum),
-    default: CocktailCategoryEnum.CLASSIC,
-    nullable: false,
+    nullable: true,
   })
   @IsEnum(CocktailCategoryEnum, {
     message: enumValidationMessage,
