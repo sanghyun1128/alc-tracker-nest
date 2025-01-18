@@ -5,7 +5,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AlcoholModule } from './alcohol/alcohol.module';
-import { SpiritModel, WineModel, CocktailModel, AlcoholModel } from './alcohol/entities/alcohol.entity';
+import { AlcoholModel, SpiritModel, WineModel, CocktailModel } from './alcohol/entities/alcohol.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -19,6 +19,7 @@ import {
   ENV_DB_USERNAME_KEY,
 } from './common/const/env-keys.const';
 import { PUBLIC_FOLDER_PATH } from './common/const/path.const';
+import { ImageModel } from './common/entities/image.entity';
 import {
   BaseReviewModel,
   CocktailReviewModel,
@@ -59,6 +60,7 @@ import { UsersModule } from './users/users.module';
         WineModel,
         CocktailModel,
         UserModel,
+        ImageModel,
       ],
       synchronize: true,
     }),
