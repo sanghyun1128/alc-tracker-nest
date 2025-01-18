@@ -1,11 +1,12 @@
 import { Exclude, Type } from 'class-transformer';
 import { IsDate, IsEmail, IsEnum, IsString, Length } from 'class-validator';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 
 import { GenderEnum } from '../const/gender.const';
 import { RoleEnum } from '../const/role.const';
-import { CocktailModel, SpiritModel, WineModel } from 'src/alcohol/entities/alcohol.entity';
+import { SpiritModel, WineModel, CocktailModel } from 'src/alcohol/entities/alcohol.entity';
 import { BaseModel } from 'src/common/entities/base.entity';
+import { ImageModel } from 'src/common/entities/image.entity';
 import {
   emailValidationMessage,
   stringValidationMessage,
@@ -95,4 +96,7 @@ export class UserModel extends BaseModel {
 
   @OneToMany(() => CocktailModel, (cocktail) => cocktail.owner)
   cocktails: CocktailModel[];
+
+  @OneToOne(() => ImageModel, (image) => image.user)
+  image: ImageModel;
 }

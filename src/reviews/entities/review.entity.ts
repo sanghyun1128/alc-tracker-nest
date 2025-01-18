@@ -1,7 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
-import { SpiritModel, WineModel, CocktailModel } from 'src/alcohol/entities/alcohol.entity';
 import { BaseModel } from 'src/common/entities/base.entity';
+import { ImageModel } from 'src/common/entities/image.entity';
 import { UserModel } from 'src/users/entities/user.entity';
 
 export abstract class DetailEvaluation {
@@ -15,6 +15,7 @@ export abstract class DetailEvaluation {
   comment: string;
 }
 
+@Entity()
 export class BaseReviewModel extends BaseModel {
   @Column({
     nullable: false,
@@ -45,16 +46,13 @@ export class BaseReviewModel extends BaseModel {
   })
   @JoinColumn({ name: 'authorId' })
   author: UserModel;
+
+  @OneToMany(() => ImageModel, (image) => image.review)
+  images: ImageModel[];
 }
 
 @Entity()
 export class SpiritReviewModel extends BaseReviewModel {
-  @ManyToOne(() => SpiritModel, (spirit) => spirit.reviews, {
-    nullable: false,
-  })
-  @JoinColumn({ name: 'spiritId' })
-  spirit: SpiritModel;
-
   /**
    * bottleCondition represents a percentage value between 0 and 100.
    */
@@ -64,12 +62,6 @@ export class SpiritReviewModel extends BaseReviewModel {
 
 @Entity()
 export class WineReviewModel extends BaseReviewModel {
-  @ManyToOne(() => WineModel, (wine) => wine.reviews, {
-    nullable: false,
-  })
-  @JoinColumn({ name: 'wineId' })
-  wine: WineModel;
-
   /**
    * aeration represents a minute of aeration.
    */
@@ -79,12 +71,6 @@ export class WineReviewModel extends BaseReviewModel {
 
 @Entity()
 export class CocktailReviewModel extends BaseReviewModel {
-  @ManyToOne(() => CocktailModel, (cocktail) => cocktail.reviews, {
-    nullable: false,
-  })
-  @JoinColumn({ name: 'cocktailId' })
-  cocktail: CocktailModel;
-
   @Column('json', { nullable: false })
   ingredients: string;
 
