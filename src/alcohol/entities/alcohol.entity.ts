@@ -1,25 +1,27 @@
 import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { ChildEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, TableInheritance } from 'typeorm';
 
 import { CocktailCategoryEnum } from '../const/cocktail.const';
-import { CaskEnum, SpiritCategoryEnum } from '../const/spirit.const';
+import { SpiritCategoryEnum, CaskEnum } from '../const/spirit.const';
 import {
+  WineCategoryEnum,
+  WineRegionEnum,
   CombinedAppellationEnum,
   CombinedAppellationType,
   GrapeVarietyEnum,
-  WineCategoryEnum,
-  WineRegionEnum,
 } from '../const/wine.const';
 import { BaseModel } from 'src/common/entities/base.entity';
+import { ImageModel } from 'src/common/entities/image.entity';
 import {
-  stringValidationMessage,
-  numberValidationMessage,
-  enumValidationMessage,
   dateValidationMessage,
+  enumValidationMessage,
+  numberValidationMessage,
+  stringValidationMessage,
 } from 'src/common/validation-message';
-import { CocktailReviewModel, SpiritReviewModel, WineReviewModel } from 'src/reviews/entities/review.entity';
 import { UserModel } from 'src/users/entities/user.entity';
 
+@Entity()
+@TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class AlcoholModel extends BaseModel {
   @Column({
     length: 100,
@@ -34,15 +36,12 @@ export class AlcoholModel extends BaseModel {
   @JoinColumn({ name: 'ownerId' })
   owner: UserModel;
 
-  // @OneToMany(() => ImageModel, (image) => image.spirit)
-  // images: ImageModel[];
+  @OneToMany(() => ImageModel, (image) => image.alcohol)
+  images: ImageModel[];
 }
 
-@Entity()
+@ChildEntity()
 export class SpiritModel extends AlcoholModel {
-  @OneToMany(() => SpiritReviewModel, (review) => review.spirit)
-  reviews: SpiritReviewModel[];
-
   @Column({
     type: 'enum',
     enum: Object.values(SpiritCategoryEnum),
@@ -102,11 +101,8 @@ export class SpiritModel extends AlcoholModel {
   purchaseDate: Date;
 }
 
-@Entity()
+@ChildEntity()
 export class WineModel extends AlcoholModel {
-  @OneToMany(() => WineReviewModel, (review) => review.wine)
-  reviews: WineReviewModel[];
-
   @Column({
     type: 'enum',
     enum: Object.values(WineCategoryEnum),
@@ -197,11 +193,8 @@ export class WineModel extends AlcoholModel {
   purchaseDate: Date;
 }
 
-@Entity()
+@ChildEntity()
 export class CocktailModel extends AlcoholModel {
-  @OneToMany(() => CocktailReviewModel, (review) => review.cocktail)
-  reviews: CocktailReviewModel[];
-
   @Column({
     type: 'enum',
     enum: Object.values(CocktailCategoryEnum),
