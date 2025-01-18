@@ -1,15 +1,20 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { promises } from 'fs';
+import { join } from 'path';
 import { Repository } from 'typeorm';
 
 import { CaskEnum, SpiritCategoryEnum } from './const/spirit.const';
+import { CreateAlcoholImageDto } from './dto/create-alcohol-image';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CreateSpiritDto } from './dto/create-spirit.dto';
 import { CreateWineDto } from './dto/create-wine.dto';
 import { PaginateAlcoholDto } from './dto/paginate-alcohol.dto';
 import { UpdateSpiritDto } from './dto/update-spirit.dto';
-import { CocktailModel, SpiritModel, WineModel } from './entities/alcohol.entity';
+import { SpiritModel, WineModel, CocktailModel } from 'src/alcohol/entities/alcohol.entity';
 import { CommonService } from 'src/common/common.service';
+import { TEMP_FOLDER_PATH, ALCOHOLS_IMAGES_FOLDER_PATH } from 'src/common/const/path.const';
+import { ImageModel } from 'src/common/entities/image.entity';
 
 @Injectable()
 export class AlcoholService {
@@ -20,12 +25,21 @@ export class AlcoholService {
     private readonly wineRepository: Repository<WineModel>,
     @InjectRepository(CocktailModel)
     private readonly cocktailRepository: Repository<CocktailModel>,
+    @InjectRepository(ImageModel)
+    private readonly imageRepository: Repository<ImageModel>,
 
     private readonly commonService: CommonService,
   ) {}
 
   async getAllSpirits(dto: PaginateAlcoholDto) {
-    return this.commonService.paginate(dto, this.spiritRepository, {}, 'alcohol/spirit');
+    return this.commonService.paginate(
+      dto,
+      this.spiritRepository,
+      {
+        relations: ['owner', 'images'],
+      },
+      'alcohol/spirit',
+    );
   }
 
   async getAllWines() {
@@ -79,12 +93,35 @@ export class AlcoholService {
     }
   }
 
+  async createAlcoholImage(dto: CreateAlcoholImageDto) {
+    const tempImagePath = join(TEMP_FOLDER_PATH, dto.path);
+
+    try {
+      await promises.access(tempImagePath);
+    } catch (e) {
+      throw new BadRequestException('Image not found');
+    }
+
+    const newPath = join(ALCOHOLS_IMAGES_FOLDER_PATH, dto.path);
+
+    const image = this.imageRepository.create({
+      ...dto,
+    });
+
+    const result = await this.imageRepository.save(image);
+
+    await promises.rename(tempImagePath, newPath);
+
+    return result;
+  }
+
   async createSpirit(ownerId: string, spiritDto: CreateSpiritDto) {
     const alcohol = this.spiritRepository.create({
       owner: {
         id: ownerId,
       },
       ...spiritDto,
+      images: [],
     });
 
     const spirit = await this.spiritRepository.save(alcohol);
@@ -132,12 +169,12 @@ export class AlcoholService {
       throw new NotFoundException(`Spirit with id ${id} not found`);
     }
 
-    const updatedSpirit = await this.spiritRepository.save({
-      ...spirit,
-      ...spiritDto,
-    });
+    // const updatedSpirit = await this.spiritRepository.save({
+    //   ...spirit,
+    //   ...spiritDto,
+    // });
 
-    return updatedSpirit;
+    return false;
   }
 
   //TODO: Test code
@@ -150,11 +187,12 @@ export class AlcoholService {
         name: `Test Spirit ${i}`,
         category: SpiritCategoryEnum[i % 17],
         cask: CaskEnum[i % 9],
-        maker: '',
+        maker: `Test Maker ${i}`,
         alc: 40 + i / 10,
         price: 100000 + i * 10,
         purchaseLocation: `Test Location ${i}`,
         purchaseDate: purchaseDate,
+        images: [],
       });
     }
   }

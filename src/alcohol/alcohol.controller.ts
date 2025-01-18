@@ -7,6 +7,7 @@ import { CreateWineDto } from './dto/create-wine.dto';
 import { PaginateAlcoholDto } from './dto/paginate-alcohol.dto';
 import { UpdateSpiritDto } from './dto/update-spirit.dto';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
+import { ImageModelEnum } from 'src/common/const/image-model.const';
 import { User } from 'src/users/decorator/user.decorator';
 import { UserModel } from 'src/users/entities/user.entity';
 
@@ -36,8 +37,19 @@ export class AlcoholController {
 
   @Post('/spirit')
   @UseGuards(AccessTokenGuard)
-  postSpirit(@User('id') userId: UserModel['id'], @Body() dto: CreateSpiritDto) {
-    return this.alcoholService.createSpirit(userId, dto);
+  async postSpirit(@User('id') userId: UserModel['id'], @Body() dto: CreateSpiritDto) {
+    const alcohol = await this.alcoholService.createSpirit(userId, dto);
+
+    for (let i = 0; i < dto.images.length; i++) {
+      await this.alcoholService.createAlcoholImage({
+        alcohol,
+        order: i,
+        path: dto.images[i],
+        type: ImageModelEnum.ALCOHOL_IMAGE,
+      });
+    }
+
+    return alcohol;
   }
 
   @Post('/wine')
