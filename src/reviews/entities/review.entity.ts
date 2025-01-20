@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { ChildEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, TableInheritance } from 'typeorm';
 
 import { BaseModel } from 'src/common/entities/base.entity';
 import { ImageModel } from 'src/common/entities/image.entity';
@@ -16,7 +16,8 @@ export abstract class DetailEvaluation {
 }
 
 @Entity()
-export class BaseReviewModel extends BaseModel {
+@TableInheritance({ column: { type: 'varchar', name: 'type' } })
+export class ReviewModel extends BaseModel {
   @Column({
     nullable: false,
     default: 0,
@@ -51,8 +52,8 @@ export class BaseReviewModel extends BaseModel {
   images: ImageModel[];
 }
 
-@Entity()
-export class SpiritReviewModel extends BaseReviewModel {
+@ChildEntity()
+export class SpiritReviewModel extends ReviewModel {
   /**
    * bottleCondition represents a percentage value between 0 and 100.
    */
@@ -60,8 +61,8 @@ export class SpiritReviewModel extends BaseReviewModel {
   bottleCondition: number;
 }
 
-@Entity()
-export class WineReviewModel extends BaseReviewModel {
+@ChildEntity()
+export class WineReviewModel extends ReviewModel {
   /**
    * aeration represents a minute of aeration.
    */
@@ -69,8 +70,8 @@ export class WineReviewModel extends BaseReviewModel {
   aeration: number;
 }
 
-@Entity()
-export class CocktailReviewModel extends BaseReviewModel {
+@ChildEntity()
+export class CocktailReviewModel extends ReviewModel {
   @Column('json', { nullable: false })
   ingredients: string;
 
