@@ -4,7 +4,7 @@ import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 
 import { GenderEnum } from '../const/gender.const';
 import { RoleEnum } from '../const/role.const';
-import { SpiritModel, WineModel, CocktailModel } from 'src/alcohol/entities/alcohol.entity';
+import { AlcoholModel } from 'src/alcohol/entities/alcohol.entity';
 import { BaseModel } from 'src/common/entities/base.entity';
 import { ImageModel } from 'src/common/entities/image.entity';
 import {
@@ -14,7 +14,7 @@ import {
   dateValidationMessage,
   lengthValidationMessage,
 } from 'src/common/validation-message';
-import { CocktailReviewModel, SpiritReviewModel, WineReviewModel } from 'src/reviews/entities/review.entity';
+import { ReviewModel } from 'src/reviews/entities/review.entity';
 
 @Entity()
 export class UserModel extends BaseModel {
@@ -79,23 +79,11 @@ export class UserModel extends BaseModel {
   @Type(() => Date)
   birth: Date;
 
-  @OneToMany(() => SpiritReviewModel, (spiritReview) => spiritReview.author)
-  reviews: SpiritReviewModel[];
+  @OneToMany(() => ReviewModel, (review) => review.author)
+  reviews: ReviewModel[];
 
-  @OneToMany(() => SpiritModel, (spirit) => spirit.owner)
-  alcohols: SpiritModel[];
-
-  @OneToMany(() => WineReviewModel, (wineReview) => wineReview.author)
-  wineReviews: WineReviewModel[];
-
-  @OneToMany(() => WineModel, (wine) => wine.owner)
-  wines: WineModel[];
-
-  @OneToMany(() => CocktailReviewModel, (cocktailReview) => cocktailReview.author)
-  cocktailReviews: CocktailReviewModel[];
-
-  @OneToMany(() => CocktailModel, (cocktail) => cocktail.owner)
-  cocktails: CocktailModel[];
+  @OneToMany(() => AlcoholModel, (alcohol) => alcohol.owner)
+  alcohols: AlcoholModel[];
 
   @OneToOne(() => ImageModel, (image) => image.user)
   image: ImageModel;
