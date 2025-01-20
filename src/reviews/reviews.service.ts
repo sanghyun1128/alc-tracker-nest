@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import {
-  BaseReviewModel,
+  ReviewModel,
   CocktailReviewModel,
   DetailEvaluation,
   SpiritReviewModel,
@@ -13,8 +13,8 @@ import {
 @Injectable()
 export class ReviewsService {
   constructor(
-    @InjectRepository(BaseReviewModel)
-    private readonly reviewRepository: Repository<BaseReviewModel>,
+    @InjectRepository(ReviewModel)
+    private readonly reviewRepository: Repository<ReviewModel>,
     @InjectRepository(SpiritReviewModel)
     private readonly spiritReviewRepository: Repository<SpiritReviewModel>,
     @InjectRepository(WineReviewModel)

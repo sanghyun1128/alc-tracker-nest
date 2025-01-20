@@ -20,12 +20,7 @@ import {
 } from './common/const/env-keys.const';
 import { PUBLIC_FOLDER_PATH } from './common/const/path.const';
 import { ImageModel } from './common/entities/image.entity';
-import {
-  BaseReviewModel,
-  CocktailReviewModel,
-  SpiritReviewModel,
-  WineReviewModel,
-} from './reviews/entities/review.entity';
+import { ReviewModel, CocktailReviewModel, SpiritReviewModel, WineReviewModel } from './reviews/entities/review.entity';
 import { ReviewsModule } from './reviews/reviews.module';
 import { UserModel } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
@@ -51,7 +46,7 @@ import { UsersModule } from './users/users.module';
       password: process.env[ENV_DB_PASSWORD_KEY],
       database: process.env[ENV_DB_NAME_KEY],
       entities: [
-        BaseReviewModel,
+        ReviewModel,
         SpiritReviewModel,
         WineReviewModel,
         CocktailReviewModel,
