@@ -86,5 +86,5 @@ export class UserModel extends BaseModel {
   alcohols: AlcoholModel[];
 
   @OneToOne(() => ImageModel, (image) => image.user)
-  image: ImageModel;
+  profileImage: ImageModel;
 }

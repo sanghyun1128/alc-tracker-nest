@@ -51,6 +51,6 @@ export class ImageModel extends BaseModel {
   @ManyToOne(() => AlcoholModel, (alcohol) => alcohol.images)
   alcohol?: AlcoholModel;
 
-  @OneToOne(() => UserModel, (user) => user.image)
+  @OneToOne(() => UserModel, (user) => user.profileImage)
   user?: UserModel;
 }
