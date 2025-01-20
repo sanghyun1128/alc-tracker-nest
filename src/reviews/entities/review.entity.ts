@@ -1,5 +1,6 @@
 import { ChildEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, TableInheritance } from 'typeorm';
 
+import { AlcoholModel } from 'src/alcohol/entities/alcohol.entity';
 import { BaseModel } from 'src/common/entities/base.entity';
 import { ImageModel } from 'src/common/entities/image.entity';
 import { UserModel } from 'src/users/entities/user.entity';
@@ -50,6 +51,10 @@ export class ReviewModel extends BaseModel {
 
   @OneToMany(() => ImageModel, (image) => image.review)
   images: ImageModel[];
+
+  @ManyToOne(() => AlcoholModel, (alcohol) => alcohol.reviews)
+  @JoinColumn({ name: 'alcoholId' })
+  alcohols: AlcoholModel[];
 }
 
 @ChildEntity()

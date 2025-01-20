@@ -18,6 +18,7 @@ import {
   numberValidationMessage,
   stringValidationMessage,
 } from 'src/common/validation-message';
+import { ReviewModel } from 'src/reviews/entities/review.entity';
 import { UserModel } from 'src/users/entities/user.entity';
 
 @Entity()
@@ -38,6 +39,9 @@ export class AlcoholModel extends BaseModel {
 
   @OneToMany(() => ImageModel, (image) => image.alcohol)
   images: ImageModel[];
+
+  @OneToMany(() => ReviewModel, (review) => review.alcohols)
+  reviews: ReviewModel[];
 }
 
 @ChildEntity()
