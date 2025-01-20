@@ -1,4 +1,4 @@
-import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsDate, IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
 import { ChildEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, TableInheritance } from 'typeorm';
 
 import { CocktailCategoryEnum } from '../const/cocktail.const';
@@ -15,6 +15,7 @@ import { ImageModel } from 'src/common/entities/image.entity';
 import {
   dateValidationMessage,
   enumValidationMessage,
+  integerValidationMessage,
   numberValidationMessage,
   stringValidationMessage,
 } from 'src/common/validation-message';
@@ -32,6 +33,48 @@ export class AlcoholModel extends BaseModel {
     message: stringValidationMessage,
   })
   name: string;
+
+  /**
+   * price is in KRW.
+   */
+  @Column({ nullable: true })
+  @IsInt({
+    message: integerValidationMessage,
+  })
+  price: number;
+
+  @Column({ length: 100, nullable: true })
+  @IsString({
+    message: stringValidationMessage,
+  })
+  maker: string;
+
+  @Column({ nullable: true })
+  @IsInt({
+    message: integerValidationMessage,
+  })
+  vintage: number;
+
+  @Column('float', { nullable: true })
+  @IsNumber(
+    {},
+    {
+      message: numberValidationMessage,
+    },
+  )
+  alc: number;
+
+  @Column({ length: 100, nullable: true })
+  @IsString({
+    message: stringValidationMessage,
+  })
+  purchaseLocation: string;
+
+  @Column({ type: 'date', nullable: true })
+  @IsDate({
+    message: dateValidationMessage,
+  })
+  purchaseDate: Date;
 
   @ManyToOne(() => UserModel, (user) => user.alcohols)
   @JoinColumn({ name: 'ownerId' })
@@ -65,42 +108,6 @@ export class SpiritModel extends AlcoholModel {
     message: enumValidationMessage,
   })
   cask: CaskEnum;
-
-  @Column({ length: 100, nullable: true })
-  @IsString({
-    message: stringValidationMessage,
-  })
-  maker: string;
-
-  @Column('float', { nullable: true })
-  @IsNumber(
-    {},
-    {
-      message: numberValidationMessage,
-    },
-  )
-  alc: number;
-
-  @Column({ nullable: true })
-  @IsNumber(
-    {},
-    {
-      message: numberValidationMessage,
-    },
-  )
-  price: number;
-
-  @Column({ length: 100, nullable: true })
-  @IsString({
-    message: stringValidationMessage,
-  })
-  purchaseLocation: string;
-
-  @Column({ type: 'date', nullable: true })
-  @IsDate({
-    message: dateValidationMessage,
-  })
-  purchaseDate: Date;
 }
 
 @ChildEntity()
@@ -144,51 +151,6 @@ export class WineModel extends AlcoholModel {
     message: enumValidationMessage,
   })
   grape: GrapeVarietyEnum;
-
-  @Column({ nullable: true })
-  @IsNumber(
-    {},
-    {
-      message: numberValidationMessage,
-    },
-  )
-  vintage: number;
-
-  @Column({ length: 100, nullable: true })
-  @IsString({
-    message: stringValidationMessage,
-  })
-  maker: string;
-
-  @Column('float', { nullable: true })
-  @IsNumber(
-    {},
-    {
-      message: numberValidationMessage,
-    },
-  )
-  alc: number;
-
-  @Column({ nullable: true })
-  @IsNumber(
-    {},
-    {
-      message: numberValidationMessage,
-    },
-  )
-  price: number;
-
-  @Column({ length: 100, nullable: true })
-  @IsString({
-    message: stringValidationMessage,
-  })
-  purchaseLocation: string;
-
-  @Column({ type: 'date', nullable: true })
-  @IsDate({
-    message: dateValidationMessage,
-  })
-  purchaseDate: Date;
 }
 
 @ChildEntity()
