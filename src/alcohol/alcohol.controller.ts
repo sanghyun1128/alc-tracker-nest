@@ -1,4 +1,16 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { DataSource } from 'typeorm';
 
 import { AlcoholService } from './alcohol.service';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
@@ -13,7 +25,10 @@ import { UserModel } from 'src/users/entities/user.entity';
 
 @Controller('alcohol')
 export class AlcoholController {
-  constructor(private readonly alcoholService: AlcoholService) {}
+  constructor(
+    private readonly alcoholService: AlcoholService,
+    private readonly dataSource: DataSource,
+  ) {}
 
   @Get('/spirit')
   getAllSpirits(@Query() query: PaginateAlcoholDto) {
@@ -38,18 +53,30 @@ export class AlcoholController {
   @Post('/spirit')
   @UseGuards(AccessTokenGuard)
   async postSpirit(@User('id') userId: UserModel['id'], @Body() dto: CreateSpiritDto) {
-    const alcohol = await this.alcoholService.createSpirit(userId, dto);
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
 
-    for (let i = 0; i < dto.images.length; i++) {
-      await this.alcoholService.createAlcoholImage({
-        alcohol,
-        order: i,
-        path: dto.images[i],
-        type: ImageModelEnum.ALCOHOL_IMAGE,
-      });
+    await queryRunner.startTransaction();
+    try {
+      const alcohol = await this.alcoholService.createSpirit(userId, dto);
+
+      for (let i = 0; i < dto.images.length; i++) {
+        await this.alcoholService.createAlcoholImage({
+          alcohol,
+          order: i,
+          path: dto.images[i],
+          type: ImageModelEnum.ALCOHOL_IMAGE,
+        });
+      }
+
+      await queryRunner.commitTransaction();
+      return alcohol;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException('Failed to create spirit');
+    } finally {
+      await queryRunner.release();
     }
-
-    return alcohol;
   }
 
   @Post('/wine')
