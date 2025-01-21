@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { promises } from 'fs';
 import { join } from 'path';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 
 import { CaskEnum, SpiritCategoryEnum } from './const/spirit.const';
 import { CreateAlcoholImageDto } from './dto/create-alcohol-image';
@@ -11,9 +11,10 @@ import { CreateSpiritDto } from './dto/create-spirit.dto';
 import { CreateWineDto } from './dto/create-wine.dto';
 import { PaginateAlcoholDto } from './dto/paginate-alcohol.dto';
 import { UpdateSpiritDto } from './dto/update-spirit.dto';
-import { SpiritModel, WineModel, CocktailModel } from 'src/alcohol/entities/alcohol.entity';
+import { SpiritModel, WineModel, CocktailModel, AlcoholModel } from 'src/alcohol/entities/alcohol.entity';
 import { CommonService } from 'src/common/common.service';
 import { TEMP_FOLDER_PATH, ALCOHOLS_IMAGES_FOLDER_PATH } from 'src/common/const/path.const';
+import { BaseModel } from 'src/common/entities/base.entity';
 import { ImageModel } from 'src/common/entities/image.entity';
 
 @Injectable()
@@ -115,8 +116,52 @@ export class AlcoholService {
     return result;
   }
 
-  async createSpirit(ownerId: string, spiritDto: CreateSpiritDto) {
-    const alcohol = this.spiritRepository.create({
+  private addQueryRunnerIfExist(
+    queryRunner: QueryRunner | undefined,
+    model: typeof AlcoholModel,
+    repository: Repository<AlcoholModel>,
+  ): Repository<AlcoholModel> {
+    if (queryRunner) {
+      return queryRunner.manager.getRepository(model);
+    }
+
+    return repository;
+  }
+
+  private selectRepositoryByType(type: string) {
+    switch (type) {
+      case 'spirit':
+        return this.spiritRepository;
+      case 'wine':
+        return this.wineRepository;
+      case 'cocktail':
+        return this.cocktailRepository;
+      default:
+        throw new BadRequestException('Invalid type');
+    }
+  }
+
+  private selectModelByType(type: string) {
+    switch (type) {
+      case 'spirit':
+        return SpiritModel;
+      case 'wine':
+        return WineModel;
+      case 'cocktail':
+        return CocktailModel;
+      default:
+        throw new BadRequestException('Invalid type');
+    }
+  }
+
+  async createSpirit(ownerId: string, spiritDto: CreateSpiritDto, queryRunner?: QueryRunner) {
+    const repository = this.addQueryRunnerIfExist(
+      queryRunner,
+      this.selectModelByType('spirit'),
+      this.selectRepositoryByType('spirit'),
+    );
+
+    const alcohol = repository.create({
       owner: {
         id: ownerId,
       },
@@ -124,7 +169,7 @@ export class AlcoholService {
       images: [],
     });
 
-    const spirit = await this.spiritRepository.save(alcohol);
+    const spirit = await repository.save(alcohol);
 
     return spirit;
   }
