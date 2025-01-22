@@ -8,7 +8,7 @@ import { Observable, tap } from 'rxjs';
  * - Response: [RES] {request path} - {current time} {time taken ms}
  */
 export class LogInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
+  intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> {
     const requestTime = new Date();
 
     const request = context.switchToHttp().getRequest();
