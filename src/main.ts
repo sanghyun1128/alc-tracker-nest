@@ -7,6 +7,8 @@ import { LogInterceptor } from './common/interceptor/log.interceptor';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.useGlobalInterceptors(new LogInterceptor());
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -17,8 +19,6 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-
-  app.useGlobalInterceptors(new LogInterceptor());
 
   await app.listen(4000);
 }
