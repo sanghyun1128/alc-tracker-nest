@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -9,8 +8,9 @@ import {
   Post,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { DataSource, QueryRunner as QueryRunnerType } from 'typeorm';
 
 import { AlcoholService } from './alcohol.service';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
@@ -20,6 +20,8 @@ import { PaginateAlcoholDto } from './dto/paginate-alcohol.dto';
 import { UpdateSpiritDto } from './dto/update-spirit.dto';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { ImageModelEnum } from 'src/common/const/image-model.const';
+import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
+import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { User } from 'src/users/decorator/user.decorator';
 import { UserModel } from 'src/users/entities/user.entity';
 
@@ -52,31 +54,27 @@ export class AlcoholController {
 
   @Post('/spirit')
   @UseGuards(AccessTokenGuard)
-  async postSpirit(@User('id') userId: UserModel['id'], @Body() dto: CreateSpiritDto) {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
+  @UseInterceptors(TransactionInterceptor)
+  async postSpirit(
+    @User('id') userId: UserModel['id'],
+    @Body() dto: CreateSpiritDto,
+    @QueryRunner() queryRunner: QueryRunnerType,
+  ) {
+    const alcohol = await this.alcoholService.createSpirit(userId, dto, queryRunner);
 
-    await queryRunner.startTransaction();
-    try {
-      const alcohol = await this.alcoholService.createSpirit(userId, dto);
-
-      for (let i = 0; i < dto.images.length; i++) {
-        await this.alcoholService.createAlcoholImage({
+    for (let i = 0; i < dto.images.length; i++) {
+      await this.alcoholService.createAlcoholImage(
+        {
           alcohol,
           order: i,
           path: dto.images[i],
           type: ImageModelEnum.ALCOHOL_IMAGE,
-        });
-      }
-
-      await queryRunner.commitTransaction();
-      return alcohol;
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw new BadRequestException('Failed to create spirit');
-    } finally {
-      await queryRunner.release();
+        },
+        queryRunner,
+      );
     }
+
+    return alcohol;
   }
 
   @Post('/wine')
