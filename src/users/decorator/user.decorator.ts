@@ -2,6 +2,10 @@ import { createParamDecorator, ExecutionContext, InternalServerErrorException } 
 
 import { UserModel } from '../entities/user.entity';
 
+/**
+ * User decorator is used to get user information from the request object.
+ * - This decorator must be used with AccessTokenGuard.
+ */
 export const User = createParamDecorator((data: keyof UserModel | undefined, context: ExecutionContext) => {
   const request = context.switchToHttp().getRequest();
 
