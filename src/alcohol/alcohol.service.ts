@@ -11,11 +11,10 @@ import { CreateSpiritDto } from './dto/create-spirit.dto';
 import { CreateWineDto } from './dto/create-wine.dto';
 import { PaginateAlcoholDto } from './dto/paginate-alcohol.dto';
 import { UpdateSpiritDto } from './dto/update-spirit.dto';
-import { SpiritModel, WineModel, CocktailModel, AlcoholModel } from 'src/alcohol/entities/alcohol.entity';
+import { SpiritModel, WineModel, CocktailModel, AlcoholModel } from 'src/alcohol/entity/alcohol.entity';
 import { CommonService } from 'src/common/common.service';
 import { TEMP_FOLDER_PATH, ALCOHOLS_IMAGES_FOLDER_PATH } from 'src/common/const/path.const';
-import { BaseModel } from 'src/common/entities/base.entity';
-import { ImageModel } from 'src/common/entities/image.entity';
+import { ImageModel } from 'src/common/entity/image.entity';
 
 @Injectable()
 export class AlcoholService {
@@ -31,6 +30,20 @@ export class AlcoholService {
 
     private readonly commonService: CommonService,
   ) {}
+
+  private repositoryMap = {
+    spirit: this.spiritRepository,
+    wine: this.wineRepository,
+    cocktail: this.cocktailRepository,
+    image: this.imageRepository,
+  };
+
+  private modelMap = {
+    spirit: SpiritModel,
+    wine: WineModel,
+    cocktail: CocktailModel,
+    image: ImageModel,
+  };
 
   async getAllSpirits(dto: PaginateAlcoholDto) {
     return this.commonService.paginate(
@@ -94,7 +107,14 @@ export class AlcoholService {
     }
   }
 
-  async createAlcoholImage(dto: CreateAlcoholImageDto) {
+  async createAlcoholImage(dto: CreateAlcoholImageDto, queryRunner?: QueryRunner) {
+    const repository = this.commonService.getRepositoryWithQueryRunner(
+      'image',
+      this.repositoryMap,
+      this.modelMap,
+      queryRunner,
+    ) as Repository<ImageModel>;
+
     const tempImagePath = join(TEMP_FOLDER_PATH, dto.path);
 
     try {
@@ -105,61 +125,24 @@ export class AlcoholService {
 
     const newPath = join(ALCOHOLS_IMAGES_FOLDER_PATH, dto.path);
 
-    const image = this.imageRepository.create({
+    const image = repository.create({
       ...dto,
     });
 
-    const result = await this.imageRepository.save(image);
+    const result = await repository.save(image);
 
     await promises.rename(tempImagePath, newPath);
 
     return result;
   }
 
-  private addQueryRunnerIfExist(
-    queryRunner: QueryRunner | undefined,
-    model: typeof AlcoholModel,
-    repository: Repository<AlcoholModel>,
-  ): Repository<AlcoholModel> {
-    if (queryRunner) {
-      return queryRunner.manager.getRepository(model);
-    }
-
-    return repository;
-  }
-
-  private selectRepositoryByType(type: string) {
-    switch (type) {
-      case 'spirit':
-        return this.spiritRepository;
-      case 'wine':
-        return this.wineRepository;
-      case 'cocktail':
-        return this.cocktailRepository;
-      default:
-        throw new BadRequestException('Invalid type');
-    }
-  }
-
-  private selectModelByType(type: string) {
-    switch (type) {
-      case 'spirit':
-        return SpiritModel;
-      case 'wine':
-        return WineModel;
-      case 'cocktail':
-        return CocktailModel;
-      default:
-        throw new BadRequestException('Invalid type');
-    }
-  }
-
   async createSpirit(ownerId: string, spiritDto: CreateSpiritDto, queryRunner?: QueryRunner) {
-    const repository = this.addQueryRunnerIfExist(
+    const repository = this.commonService.getRepositoryWithQueryRunner(
+      'spirit',
+      this.repositoryMap,
+      this.modelMap,
       queryRunner,
-      this.selectModelByType('spirit'),
-      this.selectRepositoryByType('spirit'),
-    );
+    ) as Repository<AlcoholModel>;
 
     const alcohol = repository.create({
       owner: {
@@ -224,17 +207,17 @@ export class AlcoholService {
 
   //TODO: Test code
   async generateTestData(userId: string) {
-    const purchaseDate = new Date('2020-11-28');
+    const purchaseDate = new Date('2023-11-28');
 
     for (let i = 0; i < 100; i++) {
-      purchaseDate.setDate(purchaseDate.getDate() - i);
+      purchaseDate.setDate(purchaseDate.getDate() - 1);
       await this.createSpirit(userId, {
         name: `Test Spirit ${i}`,
         category: SpiritCategoryEnum[i % 17],
         cask: CaskEnum[i % 9],
         maker: `Test Maker ${i}`,
         alc: 40 + i / 10,
-        price: 100000 + i * 10,
+        price: 100000 + i * 100,
         purchaseLocation: `Test Location ${i}`,
         purchaseDate: purchaseDate,
         images: [],

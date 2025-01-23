@@ -1,5 +1,5 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, QueryRunner, Repository } from 'typeorm';
 
 import { HOST, PROTOCOL } from './const/env-keys.const';
 import { FILTER_MAPPER } from './const/filter-mapper.const';
@@ -135,5 +135,49 @@ export class CommonService {
     }
 
     return options;
+  }
+
+  /**
+   * Retrieves the repository for a given type.
+   *
+   * @param {string} type - Key value for select the repository and model from the maps.
+   * @param {{ [key: string]: Repository<BaseModel> }} repositoryMap - A map of repositories.
+   * @param {{ [key: string]: typeof BaseModel }} modelMap - A map of model types.
+   * @param {QueryRunner} [queryRunner] - Optional query runner for transactional operations.
+   * @returns {Repository<BaseModel>} - The repository for the specified type.
+   */
+  getRepositoryWithQueryRunner(
+    type: string,
+    repositoryMap: { [key: string]: Repository<BaseModel> },
+    modelMap: { [key: string]: typeof BaseModel },
+    queryRunner?: QueryRunner,
+  ): Repository<BaseModel> {
+    const repository = this.selectRepositoryByType(type, repositoryMap);
+    const model = this.selectModelByType(type, modelMap);
+
+    if (!queryRunner) {
+      return repository;
+    } else {
+      return queryRunner.manager.getRepository(model);
+    }
+  }
+
+  private selectRepositoryByType(
+    type: string,
+    repositoryMap: { [key: string]: Repository<BaseModel> },
+  ): Repository<BaseModel> {
+    const repository = repositoryMap[type];
+    if (!repository) {
+      throw new InternalServerErrorException('Invalid type');
+    }
+    return repository;
+  }
+
+  private selectModelByType(type: string, modelMap: { [key: string]: typeof BaseModel }): typeof BaseModel {
+    const model = modelMap[type];
+    if (!model) {
+      throw new InternalServerErrorException('Invalid type');
+    }
+    return model;
   }
 }
