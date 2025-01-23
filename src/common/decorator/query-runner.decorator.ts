@@ -1,4 +1,8 @@
-import { createParamDecorator, ExecutionContext, InternalServerErrorException } from '@nestjs/common';
+import {
+  createParamDecorator,
+  ExecutionContext,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 /**
  * QueryRunner decorator is used to get the queryRunner from the request object.
@@ -10,7 +14,9 @@ export const QueryRunner = createParamDecorator((data: undefined, context: Execu
   const queryRunner = request.queryRunner;
 
   if (!queryRunner) {
-    throw new InternalServerErrorException('QueryRunner decorator must use with TransactionInterceptor');
+    throw new InternalServerErrorException(
+      'QueryRunner decorator must use with TransactionInterceptor',
+    );
   }
 
   return queryRunner;

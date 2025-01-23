@@ -147,7 +147,11 @@ export class AlcoholController {
   // Update a wine by its ID
   @Patch('/wine/:id')
   @UseGuards(AccessTokenGuard)
-  patchWine(@Param('id', ParseIntPipe) id: string, @User('id') userId: UserModel['id'], @Body() dto: UpdateWineDto) {
+  patchWine(
+    @Param('id', ParseIntPipe) id: string,
+    @User('id') userId: UserModel['id'],
+    @Body() dto: UpdateWineDto,
+  ) {
     return this.alcoholService.updateAlcohol('wine', id, userId, dto);
   }
 

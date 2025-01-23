@@ -1,5 +1,13 @@
 import { IsInt, IsNumber, IsString } from 'class-validator';
-import { ChildEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, TableInheritance } from 'typeorm';
+import {
+  ChildEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  TableInheritance,
+} from 'typeorm';
 
 import { AlcoholModel } from 'src/alcohol/entity/alcohol.entity';
 import { BaseModel } from 'src/common/entity/base.entity';

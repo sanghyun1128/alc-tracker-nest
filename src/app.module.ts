@@ -5,7 +5,12 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AlcoholModule } from './alcohol/alcohol.module';
-import { AlcoholModel, SpiritModel, WineModel, CocktailModel } from './alcohol/entity/alcohol.entity';
+import {
+  AlcoholModel,
+  SpiritModel,
+  WineModel,
+  CocktailModel,
+} from './alcohol/entity/alcohol.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -20,7 +25,12 @@ import {
 } from './common/const/env-keys.const';
 import { PUBLIC_FOLDER_PATH } from './common/const/path.const';
 import { ImageModel } from './common/entity/image.entity';
-import { ReviewModel, CocktailReviewModel, SpiritReviewModel, WineReviewModel } from './reviews/entity/review.entity';
+import {
+  ReviewModel,
+  CocktailReviewModel,
+  SpiritReviewModel,
+  WineReviewModel,
+} from './reviews/entity/review.entity';
 import { ReviewsModule } from './reviews/reviews.module';
 import { UserModel } from './users/entity/user.entity';
 import { UsersModule } from './users/users.module';

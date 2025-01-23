@@ -6,7 +6,12 @@ import { QueryRunner, Repository } from 'typeorm';
 
 import { CocktailCategoryEnum } from './const/cocktail.const';
 import { CaskEnum, SpiritCategoryEnum } from './const/spirit.const';
-import { CombinedAppellationEnum, GrapeVarietyEnum, WineCategoryEnum, WineRegionEnum } from './const/wine.const';
+import {
+  CombinedAppellationEnum,
+  GrapeVarietyEnum,
+  WineCategoryEnum,
+  WineRegionEnum,
+} from './const/wine.const';
 import { CreateAlcoholImageDto } from './dto/create-alcohol-image';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CreateSpiritDto } from './dto/create-spirit.dto';
@@ -15,7 +20,12 @@ import { PaginateAlcoholDto } from './dto/paginate-alcohol.dto';
 import { UpdateCocktailDto } from './dto/update-cocktail.dto';
 import { UpdateSpiritDto } from './dto/update-spirit.dto';
 import { UpdateWineDto } from './dto/update-wine.dto';
-import { SpiritModel, WineModel, CocktailModel, AlcoholModel } from 'src/alcohol/entity/alcohol.entity';
+import {
+  SpiritModel,
+  WineModel,
+  CocktailModel,
+  AlcoholModel,
+} from 'src/alcohol/entity/alcohol.entity';
 import { CommonService } from 'src/common/common.service';
 import { TEMP_FOLDER_PATH, ALCOHOLS_IMAGES_FOLDER_PATH } from 'src/common/const/path.const';
 import { BaseModel } from 'src/common/entity/base.entity';
@@ -54,9 +64,14 @@ export class AlcoholService {
     type: string,
     dto: PaginateAlcoholDto,
   ): Promise<
-    { data: BaseModel[]; total: number } | { data: BaseModel[]; cursor: { after: number }; count: number; next: URL }
+    | { data: BaseModel[]; total: number }
+    | { data: BaseModel[]; cursor: { after: number }; count: number; next: URL }
   > {
-    const repository = this.commonService.getRepositoryWithQueryRunner(type, this.repositoryMap, this.modelMap);
+    const repository = this.commonService.getRepositoryWithQueryRunner(
+      type,
+      this.repositoryMap,
+      this.modelMap,
+    );
 
     return this.commonService.paginate(
       dto,
@@ -107,7 +122,10 @@ export class AlcoholService {
     }
   }
 
-  async createAlcoholImage(dto: CreateAlcoholImageDto, queryRunner?: QueryRunner): Promise<ImageModel> {
+  async createAlcoholImage(
+    dto: CreateAlcoholImageDto,
+    queryRunner?: QueryRunner,
+  ): Promise<ImageModel> {
     const repository = this.commonService.getRepositoryWithQueryRunner(
       'image',
       this.repositoryMap,

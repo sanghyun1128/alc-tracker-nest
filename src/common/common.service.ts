@@ -1,5 +1,11 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, QueryRunner, Repository } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOptionsOrder,
+  FindOptionsWhere,
+  QueryRunner,
+  Repository,
+} from 'typeorm';
 
 import { HOST, PROTOCOL } from './const/env-keys.const';
 import { FILTER_MAPPER } from './const/filter-mapper.const';
@@ -51,7 +57,8 @@ export class CommonService {
       ...overrideFindOptions,
     });
 
-    const lastItem = results.length > 0 && results.length === dto.take ? results[results.length - 1] : null;
+    const lastItem =
+      results.length > 0 && results.length === dto.take ? results[results.length - 1] : null;
 
     const nextUrl = lastItem ? new URL(`${PROTOCOL}://${HOST}/${path}`) : null;
 
@@ -107,7 +114,10 @@ export class CommonService {
     };
   }
 
-  private parseOptionsFilter<T extends BaseModel>(key: string, value: any): FindOptionsWhere<T> | FindOptionsOrder<T> {
+  private parseOptionsFilter<T extends BaseModel>(
+    key: string,
+    value: any,
+  ): FindOptionsWhere<T> | FindOptionsOrder<T> {
     const options: FindOptionsWhere<T> | FindOptionsOrder<T> = {};
 
     const splitKey = key.split('__');
@@ -173,7 +183,10 @@ export class CommonService {
     return repository;
   }
 
-  private selectModelByType(type: string, modelMap: { [key: string]: typeof BaseModel }): typeof BaseModel {
+  private selectModelByType(
+    type: string,
+    modelMap: { [key: string]: typeof BaseModel },
+  ): typeof BaseModel {
     const model = modelMap[type];
     if (!model) {
       throw new InternalServerErrorException('Invalid type');

@@ -25,7 +25,9 @@ export class LogInterceptor implements NestInterceptor {
         const timeTaken = responseTime.getTime() - requestTime.getTime();
 
         // [RES] /alcohol/spirit?order__createdAt=DESC - 1/22/2025, 10:21:18 PM 50ms
-        console.log(`[RES] ${requestMethod} ${requestPath} - ${responseTime.toLocaleString('kr')} ${timeTaken}ms`);
+        console.log(
+          `[RES] ${requestMethod} ${requestPath} - ${responseTime.toLocaleString('kr')} ${timeTaken}ms`,
+        );
       }),
     );
   }

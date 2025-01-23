@@ -29,7 +29,10 @@ export class AuthService {
    * @throws BadRequestException if the email or nickname already exists.
    */
   async registerWithEmail(user: RegisterUserDto) {
-    const hashedPassword = await bcrypt.hash(user.password, +this.configService.get<string>(ENV_JWT_HASH_ROUNDS_KEY));
+    const hashedPassword = await bcrypt.hash(
+      user.password,
+      +this.configService.get<string>(ENV_JWT_HASH_ROUNDS_KEY),
+    );
 
     const newUser = await this.usersService.createUser({
       ...user,
