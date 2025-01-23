@@ -52,14 +52,16 @@ export class AlcoholController {
 
   // Retrieve a specific alcohol by its ID
   @Get(':id')
-  getAlcoholById(@Param('id', ParseIntPipe) id: string) {
+  @UseGuards(AccessTokenGuard)
+  getAlcoholById(@Param('id') id: string) {
     return this.alcoholService.getAlcoholById(id);
   }
 
   // Delete a specific alcohol by its ID
   @Delete(':id')
-  deleteAlcoholById(@Param('id', ParseIntPipe) id: string) {
-    return this.alcoholService.deleteAlcoholById(id);
+  @UseGuards(AccessTokenGuard)
+  deleteAlcoholById(@User('id') userId: UserModel['id'], @Param('id') alcoholId: string) {
+    return this.alcoholService.deleteAlcoholById(userId, alcoholId);
   }
 
   // Create a new spirit
