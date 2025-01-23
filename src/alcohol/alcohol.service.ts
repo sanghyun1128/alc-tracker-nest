@@ -18,6 +18,7 @@ import { UpdateWineDto } from './dto/update-wine.dto';
 import { SpiritModel, WineModel, CocktailModel, AlcoholModel } from 'src/alcohol/entity/alcohol.entity';
 import { CommonService } from 'src/common/common.service';
 import { TEMP_FOLDER_PATH, ALCOHOLS_IMAGES_FOLDER_PATH } from 'src/common/const/path.const';
+import { BaseModel } from 'src/common/entity/base.entity';
 import { ImageModel } from 'src/common/entity/image.entity';
 
 @Injectable()
@@ -49,30 +50,25 @@ export class AlcoholService {
     image: ImageModel,
   };
 
-  async getAllSpirits(dto: PaginateAlcoholDto) {
+  async getAllAlcohols(
+    type: string,
+    dto: PaginateAlcoholDto,
+  ): Promise<
+    { data: BaseModel[]; total: number } | { data: BaseModel[]; cursor: { after: number }; count: number; next: URL }
+  > {
+    const repository = this.commonService.getRepositoryWithQueryRunner(type, this.repositoryMap, this.modelMap);
+
     return this.commonService.paginate(
       dto,
-      this.spiritRepository,
+      repository,
       {
         relations: ['owner', 'images'],
       },
-      'alcohol/spirit',
+      `alcohol/${type}`,
     );
   }
 
-  async getAllWines() {
-    return await this.wineRepository.find({
-      relations: ['owner'],
-    });
-  }
-
-  async getAllCocktails() {
-    return await this.cocktailRepository.find({
-      relations: ['owner'],
-    });
-  }
-
-  async getAlcoholById(id: string) {
+  async getAlcoholById(id: string): Promise<AlcoholModel> {
     const spirit = await this.spiritRepository.findOne({
       where: {
         id,
@@ -111,7 +107,7 @@ export class AlcoholService {
     }
   }
 
-  async createAlcoholImage(dto: CreateAlcoholImageDto, queryRunner?: QueryRunner) {
+  async createAlcoholImage(dto: CreateAlcoholImageDto, queryRunner?: QueryRunner): Promise<ImageModel> {
     const repository = this.commonService.getRepositoryWithQueryRunner(
       'image',
       this.repositoryMap,
@@ -171,7 +167,7 @@ export class AlcoholService {
     id: string,
     ownerId: string,
     updateAlcoholDto: UpdateSpiritDto | UpdateWineDto | UpdateCocktailDto,
-  ) {
+  ): Promise<AlcoholModel> {
     const repository = this.commonService.getRepositoryWithQueryRunner(
       type,
       this.repositoryMap,
