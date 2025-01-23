@@ -4,7 +4,9 @@ import { promises } from 'fs';
 import { join } from 'path';
 import { QueryRunner, Repository } from 'typeorm';
 
+import { CocktailCategoryEnum } from './const/cocktail.const';
 import { CaskEnum, SpiritCategoryEnum } from './const/spirit.const';
+import { CombinedAppellationEnum, GrapeVarietyEnum, WineCategoryEnum, WineRegionEnum } from './const/wine.const';
 import { CreateAlcoholImageDto } from './dto/create-alcohol-image';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CreateSpiritDto } from './dto/create-spirit.dto';
@@ -190,7 +192,8 @@ export class AlcoholService {
 
     for (let i = 0; i < 100; i++) {
       purchaseDate.setDate(purchaseDate.getDate() - 1);
-      await this.createSpirit(userId, {
+
+      await this.createAlcohol('spirit', userId, {
         name: `Test Spirit ${i}`,
         category: SpiritCategoryEnum[i % 17],
         cask: CaskEnum[i % 9],
@@ -199,6 +202,27 @@ export class AlcoholService {
         price: 100000 + i * 100,
         purchaseLocation: `Test Location ${i}`,
         purchaseDate: purchaseDate,
+        images: [],
+      });
+
+      await this.createAlcohol('wine', userId, {
+        name: `Test Wine ${i}`,
+        category: WineCategoryEnum[i % 5],
+        region: WineRegionEnum[i % 5],
+        appellation: CombinedAppellationEnum[i % 5],
+        grape: GrapeVarietyEnum[i % 5],
+        vintage: 1920 + i,
+        maker: `Test Maker ${i}`,
+        alc: 12 + i / 10,
+        price: 100000 + i * 1000,
+        purchaseLocation: `Test Location ${i}`,
+        purchaseDate: purchaseDate,
+        images: [],
+      });
+
+      await this.createAlcohol('cocktail', userId, {
+        name: `Test Cocktail ${i}`,
+        category: CocktailCategoryEnum[i % 5],
         images: [],
       });
     }
