@@ -10,7 +10,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { DataSource, QueryRunner as QueryRunnerType } from 'typeorm';
+import { QueryRunner as QueryRunnerType } from 'typeorm';
 
 import { AlcoholService } from './alcohol.service';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
@@ -27,10 +27,7 @@ import { UserModel } from 'src/users/entity/user.entity';
 
 @Controller('alcohol')
 export class AlcoholController {
-  constructor(
-    private readonly alcoholService: AlcoholService,
-    private readonly dataSource: DataSource,
-  ) {}
+  constructor(private readonly alcoholService: AlcoholService) {}
 
   @Get('/spirit')
   getAllSpirits(@Query() query: PaginateAlcoholDto) {
