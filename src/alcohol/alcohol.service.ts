@@ -157,28 +157,44 @@ export class AlcoholService {
     return spirit;
   }
 
-  async createWine(ownerId: string, wineDto: CreateWineDto) {
-    const alcohol = this.wineRepository.create({
+  async createWine(ownerId: string, wineDto: CreateWineDto, queryRunner?: QueryRunner) {
+    const repository = this.commonService.getRepositoryWithQueryRunner(
+      'wine',
+      this.repositoryMap,
+      this.modelMap,
+      queryRunner,
+    ) as Repository<AlcoholModel>;
+
+    const alcohol = repository.create({
       owner: {
         id: ownerId,
       },
       ...wineDto,
+      images: [],
     });
 
-    const wine = await this.wineRepository.save(alcohol);
+    const wine = await repository.save(alcohol);
 
     return wine;
   }
 
-  async createCocktail(ownerId: string, cocktailDto: CreateCocktailDto) {
-    const alcohol = this.cocktailRepository.create({
+  async createCocktail(ownerId: string, cocktailDto: CreateCocktailDto, queryRunner?: QueryRunner) {
+    const repository = this.commonService.getRepositoryWithQueryRunner(
+      'cocktail',
+      this.repositoryMap,
+      this.modelMap,
+      queryRunner,
+    ) as Repository<AlcoholModel>;
+
+    const alcohol = repository.create({
       owner: {
         id: ownerId,
       },
       ...cocktailDto,
+      images: [],
     });
 
-    const cocktail = await this.cocktailRepository.save(alcohol);
+    const cocktail = await repository.save(alcohol);
 
     return cocktail;
   }
