@@ -29,26 +29,31 @@ import { UserModel } from 'src/users/entity/user.entity';
 export class AlcoholController {
   constructor(private readonly alcoholService: AlcoholService) {}
 
+  // Retrieve a paginated list of spirits
   @Get('/spirit')
   getAllSpirits(@Query() query: PaginateAlcoholDto) {
     return this.alcoholService.getAllSpirits(query);
   }
 
+  // Retrieve a paginated list of wines
   @Get('/wine')
   getAllWines() {
     return this.alcoholService.getAllWines();
   }
 
+  // Retrieve a paginated list of cocktails
   @Get('/cocktail')
   getAllCocktails() {
     return this.alcoholService.getAllCocktails();
   }
 
+  // Retrieve a specific alcohol by its ID
   @Get(':id')
   getAlcoholById(@Param('id', ParseIntPipe) id: string) {
     return this.alcoholService.getAlcoholById(id);
   }
 
+  // Create a new spirit
   @Post('/spirit')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
@@ -74,16 +79,56 @@ export class AlcoholController {
     return alcohol;
   }
 
+  // Create a new wine
   @Post('/wine')
   @UseGuards(AccessTokenGuard)
-  postWine(@User('id') userId: UserModel['id'], @Body() dto: CreateWineDto) {
-    return this.alcoholService.createAlcohol('wine', userId, dto);
+  @UseInterceptors(TransactionInterceptor)
+  async postWine(
+    @User('id') userId: UserModel['id'],
+    @Body() dto: CreateWineDto,
+    @QueryRunner() queryRunner: QueryRunnerType,
+  ) {
+    const alcohol = await this.alcoholService.createAlcohol('wine', userId, dto, queryRunner);
+
+    for (let i = 0; i < dto.images.length; i++) {
+      await this.alcoholService.createAlcoholImage(
+        {
+          alcohol,
+          order: i,
+          path: dto.images[i],
+          type: ImageModelEnum.ALCOHOL_IMAGE,
+        },
+        queryRunner,
+      );
+    }
+
+    return alcohol;
   }
 
+  // Create a new cocktail
   @Post('/cocktail')
   @UseGuards(AccessTokenGuard)
-  postCocktail(@User('id') userId: UserModel['id'], @Body() dto: CreateCocktailDto) {
-    return this.alcoholService.createAlcohol('cocktail', userId, dto);
+  @UseInterceptors(TransactionInterceptor)
+  async postCocktail(
+    @User('id') userId: UserModel['id'],
+    @Body() dto: CreateCocktailDto,
+    @QueryRunner() queryRunner: QueryRunnerType,
+  ) {
+    const alcohol = await this.alcoholService.createAlcohol('cocktail', userId, dto, queryRunner);
+
+    for (let i = 0; i < dto.images.length; i++) {
+      await this.alcoholService.createAlcoholImage(
+        {
+          alcohol,
+          order: i,
+          path: dto.images[i],
+          type: ImageModelEnum.ALCOHOL_IMAGE,
+        },
+        queryRunner,
+      );
+    }
+
+    return alcohol;
   }
 
   @Patch('/spirit/:id')
