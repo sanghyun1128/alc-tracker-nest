@@ -60,7 +60,7 @@ export class AlcoholController {
     @Body() dto: CreateSpiritDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    const alcohol = await this.alcoholService.createSpirit(userId, dto, queryRunner);
+    const alcohol = await this.alcoholService.createAlcohol('spirit', userId, dto, queryRunner);
 
     for (let i = 0; i < dto.images.length; i++) {
       await this.alcoholService.createAlcoholImage(
@@ -80,13 +80,13 @@ export class AlcoholController {
   @Post('/wine')
   @UseGuards(AccessTokenGuard)
   postWine(@User('id') userId: UserModel['id'], @Body() dto: CreateWineDto) {
-    return this.alcoholService.createWine(userId, dto);
+    return this.alcoholService.createAlcohol('wine', userId, dto);
   }
 
   @Post('/cocktail')
   @UseGuards(AccessTokenGuard)
   postCocktail(@User('id') userId: UserModel['id'], @Body() dto: CreateCocktailDto) {
-    return this.alcoholService.createCocktail(userId, dto);
+    return this.alcoholService.createAlcohol('cocktail', userId, dto);
   }
 
   @Patch('/spirit/:id')
