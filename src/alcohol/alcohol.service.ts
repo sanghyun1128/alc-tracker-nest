@@ -12,7 +12,9 @@ import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CreateSpiritDto } from './dto/create-spirit.dto';
 import { CreateWineDto } from './dto/create-wine.dto';
 import { PaginateAlcoholDto } from './dto/paginate-alcohol.dto';
+import { UpdateCocktailDto } from './dto/update-cocktail.dto';
 import { UpdateSpiritDto } from './dto/update-spirit.dto';
+import { UpdateWineDto } from './dto/update-wine.dto';
 import { SpiritModel, WineModel, CocktailModel, AlcoholModel } from 'src/alcohol/entity/alcohol.entity';
 import { CommonService } from 'src/common/common.service';
 import { TEMP_FOLDER_PATH, ALCOHOLS_IMAGES_FOLDER_PATH } from 'src/common/const/path.const';
@@ -164,8 +166,19 @@ export class AlcoholService {
     return result;
   }
 
-  async updateSpirit(id: string, ownerId: string, spiritDto: UpdateSpiritDto) {
-    const spirit = await this.spiritRepository.findOne({
+  async updateAlcohol(
+    type: string,
+    id: string,
+    ownerId: string,
+    updateAlcoholDto: UpdateSpiritDto | UpdateWineDto | UpdateCocktailDto,
+  ) {
+    const repository = this.commonService.getRepositoryWithQueryRunner(
+      type,
+      this.repositoryMap,
+      this.modelMap,
+    ) as Repository<AlcoholModel>;
+
+    const alcohol = await repository.findOne({
       where: {
         id,
         owner: {
@@ -174,16 +187,16 @@ export class AlcoholService {
       },
     });
 
-    if (!spirit) {
-      throw new NotFoundException(`Spirit with id ${id} not found`);
+    if (!alcohol) {
+      throw new NotFoundException(`${type} with id ${id} not found`);
     }
 
-    // const updatedSpirit = await this.spiritRepository.save({
-    //   ...spirit,
-    //   ...spiritDto,
-    // });
+    const updatedAlcohol = await repository.save({
+      ...alcohol,
+      ...updateAlcoholDto,
+    });
 
-    return false;
+    return updatedAlcohol;
   }
 
   //TODO: Test code
