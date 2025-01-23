@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { promises } from 'fs';
 import { join } from 'path';
-import { QueryRunner, Repository } from 'typeorm';
+import { DeleteResult, QueryRunner, Repository } from 'typeorm';
 
 import { CocktailCategoryEnum } from './const/cocktail.const';
 import { CaskEnum, SpiritCategoryEnum } from './const/spirit.const';
@@ -34,6 +34,8 @@ import { ImageModel } from 'src/common/entity/image.entity';
 @Injectable()
 export class AlcoholService {
   constructor(
+    @InjectRepository(AlcoholModel)
+    private readonly alcoholRepository: Repository<AlcoholModel>,
     @InjectRepository(SpiritModel)
     private readonly spiritRepository: Repository<SpiritModel>,
     @InjectRepository(WineModel)
@@ -84,42 +86,37 @@ export class AlcoholService {
   }
 
   async getAlcoholById(id: string): Promise<AlcoholModel> {
-    const spirit = await this.spiritRepository.findOne({
+    const alcohol = await this.alcoholRepository.findOne({
       where: {
         id,
       },
-      relations: ['owner'],
+      relations: ['owner', 'images'],
     });
 
-    if (spirit) {
-      return spirit;
-    }
-
-    const wine = await this.wineRepository.findOne({
-      where: {
-        id,
-      },
-      relations: ['owner'],
-    });
-
-    if (wine) {
-      return wine;
-    }
-
-    const cocktail = await this.cocktailRepository.findOne({
-      where: {
-        id,
-      },
-      relations: ['owner'],
-    });
-
-    if (cocktail) {
-      return cocktail;
-    }
-
-    if (!cocktail && !spirit && !wine) {
+    if (!alcohol) {
       throw new NotFoundException(`Alcohol with id ${id} not found`);
     }
+
+    return alcohol;
+  }
+
+  async deleteAlcoholById(ownerId: string, alcoholId: string): Promise<DeleteResult> {
+    const alcohol = await this.alcoholRepository.findOne({
+      where: {
+        id: alcoholId,
+      },
+      relations: ['owner'],
+    });
+
+    if (!alcohol) {
+      throw new NotFoundException(`Alcohol with id ${alcoholId} not found`);
+    }
+
+    if (alcohol.owner.id !== ownerId) {
+      throw new BadRequestException(`You don't have permission to delete this alcohol`);
+    }
+
+    return await this.alcoholRepository.delete(alcoholId);
   }
 
   async createAlcoholImage(
