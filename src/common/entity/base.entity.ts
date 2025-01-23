@@ -1,9 +1,7 @@
-import { Exclude } from 'class-transformer';
 import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export abstract class BaseModel {
   @PrimaryGeneratedColumn('uuid')
-  @Exclude()
   id: string;
 
   @CreateDateColumn()
