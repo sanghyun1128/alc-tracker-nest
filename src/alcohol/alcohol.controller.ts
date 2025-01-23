@@ -17,7 +17,9 @@ import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CreateSpiritDto } from './dto/create-spirit.dto';
 import { CreateWineDto } from './dto/create-wine.dto';
 import { PaginateAlcoholDto } from './dto/paginate-alcohol.dto';
+import { UpdateCocktailDto } from './dto/update-cocktail.dto';
 import { UpdateSpiritDto } from './dto/update-spirit.dto';
+import { UpdateWineDto } from './dto/update-wine.dto';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { ImageModelEnum } from 'src/common/const/image-model.const';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
@@ -131,6 +133,7 @@ export class AlcoholController {
     return alcohol;
   }
 
+  // Update a spirit by its ID
   @Patch('/spirit/:id')
   @UseGuards(AccessTokenGuard)
   patchSpirit(
@@ -138,7 +141,25 @@ export class AlcoholController {
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateSpiritDto,
   ) {
-    return this.alcoholService.updateSpirit(id, userId, dto);
+    return this.alcoholService.updateAlcohol('spirit', id, userId, dto);
+  }
+
+  // Update a wine by its ID
+  @Patch('/wine/:id')
+  @UseGuards(AccessTokenGuard)
+  patchWine(@Param('id', ParseIntPipe) id: string, @User('id') userId: UserModel['id'], @Body() dto: UpdateWineDto) {
+    return this.alcoholService.updateAlcohol('wine', id, userId, dto);
+  }
+
+  // Update a cocktail by its ID
+  @Patch('/cocktail/:id')
+  @UseGuards(AccessTokenGuard)
+  patchCocktail(
+    @Param('id', ParseIntPipe) id: string,
+    @User('id') userId: UserModel['id'],
+    @Body() dto: UpdateCocktailDto,
+  ) {
+    return this.alcoholService.updateAlcohol('cocktail', id, userId, dto);
   }
 
   //TODO: Test code
