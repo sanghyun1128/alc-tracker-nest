@@ -34,19 +34,19 @@ export class AlcoholController {
   // Retrieve a paginated list of spirits
   @Get('/spirit')
   getAllSpirits(@Query() query: PaginateAlcoholDto) {
-    return this.alcoholService.getAllSpirits(query);
+    return this.alcoholService.getAllAlcohols('spirit', query);
   }
 
   // Retrieve a paginated list of wines
   @Get('/wine')
-  getAllWines() {
-    return this.alcoholService.getAllWines();
+  getAllWines(@Query() query: PaginateAlcoholDto) {
+    return this.alcoholService.getAllAlcohols('wine', query);
   }
 
   // Retrieve a paginated list of cocktails
   @Get('/cocktail')
-  getAllCocktails() {
-    return this.alcoholService.getAllCocktails();
+  getAllCocktails(@Query() query: PaginateAlcoholDto) {
+    return this.alcoholService.getAllAlcohols('cocktail', query);
   }
 
   // Retrieve a specific alcohol by its ID
