@@ -1,7 +1,7 @@
 import { PickType } from '@nestjs/mapped-types';
 import { IsOptional, IsString } from 'class-validator';
 
-import { SpiritModel } from '../entities/alcohol.entity';
+import { SpiritModel } from '../entity/alcohol.entity';
 import { stringValidationMessage } from 'src/common/validation-message';
 
 export class CreateSpiritDto extends PickType(SpiritModel, [

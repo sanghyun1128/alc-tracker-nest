@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext, InternalServerErrorException } from '@nestjs/common';
 
-import { UserModel } from '../entities/user.entity';
+import { UserModel } from '../entity/user.entity';
 
 /**
  * User decorator is used to get user information from the request object.

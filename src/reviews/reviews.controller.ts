@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 
-import { DetailEvaluation } from './entities/review.entity';
+import { DetailEvaluation } from './entity/review.entity';
 import { ReviewsService } from './reviews.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 
@@ -39,18 +39,7 @@ export class ReviewsController {
     @Body('palate') palate: DetailEvaluation,
     @Body('finish') finish: DetailEvaluation,
     @Body('bottleCondition') bottleCondition: number,
-  ) {
-    return this.reviewsService.createSpiritReview(
-      authorId,
-      rating,
-      comment,
-      pairing,
-      nose,
-      palate,
-      finish,
-      bottleCondition,
-    );
-  }
+  ) {}
 
   @Post('/wine')
   @UseGuards(AccessTokenGuard)
@@ -63,18 +52,7 @@ export class ReviewsController {
     @Body('palate') palate: DetailEvaluation,
     @Body('finish') finish: DetailEvaluation,
     @Body('bottleCondition') bottleCondition: number,
-  ) {
-    return this.reviewsService.createWineReview(
-      authorId,
-      rating,
-      comment,
-      pairing,
-      nose,
-      palate,
-      finish,
-      bottleCondition,
-    );
-  }
+  ) {}
 
   @Post('/cocktail')
   @UseGuards(AccessTokenGuard)
@@ -88,17 +66,5 @@ export class ReviewsController {
     @Body('finish') finish: DetailEvaluation,
     @Body('ingredients') ingredients: string,
     @Body('recipe') recipe: string,
-  ) {
-    return this.reviewsService.createCocktailReview(
-      authorId,
-      rating,
-      comment,
-      pairing,
-      nose,
-      palate,
-      finish,
-      ingredients,
-      recipe,
-    );
-  }
+  ) {}
 }

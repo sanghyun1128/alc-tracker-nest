@@ -4,7 +4,7 @@ import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, Repository } from 
 import { HOST, PROTOCOL } from './const/env-keys.const';
 import { FILTER_MAPPER } from './const/filter-mapper.const';
 import { BasePaginationDto } from './dto/base-pagination.dto';
-import { BaseModel } from './entities/base.entity';
+import { BaseModel } from './entity/base.entity';
 @Injectable()
 export class CommonService {
   paginate<T extends BaseModel>(

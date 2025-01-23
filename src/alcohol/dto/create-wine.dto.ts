@@ -1,6 +1,6 @@
 import { PickType } from '@nestjs/mapped-types';
 
-import { WineModel } from '../entities/alcohol.entity';
+import { WineModel } from '../entity/alcohol.entity';
 
 export class CreateWineDto extends PickType(WineModel, [
   'name',

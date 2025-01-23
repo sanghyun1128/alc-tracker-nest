@@ -10,8 +10,8 @@ import {
   CombinedAppellationType,
   GrapeVarietyEnum,
 } from '../const/wine.const';
-import { BaseModel } from 'src/common/entities/base.entity';
-import { ImageModel } from 'src/common/entities/image.entity';
+import { BaseModel } from 'src/common/entity/base.entity';
+import { ImageModel } from 'src/common/entity/image.entity';
 import {
   dateValidationMessage,
   enumValidationMessage,
@@ -19,8 +19,8 @@ import {
   numberValidationMessage,
   stringValidationMessage,
 } from 'src/common/validation-message';
-import { ReviewModel } from 'src/reviews/entities/review.entity';
-import { UserModel } from 'src/users/entities/user.entity';
+import { ReviewModel } from 'src/reviews/entity/review.entity';
+import { UserModel } from 'src/users/entity/user.entity';
 
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })

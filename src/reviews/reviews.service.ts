@@ -8,7 +8,7 @@ import {
   DetailEvaluation,
   SpiritReviewModel,
   WineReviewModel,
-} from './entities/review.entity';
+} from './entity/review.entity';
 
 @Injectable()
 export class ReviewsService {
@@ -49,89 +49,9 @@ export class ReviewsService {
     return review;
   }
 
-  async createSpiritReview(
-    authorId: string,
-    rating: number,
-    comment: string,
-    pairing: string,
-    nose: DetailEvaluation,
-    palate: DetailEvaluation,
-    finish: DetailEvaluation,
-    bottleCondition: number,
-  ) {
-    const review = this.spiritReviewRepository.create({
-      author: {
-        id: authorId,
-      },
-      rating,
-      comment,
-      pairing,
-      nose,
-      palate,
-      finish,
-      bottleCondition,
-    });
+  async createSpiritReview() {}
 
-    const spiritReview = await this.spiritReviewRepository.save(review);
+  async createWineReview() {}
 
-    return spiritReview;
-  }
-
-  async createWineReview(
-    authorId: string,
-    rating: number,
-    comment: string,
-    pairing: string,
-    nose: DetailEvaluation,
-    palate: DetailEvaluation,
-    finish: DetailEvaluation,
-    aeration: number,
-  ) {
-    const review = this.wineReviewRepository.create({
-      author: {
-        id: authorId,
-      },
-      rating,
-      comment,
-      pairing,
-      nose,
-      palate,
-      finish,
-      aeration,
-    });
-
-    const wineReview = await this.wineReviewRepository.save(review);
-
-    return wineReview;
-  }
-
-  async createCocktailReview(
-    authorId: string,
-    rating: number,
-    comment: string,
-    pairing: string,
-    nose: DetailEvaluation,
-    palate: DetailEvaluation,
-    finish: DetailEvaluation,
-    ingredients: string,
-    recipe: string,
-  ) {
-    const review = this.cocktailReviewRepository.create({
-      author: {
-        id: authorId,
-      },
-      rating,
-      comment,
-      pairing,
-      nose,
-      palate,
-      finish,
-      ingredients,
-      recipe,
-    });
-
-    const cocktailReview = await this.cocktailReviewRepository.save(review);
-
-    return cocktailReview;
-  }
+  async createCocktailReview() {}
 }

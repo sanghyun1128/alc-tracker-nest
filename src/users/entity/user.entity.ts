@@ -4,9 +4,9 @@ import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 
 import { GenderEnum } from '../const/gender.const';
 import { RoleEnum } from '../const/role.const';
-import { AlcoholModel } from 'src/alcohol/entities/alcohol.entity';
-import { BaseModel } from 'src/common/entities/base.entity';
-import { ImageModel } from 'src/common/entities/image.entity';
+import { AlcoholModel } from 'src/alcohol/entity/alcohol.entity';
+import { BaseModel } from 'src/common/entity/base.entity';
+import { ImageModel } from 'src/common/entity/image.entity';
 import {
   emailValidationMessage,
   stringValidationMessage,
@@ -14,7 +14,7 @@ import {
   dateValidationMessage,
   lengthValidationMessage,
 } from 'src/common/validation-message';
-import { ReviewModel } from 'src/reviews/entities/review.entity';
+import { ReviewModel } from 'src/reviews/entity/review.entity';
 
 @Entity()
 export class UserModel extends BaseModel {

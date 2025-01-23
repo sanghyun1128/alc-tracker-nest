@@ -1,15 +1,15 @@
 import { IsInt, IsNumber, IsString } from 'class-validator';
 import { ChildEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, TableInheritance } from 'typeorm';
 
-import { AlcoholModel } from 'src/alcohol/entities/alcohol.entity';
-import { BaseModel } from 'src/common/entities/base.entity';
-import { ImageModel } from 'src/common/entities/image.entity';
+import { AlcoholModel } from 'src/alcohol/entity/alcohol.entity';
+import { BaseModel } from 'src/common/entity/base.entity';
+import { ImageModel } from 'src/common/entity/image.entity';
 import {
   integerValidationMessage,
   numberValidationMessage,
   stringValidationMessage,
 } from 'src/common/validation-message';
-import { UserModel } from 'src/users/entities/user.entity';
+import { UserModel } from 'src/users/entity/user.entity';
 
 export abstract class DetailEvaluation {
   /**

@@ -10,7 +10,7 @@ import {
   ENV_JWT_REFRESH_TOKEN_EXPIRATION,
   ENV_JWT_SECRET_KEY,
 } from 'src/common/const/env-keys.const';
-import { UserModel } from 'src/users/entities/user.entity';
+import { UserModel } from 'src/users/entity/user.entity';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()

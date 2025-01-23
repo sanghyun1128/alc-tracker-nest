@@ -23,7 +23,7 @@ import { ImageModelEnum } from 'src/common/const/image-model.const';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { User } from 'src/users/decorator/user.decorator';
-import { UserModel } from 'src/users/entities/user.entity';
+import { UserModel } from 'src/users/entity/user.entity';
 
 @Controller('alcohol')
 export class AlcoholController {
