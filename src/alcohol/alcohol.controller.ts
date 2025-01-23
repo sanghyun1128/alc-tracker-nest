@@ -1,11 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
+  Put,
   Query,
   UseGuards,
   UseInterceptors,
@@ -53,6 +54,12 @@ export class AlcoholController {
   @Get(':id')
   getAlcoholById(@Param('id', ParseIntPipe) id: string) {
     return this.alcoholService.getAlcoholById(id);
+  }
+
+  // Delete a specific alcohol by its ID
+  @Delete(':id')
+  deleteAlcoholById(@Param('id', ParseIntPipe) id: string) {
+    return this.alcoholService.deleteAlcoholById(id);
   }
 
   // Create a new spirit
@@ -134,9 +141,9 @@ export class AlcoholController {
   }
 
   // Update a spirit by its ID
-  @Patch('/spirit/:id')
+  @Put('/spirit/:id')
   @UseGuards(AccessTokenGuard)
-  patchSpirit(
+  putSpirit(
     @Param('id', ParseIntPipe) id: string,
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateSpiritDto,
@@ -145,9 +152,9 @@ export class AlcoholController {
   }
 
   // Update a wine by its ID
-  @Patch('/wine/:id')
+  @Put('/wine/:id')
   @UseGuards(AccessTokenGuard)
-  patchWine(
+  putWine(
     @Param('id', ParseIntPipe) id: string,
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateWineDto,
@@ -156,9 +163,9 @@ export class AlcoholController {
   }
 
   // Update a cocktail by its ID
-  @Patch('/cocktail/:id')
+  @Put('/cocktail/:id')
   @UseGuards(AccessTokenGuard)
-  patchCocktail(
+  putCocktail(
     @Param('id', ParseIntPipe) id: string,
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateCocktailDto,
