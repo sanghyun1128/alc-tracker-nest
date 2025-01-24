@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { promises } from 'fs';
 import { join } from 'path';
@@ -49,6 +54,7 @@ export class AlcoholService {
   ) {}
 
   private repositoryMap = {
+    alcohol: this.alcoholRepository,
     spirit: this.spiritRepository,
     wine: this.wineRepository,
     cocktail: this.cocktailRepository,
@@ -56,6 +62,7 @@ export class AlcoholService {
   };
 
   private modelMap = {
+    alcohol: AlcoholModel,
     spirit: SpiritModel,
     wine: WineModel,
     cocktail: CocktailModel,
@@ -100,12 +107,23 @@ export class AlcoholService {
     return alcohol;
   }
 
-  async deleteAlcoholById(ownerId: string, alcoholId: string): Promise<DeleteResult> {
-    const alcohol = await this.alcoholRepository.findOne({
+  async deleteAlcoholById(
+    ownerId: string,
+    alcoholId: string,
+    queryRunner?: QueryRunner,
+  ): Promise<DeleteResult> {
+    const repository = this.commonService.getRepositoryWithQueryRunner(
+      'alcohol',
+      this.repositoryMap,
+      this.modelMap,
+      queryRunner,
+    ) as Repository<AlcoholModel>;
+
+    const alcohol = await repository.findOne({
       where: {
         id: alcoholId,
       },
-      relations: ['owner'],
+      relations: ['owner', 'images'],
     });
 
     if (!alcohol) {
@@ -116,9 +134,14 @@ export class AlcoholService {
       throw new BadRequestException(`You don't have permission to delete this alcohol`);
     }
 
-    return await this.alcoholRepository.delete(alcoholId);
+    for (const image of alcohol.images) {
+      await this.deleteAlcoholImageById(image.id, queryRunner);
+    }
+
+    return await repository.delete(alcoholId);
   }
 
+  //TODO: Image 관련 코드들 common을 이동
   async createAlcoholImage(
     dto: CreateAlcoholImageDto,
     queryRunner?: QueryRunner,
@@ -151,6 +174,33 @@ export class AlcoholService {
     return result;
   }
 
+  async deleteAlcoholImageById(imageId: string, queryRunner?: QueryRunner): Promise<void> {
+    const repository = this.commonService.getRepositoryWithQueryRunner(
+      'image',
+      this.repositoryMap,
+      this.modelMap,
+      queryRunner,
+    ) as Repository<ImageModel>;
+
+    const image = await repository.findOne({
+      where: { id: imageId },
+    });
+
+    if (!image) {
+      throw new NotFoundException(`Image with id ${imageId} not found`);
+    }
+
+    const imagePath = join(ALCOHOLS_IMAGES_FOLDER_PATH, image.path);
+
+    await repository.delete(imageId);
+
+    try {
+      await promises.unlink(imagePath);
+    } catch (e) {
+      throw new InternalServerErrorException('Failed to delete image file');
+    }
+  }
+
   async createAlcohol(
     type: string,
     ownerId: string,
@@ -177,6 +227,8 @@ export class AlcoholService {
     return result;
   }
 
+  //TODO: Update시 image도 같이 업데이트해야됨 => updateAlcoholImage 함수 추가
+  // 텍스트 데이터들은 Put으로 업데이트하고 이미지들은 변경 있을시에만 Patch로 업데이트 하는 방식으로 추가
   async updateAlcohol(
     type: string,
     id: string,
