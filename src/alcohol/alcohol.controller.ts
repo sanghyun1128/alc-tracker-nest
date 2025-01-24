@@ -22,6 +22,7 @@ import { UpdateCocktailDto } from './dto/update-cocktail.dto';
 import { UpdateSpiritDto } from './dto/update-spirit.dto';
 import { UpdateWineDto } from './dto/update-wine.dto';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
+import { CommonService } from 'src/common/common.service';
 import { ImageModelEnum } from 'src/common/const/image-model.const';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
@@ -30,7 +31,10 @@ import { UserModel } from 'src/users/entity/user.entity';
 
 @Controller('alcohol')
 export class AlcoholController {
-  constructor(private readonly alcoholService: AlcoholService) {}
+  constructor(
+    private readonly alcoholService: AlcoholService,
+    private readonly commonService: CommonService,
+  ) {}
 
   // Retrieve a paginated list of spirits
   @Get('/spirit')
@@ -76,7 +80,7 @@ export class AlcoholController {
     const alcohol = await this.alcoholService.createAlcohol('spirit', userId, dto, queryRunner);
 
     for (let i = 0; i < dto.images.length; i++) {
-      await this.alcoholService.createAlcoholImage(
+      await this.commonService.createAlcoholImage(
         {
           alcohol,
           order: i,
@@ -102,7 +106,7 @@ export class AlcoholController {
     const alcohol = await this.alcoholService.createAlcohol('wine', userId, dto, queryRunner);
 
     for (let i = 0; i < dto.images.length; i++) {
-      await this.alcoholService.createAlcoholImage(
+      await this.commonService.createAlcoholImage(
         {
           alcohol,
           order: i,
@@ -128,7 +132,7 @@ export class AlcoholController {
     const alcohol = await this.alcoholService.createAlcohol('cocktail', userId, dto, queryRunner);
 
     for (let i = 0; i < dto.images.length; i++) {
-      await this.alcoholService.createAlcoholImage(
+      await this.commonService.createAlcoholImage(
         {
           alcohol,
           order: i,
