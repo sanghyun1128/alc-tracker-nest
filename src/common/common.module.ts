@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import * as multer from 'multer';
 import { extname } from 'path';
 import { v4 as uuidV4 } from 'uuid';
@@ -7,10 +8,12 @@ import { v4 as uuidV4 } from 'uuid';
 import { CommonController } from './common.controller';
 import { CommonService } from './common.service';
 import { TEMP_FOLDER_PATH } from './const/path.const';
+import { ImageModel } from './entity/image.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';
 @Module({
   imports: [
+    TypeOrmModule.forFeature([ImageModel]),
     AuthModule,
     UsersModule,
     MulterModule.register({

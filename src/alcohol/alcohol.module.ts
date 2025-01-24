@@ -6,12 +6,11 @@ import { AlcoholService } from './alcohol.service';
 import { AlcoholModel, SpiritModel, WineModel, CocktailModel } from './entity/alcohol.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { CommonModule } from 'src/common/common.module';
-import { ImageModel } from 'src/common/entity/image.entity';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([AlcoholModel, SpiritModel, WineModel, CocktailModel, ImageModel]),
+    TypeOrmModule.forFeature([AlcoholModel, SpiritModel, WineModel, CocktailModel]),
     AuthModule,
     UsersModule,
     CommonModule,
