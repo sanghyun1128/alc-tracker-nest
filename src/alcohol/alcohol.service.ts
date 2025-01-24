@@ -1,12 +1,5 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { promises } from 'fs';
-import { join } from 'path';
 import { DeleteResult, QueryRunner, Repository } from 'typeorm';
 
 import { CocktailCategoryEnum } from './const/cocktail.const';
@@ -17,7 +10,6 @@ import {
   WineCategoryEnum,
   WineRegionEnum,
 } from './const/wine.const';
-import { CreateAlcoholImageDto } from './dto/create-alcohol-image';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CreateSpiritDto } from './dto/create-spirit.dto';
 import { CreateWineDto } from './dto/create-wine.dto';
@@ -32,9 +24,7 @@ import {
   AlcoholModel,
 } from 'src/alcohol/entity/alcohol.entity';
 import { CommonService } from 'src/common/common.service';
-import { TEMP_FOLDER_PATH, ALCOHOLS_IMAGES_FOLDER_PATH } from 'src/common/const/path.const';
 import { BaseModel } from 'src/common/entity/base.entity';
-import { ImageModel } from 'src/common/entity/image.entity';
 
 @Injectable()
 export class AlcoholService {
@@ -47,8 +37,6 @@ export class AlcoholService {
     private readonly wineRepository: Repository<WineModel>,
     @InjectRepository(CocktailModel)
     private readonly cocktailRepository: Repository<CocktailModel>,
-    @InjectRepository(ImageModel)
-    private readonly imageRepository: Repository<ImageModel>,
 
     private readonly commonService: CommonService,
   ) {}
@@ -58,7 +46,6 @@ export class AlcoholService {
     spirit: this.spiritRepository,
     wine: this.wineRepository,
     cocktail: this.cocktailRepository,
-    image: this.imageRepository,
   };
 
   private modelMap = {
@@ -66,7 +53,6 @@ export class AlcoholService {
     spirit: SpiritModel,
     wine: WineModel,
     cocktail: CocktailModel,
-    image: ImageModel,
   };
 
   async getAllAlcohols(
@@ -135,70 +121,10 @@ export class AlcoholService {
     }
 
     for (const image of alcohol.images) {
-      await this.deleteAlcoholImageById(image.id, queryRunner);
+      await this.commonService.deleteAlcoholImageById(image.id, queryRunner);
     }
 
     return await repository.delete(alcoholId);
-  }
-
-  //TODO: Image 관련 코드들 common을 이동
-  async createAlcoholImage(
-    dto: CreateAlcoholImageDto,
-    queryRunner?: QueryRunner,
-  ): Promise<ImageModel> {
-    const repository = this.commonService.getRepositoryWithQueryRunner(
-      'image',
-      this.repositoryMap,
-      this.modelMap,
-      queryRunner,
-    ) as Repository<ImageModel>;
-
-    const tempImagePath = join(TEMP_FOLDER_PATH, dto.path);
-
-    try {
-      await promises.access(tempImagePath);
-    } catch (e) {
-      throw new BadRequestException('Image not found');
-    }
-
-    const newPath = join(ALCOHOLS_IMAGES_FOLDER_PATH, dto.path);
-
-    const image = repository.create({
-      ...dto,
-    });
-
-    const result = await repository.save(image);
-
-    await promises.rename(tempImagePath, newPath);
-
-    return result;
-  }
-
-  async deleteAlcoholImageById(imageId: string, queryRunner?: QueryRunner): Promise<void> {
-    const repository = this.commonService.getRepositoryWithQueryRunner(
-      'image',
-      this.repositoryMap,
-      this.modelMap,
-      queryRunner,
-    ) as Repository<ImageModel>;
-
-    const image = await repository.findOne({
-      where: { id: imageId },
-    });
-
-    if (!image) {
-      throw new NotFoundException(`Image with id ${imageId} not found`);
-    }
-
-    const imagePath = join(ALCOHOLS_IMAGES_FOLDER_PATH, image.path);
-
-    await repository.delete(imageId);
-
-    try {
-      await promises.unlink(imagePath);
-    } catch (e) {
-      throw new InternalServerErrorException('Failed to delete image file');
-    }
   }
 
   async createAlcohol(

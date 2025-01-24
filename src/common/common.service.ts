@@ -1,4 +1,12 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { promises } from 'fs';
+import { join } from 'path';
 import {
   FindManyOptions,
   FindOptionsOrder,
@@ -9,10 +17,26 @@ import {
 
 import { HOST, PROTOCOL } from './const/env-keys.const';
 import { FILTER_MAPPER } from './const/filter-mapper.const';
+import { TEMP_FOLDER_PATH, ALCOHOLS_IMAGES_FOLDER_PATH } from './const/path.const';
 import { BasePaginationDto } from './dto/base-pagination.dto';
 import { BaseModel } from './entity/base.entity';
+import { ImageModel } from './entity/image.entity';
+import { CreateAlcoholImageDto } from 'src/alcohol/dto/create-alcohol-image';
 @Injectable()
 export class CommonService {
+  constructor(
+    @InjectRepository(ImageModel)
+    private readonly imageRepository: Repository<ImageModel>,
+  ) {}
+
+  private repositoryMap = {
+    image: this.imageRepository,
+  };
+
+  private modelMap = {
+    image: ImageModel,
+  };
+
   paginate<T extends BaseModel>(
     dto: BasePaginationDto,
     repository: Repository<T>,
@@ -156,26 +180,26 @@ export class CommonService {
    * @param {QueryRunner} [queryRunner] - Optional query runner for transactional operations.
    * @returns {Repository<BaseModel>} - The repository for the specified type.
    */
-  getRepositoryWithQueryRunner(
+  getRepositoryWithQueryRunner<T extends BaseModel>(
     type: string,
-    repositoryMap: { [key: string]: Repository<BaseModel> },
+    repositoryMap: { [key: string]: Repository<T> },
     modelMap: { [key: string]: typeof BaseModel },
     queryRunner?: QueryRunner,
-  ): Repository<BaseModel> {
-    const repository = this.selectRepositoryByType(type, repositoryMap);
+  ): Repository<T> {
+    const repository = this.selectRepositoryByType<T>(type, repositoryMap);
     const model = this.selectModelByType(type, modelMap);
 
     if (!queryRunner) {
-      return repository;
+      return repository as Repository<T>;
     } else {
-      return queryRunner.manager.getRepository(model);
+      return queryRunner.manager.getRepository(model) as Repository<T>;
     }
   }
 
-  private selectRepositoryByType(
+  private selectRepositoryByType<T extends BaseModel>(
     type: string,
-    repositoryMap: { [key: string]: Repository<BaseModel> },
-  ): Repository<BaseModel> {
+    repositoryMap: { [key: string]: Repository<T> },
+  ): Repository<T> {
     const repository = repositoryMap[type];
     if (!repository) {
       throw new InternalServerErrorException('Invalid type');
@@ -192,5 +216,65 @@ export class CommonService {
       throw new InternalServerErrorException('Invalid type');
     }
     return model;
+  }
+
+  //TODO: Alcohol 말고 다른 entity에도 적용할 수 있도록 수정
+  async createAlcoholImage(
+    dto: CreateAlcoholImageDto,
+    queryRunner?: QueryRunner,
+  ): Promise<ImageModel> {
+    const repository = this.getRepositoryWithQueryRunner(
+      'image',
+      this.repositoryMap,
+      this.modelMap,
+      queryRunner,
+    ) as Repository<ImageModel>;
+
+    const tempImagePath = join(TEMP_FOLDER_PATH, dto.path);
+
+    try {
+      await promises.access(tempImagePath);
+    } catch (e) {
+      throw new BadRequestException('Image not found');
+    }
+
+    const newPath = join(ALCOHOLS_IMAGES_FOLDER_PATH, dto.path);
+
+    const image = repository.create({
+      ...dto,
+    });
+
+    const result = await repository.save(image);
+
+    await promises.rename(tempImagePath, newPath);
+
+    return result;
+  }
+
+  async deleteAlcoholImageById(imageId: string, queryRunner?: QueryRunner): Promise<void> {
+    const repository = this.getRepositoryWithQueryRunner(
+      'image',
+      this.repositoryMap,
+      this.modelMap,
+      queryRunner,
+    ) as Repository<ImageModel>;
+
+    const image = await repository.findOne({
+      where: { id: imageId },
+    });
+
+    if (!image) {
+      throw new NotFoundException(`Image with id ${imageId} not found`);
+    }
+
+    const imagePath = join(ALCOHOLS_IMAGES_FOLDER_PATH, image.path);
+
+    await repository.delete(imageId);
+
+    try {
+      await promises.unlink(imagePath);
+    } catch (e) {
+      throw new InternalServerErrorException('Failed to delete image file');
+    }
   }
 }
