@@ -39,7 +39,6 @@ export class AlcoholController {
   // Retrieve a paginated list of alcohols
   @Get('/:type')
   getAllAlcohols(@Param('type') type: AlcoholType, @Query() query: PaginateAlcoholDto) {
-    console.log('type', type);
     return this.alcoholService.getAllAlcohols(type, query);
   }
 
