@@ -24,7 +24,6 @@ import {
   AlcoholModel,
 } from 'src/alcohol/entity/alcohol.entity';
 import { CommonService } from 'src/common/common.service';
-import { ImageModelEnum } from 'src/common/const/image-model.const';
 import { BaseModel } from 'src/common/entity/base.entity';
 
 @Injectable()
@@ -185,44 +184,9 @@ export class AlcoholService {
 
     const { images, ...updateAlcoholDtoWithoutImages } = updateAlcoholDto;
 
-    await repository.save({
+    const updatedAlcohol = await repository.save({
       ...alcohol,
       ...updateAlcoholDtoWithoutImages,
-    });
-
-    for (const image of images) {
-      if (image.isNew) {
-        await this.commonService.createAlcoholImage(
-          {
-            alcohol,
-            order: image.order,
-            path: image.path,
-            type: ImageModelEnum.ALCOHOL_IMAGE,
-          },
-          queryRunner,
-        );
-      } else {
-        const alcoholImage = alcohol.images.find(
-          (alcoholImage) => alcoholImage.path === image.path,
-        );
-
-        if (alcoholImage) {
-          await this.commonService.updateAlcoholImage(
-            alcoholImage.id,
-            {
-              order: image.order,
-            },
-            queryRunner,
-          );
-        }
-      }
-    }
-
-    const updatedAlcohol = await repository.findOne({
-      where: {
-        id,
-      },
-      relations: ['owner', 'images'],
     });
 
     return updatedAlcohol;

@@ -55,20 +55,20 @@ export class AlcoholController {
   ) {
     const alcohol = await this.alcoholService.createAlcohol(type, userId, dto, queryRunner);
 
-    //TODO: isNew is not used
-    for (let i = 0; i < dto.images.length; i++) {
-      await this.commonService.createAlcoholImage(
-        {
-          alcohol,
-          order: dto.images[i].order,
-          path: dto.images[i].path,
-          type: ImageModelEnum.ALCOHOL_IMAGE,
-        },
-        queryRunner,
-      );
+    for (const image of dto.images) {
+      image.isNew ??
+        (await this.commonService.createAlcoholImage(
+          {
+            alcohol,
+            order: image.order,
+            path: image.path,
+            type: ImageModelEnum.ALCOHOL_IMAGE,
+          },
+          queryRunner,
+        ));
     }
 
-    return alcohol;
+    return await this.alcoholService.getAlcoholById(alcohol.id);
   }
 
   // Retrieve a specific alcohol by its ID
@@ -89,14 +89,44 @@ export class AlcoholController {
   @Put('/:type/:id')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
-  updateAlcohol(
+  async updateAlcohol(
     @Param('type') type: AlcoholType,
     @Param('id') id: string,
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateSpiritDto | UpdateWineDto | UpdateCocktailDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    return this.alcoholService.updateAlcohol(type, id, userId, dto, queryRunner);
+    const alcohol = await this.alcoholService.updateAlcohol(type, id, userId, dto, queryRunner);
+
+    for (const image of dto.images) {
+      if (image.isNew) {
+        await this.commonService.createAlcoholImage(
+          {
+            alcohol,
+            order: image.order,
+            path: image.path,
+            type: ImageModelEnum.ALCOHOL_IMAGE,
+          },
+          queryRunner,
+        );
+      } else {
+        const alcoholImage = alcohol.images.find(
+          (alcoholImage) => alcoholImage.path === image.path,
+        );
+
+        if (alcoholImage) {
+          await this.commonService.updateAlcoholImage(
+            alcoholImage.id,
+            {
+              order: image.order,
+            },
+            queryRunner,
+          );
+        }
+      }
+    }
+
+    return await this.alcoholService.getAlcoholById(alcohol.id);
   }
 
   //TODO: Test code
