@@ -154,8 +154,6 @@ export class AlcoholService {
     return result;
   }
 
-  //TODO: Update시 image도 같이 업데이트해야됨 => updateAlcoholImage 함수 추가
-  // 텍스트 데이터들은 Put으로 업데이트하고 이미지들은 변경 있을시에만 Patch로 업데이트 하는 방식으로 추가
   async updateAlcohol(
     type: string,
     id: string,
@@ -187,7 +185,7 @@ export class AlcoholService {
 
     const { images, ...updateAlcoholDtoWithoutImages } = updateAlcoholDto;
 
-    const updatedAlcohol = await repository.save({
+    await repository.save({
       ...alcohol,
       ...updateAlcoholDtoWithoutImages,
     });
@@ -219,6 +217,13 @@ export class AlcoholService {
         }
       }
     }
+
+    const updatedAlcohol = await repository.findOne({
+      where: {
+        id,
+      },
+      relations: ['owner', 'images'],
+    });
 
     return updatedAlcohol;
   }
