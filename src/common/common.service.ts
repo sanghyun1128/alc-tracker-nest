@@ -19,9 +19,11 @@ import { HOST, PROTOCOL } from './const/env-keys.const';
 import { FILTER_MAPPER } from './const/filter-mapper.const';
 import { TEMP_FOLDER_PATH, ALCOHOLS_IMAGES_FOLDER_PATH } from './const/path.const';
 import { BasePaginationDto } from './dto/base-pagination.dto';
+import { CreateAlcoholImageDto } from './dto/create-alcohol-image';
+import { UpdateAlcoholImageDto } from './dto/update-alcohol-image';
 import { BaseModel } from './entity/base.entity';
 import { ImageModel } from './entity/image.entity';
-import { CreateAlcoholImageDto } from 'src/alcohol/dto/create-alcohol-image';
+
 @Injectable()
 export class CommonService {
   constructor(
@@ -247,6 +249,34 @@ export class CommonService {
     const result = await repository.save(image);
 
     await promises.rename(tempImagePath, newPath);
+
+    return result;
+  }
+
+  async updateAlcoholImage(
+    imageId: string,
+    dto: UpdateAlcoholImageDto,
+    queryRunner?: QueryRunner,
+  ): Promise<ImageModel> {
+    const repository = this.getRepositoryWithQueryRunner(
+      'image',
+      this.repositoryMap,
+      this.modelMap,
+      queryRunner,
+    ) as Repository<ImageModel>;
+
+    const image = await repository.findOne({
+      where: { id: imageId },
+    });
+
+    if (!image) {
+      throw new NotFoundException(`Image with id ${imageId} not found`);
+    }
+
+    const result = await repository.save({
+      ...image,
+      ...dto,
+    });
 
     return result;
   }
