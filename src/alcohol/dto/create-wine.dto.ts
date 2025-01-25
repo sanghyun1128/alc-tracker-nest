@@ -22,5 +22,9 @@ export class CreateWineDto extends PickType(WineModel, [
     message: stringValidationMessage,
   })
   @IsOptional()
-  images: string[] = [];
+  images: {
+    path: string;
+    order: number;
+    isNew: boolean;
+  }[] = [];
 }

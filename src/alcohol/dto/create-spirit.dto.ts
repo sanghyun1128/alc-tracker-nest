@@ -19,5 +19,9 @@ export class CreateSpiritDto extends PickType(SpiritModel, [
     message: stringValidationMessage,
   })
   @IsOptional()
-  images: string[] = [];
+  images: {
+    path: string;
+    order: number;
+    isNew: boolean;
+  }[] = [];
 }

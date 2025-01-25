@@ -10,5 +10,9 @@ export class CreateCocktailDto extends PickType(CocktailModel, ['name', 'categor
     message: stringValidationMessage,
   })
   @IsOptional()
-  images: string[] = [];
+  images: {
+    path: string;
+    order: number;
+    isNew: boolean;
+  }[] = [];
 }
