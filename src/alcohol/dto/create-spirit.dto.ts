@@ -1,8 +1,7 @@
 import { PickType } from '@nestjs/mapped-types';
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional } from 'class-validator';
 
 import { SpiritModel } from '../entity/alcohol.entity';
-import { stringValidationMessage } from 'src/common/validation-message';
 
 export class CreateSpiritDto extends PickType(SpiritModel, [
   'name',
@@ -14,10 +13,6 @@ export class CreateSpiritDto extends PickType(SpiritModel, [
   'purchaseLocation',
   'purchaseDate',
 ] as const) {
-  @IsString({
-    each: true,
-    message: stringValidationMessage,
-  })
   @IsOptional()
   images: {
     path: string;
