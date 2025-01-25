@@ -13,6 +13,7 @@ import {
 import { QueryRunner as QueryRunnerType } from 'typeorm';
 
 import { AlcoholService } from './alcohol.service';
+import { AlcoholType } from './const/\balcohol-type.const';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CreateSpiritDto } from './dto/create-spirit.dto';
 import { CreateWineDto } from './dto/create-wine.dto';
@@ -35,48 +36,24 @@ export class AlcoholController {
     private readonly commonService: CommonService,
   ) {}
 
-  // Retrieve a paginated list of spirits
-  @Get('/spirit')
-  getAllSpirits(@Query() query: PaginateAlcoholDto) {
-    return this.alcoholService.getAllAlcohols('spirit', query);
+  // Retrieve a paginated list of alcohols
+  @Get('/:type')
+  getAllAlcohols(@Param('type') type: AlcoholType, @Query() query: PaginateAlcoholDto) {
+    console.log('type', type);
+    return this.alcoholService.getAllAlcohols(type, query);
   }
 
-  // Retrieve a paginated list of wines
-  @Get('/wine')
-  getAllWines(@Query() query: PaginateAlcoholDto) {
-    return this.alcoholService.getAllAlcohols('wine', query);
-  }
-
-  // Retrieve a paginated list of cocktails
-  @Get('/cocktail')
-  getAllCocktails(@Query() query: PaginateAlcoholDto) {
-    return this.alcoholService.getAllAlcohols('cocktail', query);
-  }
-
-  // Retrieve a specific alcohol by its ID
-  @Get(':id')
-  @UseGuards(AccessTokenGuard)
-  getAlcoholById(@Param('id') id: string) {
-    return this.alcoholService.getAlcoholById(id);
-  }
-
-  // Delete a specific alcohol by its ID
-  @Delete(':id')
-  @UseGuards(AccessTokenGuard)
-  deleteAlcoholById(@User('id') userId: UserModel['id'], @Param('id') alcoholId: string) {
-    return this.alcoholService.deleteAlcoholById(userId, alcoholId);
-  }
-
-  // Create a new spirit
-  @Post('/spirit')
+  // Create a new spirit, wine, or cocktail
+  @Post('/:type')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   async postSpirit(
+    @Param('type') type: AlcoholType,
     @User('id') userId: UserModel['id'],
-    @Body() dto: CreateSpiritDto,
+    @Body() dto: CreateSpiritDto | CreateWineDto | CreateCocktailDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    const alcohol = await this.alcoholService.createAlcohol('spirit', userId, dto, queryRunner);
+    const alcohol = await this.alcoholService.createAlcohol(type, userId, dto, queryRunner);
 
     //TODO: isNew is not used
     for (let i = 0; i < dto.images.length; i++) {
@@ -94,91 +71,32 @@ export class AlcoholController {
     return alcohol;
   }
 
-  // Create a new wine
-  @Post('/wine')
+  // Retrieve a specific alcohol by its ID
+  @Get(':id')
+  @UseGuards(AccessTokenGuard)
+  getAlcoholById(@Param('id') id: string) {
+    return this.alcoholService.getAlcoholById(id);
+  }
+
+  // Delete a specific alcohol by its ID
+  @Delete(':id')
+  @UseGuards(AccessTokenGuard)
+  deleteAlcoholById(@User('id') userId: UserModel['id'], @Param('id') alcoholId: string) {
+    return this.alcoholService.deleteAlcoholById(userId, alcoholId);
+  }
+
+  // Update a specific spirit, wine, or cocktail by its ID
+  @Put('/:type/:id')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
-  async postWine(
-    @User('id') userId: UserModel['id'],
-    @Body() dto: CreateWineDto,
-    @QueryRunner() queryRunner: QueryRunnerType,
-  ) {
-    const alcohol = await this.alcoholService.createAlcohol('wine', userId, dto, queryRunner);
-
-    for (let i = 0; i < dto.images.length; i++) {
-      await this.commonService.createAlcoholImage(
-        {
-          alcohol,
-          order: dto.images[i].order,
-          path: dto.images[i].path,
-          type: ImageModelEnum.ALCOHOL_IMAGE,
-        },
-        queryRunner,
-      );
-    }
-
-    return alcohol;
-  }
-
-  // Create a new cocktail
-  @Post('/cocktail')
-  @UseGuards(AccessTokenGuard)
-  @UseInterceptors(TransactionInterceptor)
-  async postCocktail(
-    @User('id') userId: UserModel['id'],
-    @Body() dto: CreateCocktailDto,
-    @QueryRunner() queryRunner: QueryRunnerType,
-  ) {
-    const alcohol = await this.alcoholService.createAlcohol('cocktail', userId, dto, queryRunner);
-
-    for (let i = 0; i < dto.images.length; i++) {
-      await this.commonService.createAlcoholImage(
-        {
-          alcohol,
-          order: dto.images[i].order,
-          path: dto.images[i].path,
-          type: ImageModelEnum.ALCOHOL_IMAGE,
-        },
-        queryRunner,
-      );
-    }
-
-    return alcohol;
-  }
-
-  // Update a spirit by its ID
-  @Put('/spirit/:id')
-  @UseGuards(AccessTokenGuard)
-  @UseInterceptors(TransactionInterceptor)
-  putSpirit(
+  updateAlcohol(
+    @Param('type') type: AlcoholType,
     @Param('id') id: string,
     @User('id') userId: UserModel['id'],
-    @Body() dto: UpdateSpiritDto,
+    @Body() dto: UpdateSpiritDto | UpdateWineDto | UpdateCocktailDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    return this.alcoholService.updateAlcohol('spirit', id, userId, dto, queryRunner);
-  }
-
-  // Update a wine by its ID
-  @Put('/wine/:id')
-  @UseGuards(AccessTokenGuard)
-  putWine(
-    @Param('id') id: string,
-    @User('id') userId: UserModel['id'],
-    @Body() dto: UpdateWineDto,
-  ) {
-    return this.alcoholService.updateAlcohol('wine', id, userId, dto);
-  }
-
-  // Update a cocktail by its ID
-  @Put('/cocktail/:id')
-  @UseGuards(AccessTokenGuard)
-  putCocktail(
-    @Param('id') id: string,
-    @User('id') userId: UserModel['id'],
-    @Body() dto: UpdateCocktailDto,
-  ) {
-    return this.alcoholService.updateAlcohol('cocktail', id, userId, dto);
+    return this.alcoholService.updateAlcohol(type, id, userId, dto, queryRunner);
   }
 
   //TODO: Test code
