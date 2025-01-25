@@ -1,6 +1,7 @@
 import {
   CallHandler,
   ExecutionContext,
+  HttpException,
   Injectable,
   InternalServerErrorException,
   NestInterceptor,
@@ -28,6 +29,9 @@ export class TransactionInterceptor implements NestInterceptor {
       catchError(async (error) => {
         await queryRunner.rollbackTransaction();
         await queryRunner.release();
+        if (error instanceof HttpException) {
+          throw error;
+        }
         throw new InternalServerErrorException(`Request failed: ${error.message}`);
       }),
       tap(async () => {
