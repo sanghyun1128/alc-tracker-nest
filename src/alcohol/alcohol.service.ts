@@ -161,20 +161,20 @@ export class AlcoholService {
     id: string,
     ownerId: string,
     updateAlcoholDto: UpdateSpiritDto | UpdateWineDto | UpdateCocktailDto,
+    queryRunner?: QueryRunner,
   ): Promise<AlcoholModel> {
     const repository = this.commonService.getRepositoryWithQueryRunner(
       type,
       this.repositoryMap,
       this.modelMap,
+      queryRunner,
     ) as Repository<AlcoholModel>;
 
     const alcohol = await repository.findOne({
       where: {
         id,
-        owner: {
-          id: ownerId,
-        },
       },
+      relations: ['owner', 'images'],
     });
 
     if (!alcohol) {
@@ -192,22 +192,33 @@ export class AlcoholService {
       ...updateAlcoholDtoWithoutImages,
     });
 
-    images.forEach(async (image) => {
+    for (const image of images) {
       if (image.isNew) {
-        await this.commonService.createAlcoholImage({
-          alcohol,
-          order: image.order,
-          path: image.path,
-          type: ImageModelEnum.ALCOHOL_IMAGE,
-        });
+        await this.commonService.createAlcoholImage(
+          {
+            alcohol,
+            order: image.order,
+            path: image.path,
+            type: ImageModelEnum.ALCOHOL_IMAGE,
+          },
+          queryRunner,
+        );
       } else {
-        const imageId = alcohol.images.find((alcoholImage) => alcoholImage.path === image.path).id;
+        const alcoholImage = alcohol.images.find(
+          (alcoholImage) => alcoholImage.path === image.path,
+        );
 
-        await this.commonService.updateAlcoholImage(imageId, {
-          order: image.order,
-        });
+        if (alcoholImage) {
+          await this.commonService.updateAlcoholImage(
+            alcoholImage.id,
+            {
+              order: image.order,
+            },
+            queryRunner,
+          );
+        }
       }
-    });
+    }
 
     return updatedAlcohol;
   }
