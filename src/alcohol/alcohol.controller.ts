@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -150,19 +149,21 @@ export class AlcoholController {
   // Update a spirit by its ID
   @Put('/spirit/:id')
   @UseGuards(AccessTokenGuard)
+  @UseInterceptors(TransactionInterceptor)
   putSpirit(
-    @Param('id', ParseIntPipe) id: string,
+    @Param('id') id: string,
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateSpiritDto,
+    @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    return this.alcoholService.updateAlcohol('spirit', id, userId, dto);
+    return this.alcoholService.updateAlcohol('spirit', id, userId, dto, queryRunner);
   }
 
   // Update a wine by its ID
   @Put('/wine/:id')
   @UseGuards(AccessTokenGuard)
   putWine(
-    @Param('id', ParseIntPipe) id: string,
+    @Param('id') id: string,
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateWineDto,
   ) {
@@ -173,7 +174,7 @@ export class AlcoholController {
   @Put('/cocktail/:id')
   @UseGuards(AccessTokenGuard)
   putCocktail(
-    @Param('id', ParseIntPipe) id: string,
+    @Param('id') id: string,
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateCocktailDto,
   ) {
