@@ -181,6 +181,10 @@ export class AlcoholService {
       throw new NotFoundException(`${type} with id ${id} not found`);
     }
 
+    if (alcohol.owner.id !== ownerId) {
+      throw new BadRequestException(`You don't have permission to update this ${type}`);
+    }
+
     const { images, ...updateAlcoholDtoWithoutImages } = updateAlcoholDto;
 
     const updatedAlcohol = await repository.save({
