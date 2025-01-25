@@ -79,12 +79,13 @@ export class AlcoholController {
   ) {
     const alcohol = await this.alcoholService.createAlcohol('spirit', userId, dto, queryRunner);
 
+    //TODO: isNew is not used
     for (let i = 0; i < dto.images.length; i++) {
       await this.commonService.createAlcoholImage(
         {
           alcohol,
-          order: i,
-          path: dto.images[i],
+          order: dto.images[i].order,
+          path: dto.images[i].path,
           type: ImageModelEnum.ALCOHOL_IMAGE,
         },
         queryRunner,
@@ -109,8 +110,8 @@ export class AlcoholController {
       await this.commonService.createAlcoholImage(
         {
           alcohol,
-          order: i,
-          path: dto.images[i],
+          order: dto.images[i].order,
+          path: dto.images[i].path,
           type: ImageModelEnum.ALCOHOL_IMAGE,
         },
         queryRunner,
@@ -135,8 +136,8 @@ export class AlcoholController {
       await this.commonService.createAlcoholImage(
         {
           alcohol,
-          order: i,
-          path: dto.images[i],
+          order: dto.images[i].order,
+          path: dto.images[i].path,
           type: ImageModelEnum.ALCOHOL_IMAGE,
         },
         queryRunner,
