@@ -24,6 +24,7 @@ import {
   AlcoholModel,
 } from 'src/alcohol/entity/alcohol.entity';
 import { CommonService } from 'src/common/common.service';
+import { ImageModelEnum } from 'src/common/const/image-model.const';
 import { BaseModel } from 'src/common/entity/base.entity';
 
 @Injectable()
@@ -180,9 +181,28 @@ export class AlcoholService {
       throw new NotFoundException(`${type} with id ${id} not found`);
     }
 
+    const { images, ...updateAlcoholDtoWithoutImages } = updateAlcoholDto;
+
     const updatedAlcohol = await repository.save({
       ...alcohol,
-      ...updateAlcoholDto,
+      ...updateAlcoholDtoWithoutImages,
+    });
+
+    images.forEach(async (image) => {
+      if (image.isNew) {
+        await this.commonService.createAlcoholImage({
+          alcohol,
+          order: image.order,
+          path: image.path,
+          type: ImageModelEnum.ALCOHOL_IMAGE,
+        });
+      } else {
+        const imageId = alcohol.images.find((alcoholImage) => alcoholImage.path === image.path).id;
+
+        await this.commonService.updateAlcoholImage(imageId, {
+          order: image.order,
+        });
+      }
     });
 
     return updatedAlcohol;
