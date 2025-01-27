@@ -3,7 +3,7 @@ import { IsOptional } from 'class-validator';
 
 import { WineReviewModel } from '../entity/review.entity';
 
-export class CreateWineDto extends PickType(WineReviewModel, [
+export class CreateWineReviewDto extends PickType(WineReviewModel, [
   'rating',
   'comment',
   'pairing',
