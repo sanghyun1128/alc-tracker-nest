@@ -1,11 +1,21 @@
-import { IsNumber } from 'class-validator';
+import { PickType } from '@nestjs/mapped-types';
+import { IsOptional } from 'class-validator';
 
-import { CreateBaseReviewDto } from './create-base-review.dto';
+import { SpiritReviewModel } from '../entity/review.entity';
 
-export class CreateSpiritReviewDto extends CreateBaseReviewDto {
-  @IsNumber()
-  spiritId: number;
-
-  @IsNumber()
-  bottleCondition: number;
+export class CreateSpiritReviewDto extends PickType(SpiritReviewModel, [
+  'rating',
+  'comment',
+  'pairing',
+  'nose',
+  'palate',
+  'finish',
+  'bottleCondition',
+] as const) {
+  @IsOptional()
+  images: {
+    path: string;
+    order: number;
+    isNew: boolean;
+  }[] = [];
 }

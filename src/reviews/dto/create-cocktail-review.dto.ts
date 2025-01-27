@@ -1,17 +1,23 @@
-import { IsJSON, IsNumber } from 'class-validator';
+import { PickType } from '@nestjs/mapped-types';
+import { IsOptional } from 'class-validator';
 
-import { CreateBaseReviewDto } from './create-base-review.dto';
+import { CocktailReviewModel } from '../entity/review.entity';
 
-export class CreateCocktailReviewDto extends CreateBaseReviewDto {
-  @IsNumber()
-  cocktailId: number;
-
-  @IsJSON()
-  ingredients: string;
-
-  @IsJSON()
-  recipe: string;
-
-  @IsNumber()
-  alc: number;
+export class CreateCocktailReviewDto extends PickType(CocktailReviewModel, [
+  'rating',
+  'comment',
+  'pairing',
+  'nose',
+  'palate',
+  'finish',
+  'ingredients',
+  'recipe',
+  'alc',
+] as const) {
+  @IsOptional()
+  images: {
+    path: string;
+    order: number;
+    isNew: boolean;
+  }[] = [];
 }
