@@ -89,12 +89,14 @@ export class ReviewModel extends BaseModel {
   @JoinColumn({ name: 'authorId' })
   author: UserModel;
 
+  @ManyToOne(() => AlcoholModel, (alcohol) => alcohol.reviews, {
+    nullable: false,
+  })
+  @JoinColumn({ name: 'alcoholId' })
+  alcohol: AlcoholModel;
+
   @OneToMany(() => ImageModel, (image) => image.review)
   images: ImageModel[];
-
-  @ManyToOne(() => AlcoholModel, (alcohol) => alcohol.reviews)
-  @JoinColumn({ name: 'alcoholId' })
-  alcohols: AlcoholModel[];
 }
 
 @ChildEntity()
