@@ -94,73 +94,12 @@ export class AlcoholService {
   }
 
   async deleteAlcoholById(
-    ownerId: string,
-    alcoholId: string,
+    userId: string,
+    id: string,
     queryRunner?: QueryRunner,
   ): Promise<DeleteResult> {
     const repository = this.commonService.getRepositoryWithQueryRunner(
       'alcohol',
-      this.repositoryMap,
-      this.modelMap,
-      queryRunner,
-    ) as Repository<AlcoholModel>;
-
-    const alcohol = await repository.findOne({
-      where: {
-        id: alcoholId,
-      },
-      relations: ['owner', 'images'],
-    });
-
-    if (!alcohol) {
-      throw new NotFoundException(`Alcohol with id ${alcoholId} not found`);
-    }
-
-    if (alcohol.owner.id !== ownerId) {
-      throw new BadRequestException(`You don't have permission to delete this alcohol`);
-    }
-
-    for (const image of alcohol.images) {
-      await this.commonService.deleteAlcoholImageById(image.id, queryRunner);
-    }
-
-    return await repository.delete(alcoholId);
-  }
-
-  async createAlcohol(
-    type: string,
-    ownerId: string,
-    dto: CreateSpiritDto | CreateWineDto | CreateCocktailDto,
-    queryRunner?: QueryRunner,
-  ): Promise<AlcoholModel> {
-    const repository = this.commonService.getRepositoryWithQueryRunner(
-      type,
-      this.repositoryMap,
-      this.modelMap,
-      queryRunner,
-    ) as Repository<AlcoholModel>;
-
-    const alcohol = repository.create({
-      owner: {
-        id: ownerId,
-      },
-      ...dto,
-      images: [],
-    });
-
-    const result = await repository.save(alcohol);
-
-    return result;
-  }
-
-  async updateAlcohol(
-    id: string,
-    ownerId: string,
-    updateAlcoholDto: UpdateSpiritDto | UpdateWineDto | UpdateCocktailDto,
-    queryRunner?: QueryRunner,
-  ): Promise<AlcoholModel> {
-    const repository = this.commonService.getRepositoryWithQueryRunner(
-      updateAlcoholDto.type,
       this.repositoryMap,
       this.modelMap,
       queryRunner,
@@ -174,20 +113,79 @@ export class AlcoholService {
     });
 
     if (!alcohol) {
-      throw new NotFoundException(`${updateAlcoholDto.type} with id ${id} not found`);
+      throw new NotFoundException(`Alcohol with id ${id} not found`);
     }
 
-    if (alcohol.owner.id !== ownerId) {
-      throw new BadRequestException(
-        `You don't have permission to update this ${updateAlcoholDto.type}`,
-      );
+    if (alcohol.owner.id !== userId) {
+      throw new BadRequestException(`You don't have permission to delete this alcohol`);
     }
 
-    const { images, ...updateAlcoholDtoWithoutImages } = updateAlcoholDto;
+    for (const image of alcohol.images) {
+      await this.commonService.deleteAlcoholImageById(image.id, queryRunner);
+    }
+
+    return await repository.delete(id);
+  }
+
+  async createAlcohol(
+    type: string,
+    userId: string,
+    dto: CreateSpiritDto | CreateWineDto | CreateCocktailDto,
+    queryRunner?: QueryRunner,
+  ): Promise<AlcoholModel> {
+    const repository = this.commonService.getRepositoryWithQueryRunner(
+      type,
+      this.repositoryMap,
+      this.modelMap,
+      queryRunner,
+    ) as Repository<AlcoholModel>;
+
+    const alcohol = repository.create({
+      owner: {
+        id: userId,
+      },
+      ...dto,
+      images: [],
+    });
+
+    const result = await repository.save(alcohol);
+
+    return result;
+  }
+
+  async updateAlcohol(
+    id: string,
+    userId: string,
+    dto: UpdateSpiritDto | UpdateWineDto | UpdateCocktailDto,
+    queryRunner?: QueryRunner,
+  ): Promise<AlcoholModel> {
+    const repository = this.commonService.getRepositoryWithQueryRunner(
+      dto.type,
+      this.repositoryMap,
+      this.modelMap,
+      queryRunner,
+    ) as Repository<AlcoholModel>;
+
+    const alcohol = await repository.findOne({
+      where: {
+        id,
+      },
+      relations: ['owner', 'images'],
+    });
+
+    if (!alcohol) {
+      throw new NotFoundException(`${dto.type} with id ${id} not found`);
+    }
+
+    if (alcohol.owner.id !== userId) {
+      throw new BadRequestException(`You don't have permission to update this ${dto.type}`);
+    }
+
+    const { images, ...dtoWithoutImages } = dto;
 
     const updatedAlcohol = await repository.save({
       ...alcohol,
-      ...updateAlcoholDtoWithoutImages,
+      ...dtoWithoutImages,
     });
 
     return updatedAlcohol;
