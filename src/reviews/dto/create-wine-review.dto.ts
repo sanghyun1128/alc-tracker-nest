@@ -1,7 +1,8 @@
 import { PickType } from '@nestjs/mapped-types';
-import { IsOptional } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 import { WineReviewModel } from '../entity/review.entity';
+import { stringValidationMessage } from 'src/common/validation-message';
 
 export class CreateWineReviewDto extends PickType(WineReviewModel, [
   'rating',
@@ -12,6 +13,11 @@ export class CreateWineReviewDto extends PickType(WineReviewModel, [
   'finish',
   'aeration',
 ] as const) {
+  @IsString({
+    message: stringValidationMessage,
+  })
+  alcoholId: string;
+
   @IsOptional()
   images: {
     path: string;
