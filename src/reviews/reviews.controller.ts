@@ -7,15 +7,25 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { QueryRunner as QueryRunnerType } from 'typeorm';
 
+import { CreateCocktailReviewDto } from './dto/create-cocktail-review.dto';
+import { CreateSpiritReviewDto } from './dto/create-spirit-review.dto';
+import { CreateWineReviewDto } from './dto/create-wine-review.dto';
+import { PaginateReviewDto } from './dto/paginate-review.dto';
+import { UpdateCocktailReviewDto } from './dto/update-cocktail-review.dto';
+import { UpdateSpiritReviewDto } from './dto/update-spirit-review.dto';
+import { UpdateWineReviewDto } from './dto/update-wine-review.dto';
 import { ReviewsService } from './reviews.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
+import { User } from 'src/users/decorator/user.decorator';
+import { UserModel } from 'src/users/entity/user.entity';
 
 @Controller('reviews')
 export class ReviewsController {
@@ -35,7 +45,7 @@ export class ReviewsController {
   postAlcoholReview(
     @Param('type') type: string,
     @User('id') userId: UserModel['id'],
-    @Body() dto: CreateReviewDto,
+    @Body() dto: CreateSpiritReviewDto | CreateWineReviewDto | CreateCocktailReviewDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
     return this.reviewsService.createReview(type, userId, dto, queryRunner);
@@ -51,18 +61,21 @@ export class ReviewsController {
   // Delete a specific review by its ID
   @Delete(':id')
   @UseGuards(AccessTokenGuard)
-  deleteReviewById(@Param('id', ParseIntPipe) id: string) {
-    return this.reviewsService.deleteReviewById(id);
+  @UseInterceptors(TransactionInterceptor)
+  deleteReviewById(
+    @Param('id', ParseIntPipe) id: string,
+    @QueryRunner() queryRunner: QueryRunnerType,
+  ) {
+    return this.reviewsService.deleteReviewById(id, queryRunner);
   }
 
   // Update a specific review by its ID
   @Put(':id')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
-  updateReviewById(
+  putReviewById(
     @Param('id', ParseIntPipe) id: string,
-    //dto에 type이 있어야함
-    @Body() dto: UpdateReviewDto,
+    @Body() dto: UpdateSpiritReviewDto | UpdateWineReviewDto | UpdateCocktailReviewDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
     return this.reviewsService.updateReviewById(id, dto, queryRunner);
