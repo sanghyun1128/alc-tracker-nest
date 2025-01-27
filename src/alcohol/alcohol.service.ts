@@ -154,14 +154,13 @@ export class AlcoholService {
   }
 
   async updateAlcohol(
-    type: string,
     id: string,
     ownerId: string,
     updateAlcoholDto: UpdateSpiritDto | UpdateWineDto | UpdateCocktailDto,
     queryRunner?: QueryRunner,
   ): Promise<AlcoholModel> {
     const repository = this.commonService.getRepositoryWithQueryRunner(
-      type,
+      updateAlcoholDto.type,
       this.repositoryMap,
       this.modelMap,
       queryRunner,
@@ -175,11 +174,13 @@ export class AlcoholService {
     });
 
     if (!alcohol) {
-      throw new NotFoundException(`${type} with id ${id} not found`);
+      throw new NotFoundException(`${updateAlcoholDto.type} with id ${id} not found`);
     }
 
     if (alcohol.owner.id !== ownerId) {
-      throw new BadRequestException(`You don't have permission to update this ${type}`);
+      throw new BadRequestException(
+        `You don't have permission to update this ${updateAlcoholDto.type}`,
+      );
     }
 
     const { images, ...updateAlcoholDtoWithoutImages } = updateAlcoholDto;

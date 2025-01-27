@@ -13,7 +13,7 @@ import {
 import { QueryRunner as QueryRunnerType } from 'typeorm';
 
 import { AlcoholService } from './alcohol.service';
-import { AlcoholType } from './const/\balcohol-type.const';
+import { AlcoholType } from './const/alcohol-type.const';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { CreateSpiritDto } from './dto/create-spirit.dto';
 import { CreateWineDto } from './dto/create-wine.dto';
@@ -36,6 +36,8 @@ export class AlcoholController {
     private readonly commonService: CommonService,
   ) {}
 
+  //TODO: 자기가 소유한 알콜만 가져와야됨
+  //TODO: 특정 유저의 알콜만 가져오는 API 필요
   // Retrieve a paginated list of alcohols
   @Get('/:type')
   getAllAlcohols(@Param('type') type: AlcoholType, @Query() query: PaginateAlcoholDto) {
@@ -84,18 +86,17 @@ export class AlcoholController {
     return this.alcoholService.deleteAlcoholById(userId, alcoholId);
   }
 
-  // Update a specific spirit, wine, or cocktail by its ID
-  @Put('/:type/:id')
+  // Update a specific alcohol by its ID
+  @Put(':id')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   async updateAlcohol(
-    @Param('type') type: AlcoholType,
     @Param('id') id: string,
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateSpiritDto | UpdateWineDto | UpdateCocktailDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    const alcohol = await this.alcoholService.updateAlcohol(type, id, userId, dto, queryRunner);
+    const alcohol = await this.alcoholService.updateAlcohol(id, userId, dto, queryRunner);
 
     for (const image of dto.images) {
       if (image.isNew) {
