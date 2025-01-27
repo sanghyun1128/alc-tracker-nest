@@ -1,70 +1,70 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { QueryRunner as QueryRunnerType } from 'typeorm';
 
-import { DetailEvaluation } from './entity/review.entity';
 import { ReviewsService } from './reviews.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
+import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
+import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
-  @Get('/spirit')
-  getAllSpritReviews() {
-    return this.reviewsService.getAllSpiritReviews();
+  // Retrieve a paginated list of reviews
+  @Get('/:type')
+  @UseGuards(AccessTokenGuard)
+  getAllReviews(@Param('type') type: string, @Query() query: PaginateReviewDto) {
+    return this.reviewsService.getAllReviews(type, query);
   }
 
-  @Get('/wine')
-  getAllWineReviews() {
-    return this.reviewsService.getAllWineReviews();
+  // Create a new review
+  @Post('/:type')
+  @UseGuards(AccessTokenGuard)
+  @UseInterceptors(TransactionInterceptor)
+  postAlcoholReview(
+    @Param('type') type: string,
+    @User('id') userId: UserModel['id'],
+    @Body() dto: CreateReviewDto,
+    @QueryRunner() queryRunner: QueryRunnerType,
+  ) {
+    return this.reviewsService.createReview(type, userId, dto, queryRunner);
   }
 
-  @Get('/cocktail')
-  getAllCocktailReviews() {
-    return this.reviewsService.getAllCocktailReviews();
-  }
-
+  // Retrieve a specific review by its ID
   @Get(':id')
+  @UseGuards(AccessTokenGuard)
   getReviewById(@Param('id', ParseIntPipe) id: string) {
     return this.reviewsService.getReviewById(id);
   }
 
-  @Post('/spirit')
+  // Delete a specific review by its ID
+  @Delete(':id')
   @UseGuards(AccessTokenGuard)
-  postSpiritReview(
-    @Body('authorId') authorId: string,
-    @Body('rating') rating: number,
-    @Body('comment') comment: string,
-    @Body('pairing') pairing: string,
-    @Body('nose') nose: DetailEvaluation,
-    @Body('palate') palate: DetailEvaluation,
-    @Body('finish') finish: DetailEvaluation,
-    @Body('bottleCondition') bottleCondition: number,
-  ) {}
+  deleteReviewById(@Param('id', ParseIntPipe) id: string) {
+    return this.reviewsService.deleteReviewById(id);
+  }
 
-  @Post('/wine')
+  // Update a specific review by its ID
+  @Put(':id')
   @UseGuards(AccessTokenGuard)
-  postWineReview(
-    @Body('authorId') authorId: string,
-    @Body('rating') rating: number,
-    @Body('comment') comment: string,
-    @Body('pairing') pairing: string,
-    @Body('nose') nose: DetailEvaluation,
-    @Body('palate') palate: DetailEvaluation,
-    @Body('finish') finish: DetailEvaluation,
-    @Body('bottleCondition') bottleCondition: number,
-  ) {}
-
-  @Post('/cocktail')
-  @UseGuards(AccessTokenGuard)
-  postCocktailReview(
-    @Body('authorId') authorId: string,
-    @Body('rating') rating: number,
-    @Body('comment') comment: string,
-    @Body('pairing') pairing: string,
-    @Body('nose') nose: DetailEvaluation,
-    @Body('palate') palate: DetailEvaluation,
-    @Body('finish') finish: DetailEvaluation,
-    @Body('ingredients') ingredients: string,
-    @Body('recipe') recipe: string,
-  ) {}
+  @UseInterceptors(TransactionInterceptor)
+  updateReviewById(
+    @Param('id', ParseIntPipe) id: string,
+    //dto에 type이 있어야함
+    @Body() dto: UpdateReviewDto,
+    @QueryRunner() queryRunner: QueryRunnerType,
+  ) {
+    return this.reviewsService.updateReviewById(id, dto, queryRunner);
+  }
 }
