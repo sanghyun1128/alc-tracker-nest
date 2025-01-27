@@ -1,14 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 
+import { CreateCocktailReviewDto } from './dto/create-cocktail-review.dto';
+import { CreateSpiritReviewDto } from './dto/create-spirit-review.dto';
+import { CreateWineReviewDto } from './dto/create-wine-review.dto';
+import { PaginateReviewDto } from './dto/paginate-review.dto';
+import { UpdateCocktailReviewDto } from './dto/update-cocktail-review.dto';
+import { UpdateSpiritReviewDto } from './dto/update-spirit-review.dto';
+import { UpdateWineReviewDto } from './dto/update-wine-review.dto';
 import {
   ReviewModel,
   CocktailReviewModel,
-  DetailEvaluation,
   SpiritReviewModel,
   WineReviewModel,
 } from './entity/review.entity';
+import { AlcoholType } from 'src/alcohol/const/alcohol-type.const';
 
 @Injectable()
 export class ReviewsService {
@@ -23,17 +30,14 @@ export class ReviewsService {
     private readonly cocktailReviewRepository: Repository<CocktailReviewModel>,
   ) {}
 
-  async getAllSpiritReviews() {
-    return await this.spiritReviewRepository.find();
-  }
+  async getAllReviews(type: AlcoholType, dto: PaginateReviewDto) {}
 
-  async getAllWineReviews() {
-    return await this.wineReviewRepository.find();
-  }
-
-  async getAllCocktailReviews() {
-    return await this.cocktailReviewRepository.find();
-  }
+  async createReview(
+    type: AlcoholType,
+    userId: string,
+    dto: CreateSpiritReviewDto | CreateWineReviewDto | CreateCocktailReviewDto,
+    queryRunner?: QueryRunner,
+  ) {}
 
   async getReviewById(id: string) {
     const review = await this.reviewRepository.findOne({
@@ -49,9 +53,11 @@ export class ReviewsService {
     return review;
   }
 
-  async createSpiritReview() {}
+  async deleteReviewById(id: string, queryRunner?: QueryRunner) {}
 
-  async createWineReview() {}
-
-  async createCocktailReview() {}
+  async updateReviewById(
+    id: string,
+    dto: UpdateSpiritReviewDto | UpdateWineReviewDto | UpdateCocktailReviewDto,
+    queryRunner?: QueryRunner,
+  ) {}
 }
