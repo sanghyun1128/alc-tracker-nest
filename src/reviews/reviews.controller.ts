@@ -21,6 +21,7 @@ import { UpdateCocktailReviewDto } from './dto/update-cocktail-review.dto';
 import { UpdateSpiritReviewDto } from './dto/update-spirit-review.dto';
 import { UpdateWineReviewDto } from './dto/update-wine-review.dto';
 import { ReviewsService } from './reviews.service';
+import { AlcoholType } from 'src/alcohol/const/alcohol-type.const';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
@@ -34,7 +35,7 @@ export class ReviewsController {
   // Retrieve a paginated list of reviews
   @Get('/:type')
   @UseGuards(AccessTokenGuard)
-  getAllReviews(@Param('type') type: string, @Query() query: PaginateReviewDto) {
+  getAllReviews(@Param('type') type: AlcoholType, @Query() query: PaginateReviewDto) {
     return this.reviewsService.getAllReviews(type, query);
   }
 
@@ -43,7 +44,7 @@ export class ReviewsController {
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   postAlcoholReview(
-    @Param('type') type: string,
+    @Param('type') type: AlcoholType,
     @User('id') userId: UserModel['id'],
     @Body() dto: CreateSpiritReviewDto | CreateWineReviewDto | CreateCocktailReviewDto,
     @QueryRunner() queryRunner: QueryRunnerType,
