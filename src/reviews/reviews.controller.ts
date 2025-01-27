@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -55,7 +54,7 @@ export class ReviewsController {
   // Retrieve a specific review by its ID
   @Get(':id')
   @UseGuards(AccessTokenGuard)
-  getReviewById(@Param('id', ParseIntPipe) id: string) {
+  getReviewById(@Param('id') id: string) {
     return this.reviewsService.getReviewById(id);
   }
 
@@ -63,10 +62,7 @@ export class ReviewsController {
   @Delete(':id')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
-  deleteReviewById(
-    @Param('id', ParseIntPipe) id: string,
-    @QueryRunner() queryRunner: QueryRunnerType,
-  ) {
+  deleteReviewById(@Param('id') id: string, @QueryRunner() queryRunner: QueryRunnerType) {
     return this.reviewsService.deleteReviewById(id, queryRunner);
   }
 
@@ -75,7 +71,7 @@ export class ReviewsController {
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   putReviewById(
-    @Param('id', ParseIntPipe) id: string,
+    @Param('id') id: string,
     @Body() dto: UpdateSpiritReviewDto | UpdateWineReviewDto | UpdateCocktailReviewDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
