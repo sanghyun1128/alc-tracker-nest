@@ -53,7 +53,6 @@ export class ReviewsController {
 
   // Retrieve a specific review by its ID
   @Get(':id')
-  @UseGuards(AccessTokenGuard)
   getReviewById(@Param('id') id: string) {
     return this.reviewsService.getReviewById(id);
   }
@@ -62,8 +61,12 @@ export class ReviewsController {
   @Delete(':id')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
-  deleteReviewById(@Param('id') id: string, @QueryRunner() queryRunner: QueryRunnerType) {
-    return this.reviewsService.deleteReviewById(id, queryRunner);
+  deleteReviewById(
+    @Param('id') id: string,
+    @User('id') userId: UserModel['id'],
+    @QueryRunner() queryRunner: QueryRunnerType,
+  ) {
+    return this.reviewsService.deleteReviewById(id, userId, queryRunner);
   }
 
   // Update a specific review by its ID
@@ -72,9 +75,10 @@ export class ReviewsController {
   @UseInterceptors(TransactionInterceptor)
   putReviewById(
     @Param('id') id: string,
+    @User('id') userId: UserModel['id'],
     @Body() dto: UpdateSpiritReviewDto | UpdateWineReviewDto | UpdateCocktailReviewDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    return this.reviewsService.updateReviewById(id, dto, queryRunner);
+    return this.reviewsService.updateReviewById(id, dto, userId, queryRunner);
   }
 }
