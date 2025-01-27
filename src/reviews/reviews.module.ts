@@ -10,6 +10,7 @@ import {
 import { ReviewsController } from './reviews.controller';
 import { ReviewsService } from './reviews.service';
 import { AuthModule } from 'src/auth/auth.module';
+import { CommonModule } from 'src/common/common.module';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
@@ -22,6 +23,7 @@ import { UsersModule } from 'src/users/users.module';
     ]),
     AuthModule,
     UsersModule,
+    CommonModule,
   ],
   controllers: [ReviewsController],
   providers: [ReviewsService],
