@@ -128,7 +128,7 @@ export class AlcoholService {
     }
 
     for (const image of alcohol.images) {
-      await this.commonService.deleteAlcoholImageById(image.id, queryRunner);
+      await this.commonService.deleteImageById(image.id, queryRunner);
     }
 
     return await repository.delete(id);

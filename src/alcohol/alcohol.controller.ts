@@ -112,7 +112,7 @@ export class AlcoholController {
         );
 
         if (alcoholImage) {
-          await this.commonService.updateAlcoholImage(
+          await this.commonService.updateImage(
             alcoholImage.id,
             {
               order: image.order,
