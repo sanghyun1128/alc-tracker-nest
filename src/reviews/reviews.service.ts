@@ -135,7 +135,7 @@ export class ReviewsService {
     }
 
     for (const image of review.images) {
-      await this.commonService.deleteAlcoholImageById(image.id, queryRunner);
+      await this.commonService.deleteImageById(image.id, queryRunner);
     }
 
     return await repository.delete(id);
