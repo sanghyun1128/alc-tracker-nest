@@ -17,7 +17,13 @@ import {
 
 import { HOST, PROTOCOL } from './const/env-keys.const';
 import { FILTER_MAPPER } from './const/filter-mapper.const';
-import { TEMP_FOLDER_PATH, ALCOHOLS_IMAGES_FOLDER_PATH } from './const/path.const';
+import { ImageModelEnum } from './const/image-model.const';
+import {
+  TEMP_FOLDER_PATH,
+  ALCOHOLS_IMAGES_FOLDER_PATH,
+  REVIEWS_IMAGES_FOLDER_PATH,
+  USERS_IMAGES_FOLDER_PATH,
+} from './const/path.const';
 import { BasePaginationDto } from './dto/base-pagination.dto';
 import { CreateImageDto } from './dto/create-image';
 import { UpdateImageDto } from './dto/update-image';
@@ -220,8 +226,7 @@ export class CommonService {
     return model;
   }
 
-  //TODO: Alcohol 말고 다른 entity에도 적용할 수 있도록 수정
-  async createAlcoholImage(dto: CreateImageDto, queryRunner?: QueryRunner): Promise<ImageModel> {
+  async createImage(dto: CreateImageDto, queryRunner?: QueryRunner): Promise<ImageModel> {
     const repository = this.getRepositoryWithQueryRunner(
       'image',
       this.repositoryMap,
@@ -237,14 +242,32 @@ export class CommonService {
       throw new BadRequestException('Image not found');
     }
 
-    const newPath = join(ALCOHOLS_IMAGES_FOLDER_PATH, dto.path);
+    const type = dto.alcoholId
+      ? ImageModelEnum.ALCOHOL_IMAGE
+      : dto.reviewId
+        ? ImageModelEnum.REVIEW_IMAGE
+        : ImageModelEnum.USER_IMAGE;
 
-    const { alcoholId, ...dtoWithoutAlcoholId } = dto;
+    const newPath =
+      type === ImageModelEnum.ALCOHOL_IMAGE
+        ? join(ALCOHOLS_IMAGES_FOLDER_PATH, dto.path)
+        : type === ImageModelEnum.REVIEW_IMAGE
+          ? join(REVIEWS_IMAGES_FOLDER_PATH, dto.path)
+          : join(USERS_IMAGES_FOLDER_PATH, dto.path);
+
+    const { alcoholId, reviewId, userId, ...dtoWithoutId } = dto;
 
     const image = repository.create({
-      ...dtoWithoutAlcoholId,
+      ...dtoWithoutId,
+      type,
       alcohol: {
         id: alcoholId,
+      },
+      review: {
+        id: reviewId,
+      },
+      user: {
+        id: userId,
       },
     });
 
