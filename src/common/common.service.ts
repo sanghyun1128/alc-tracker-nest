@@ -239,8 +239,13 @@ export class CommonService {
 
     const newPath = join(ALCOHOLS_IMAGES_FOLDER_PATH, dto.path);
 
+    const { alcoholId, ...dtoWithoutAlcoholId } = dto;
+
     const image = repository.create({
-      ...dto,
+      ...dtoWithoutAlcoholId,
+      alcohol: {
+        id: alcoholId,
+      },
     });
 
     const result = await repository.save(image);

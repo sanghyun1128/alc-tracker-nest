@@ -60,7 +60,7 @@ export class AlcoholController {
       image.isNew &&
         (await this.commonService.createAlcoholImage(
           {
-            alcohol,
+            alcoholId: alcohol.id,
             order: image.order,
             path: image.path,
             type: ImageModelEnum.ALCOHOL_IMAGE,
@@ -102,7 +102,7 @@ export class AlcoholController {
       if (image.isNew) {
         await this.commonService.createAlcoholImage(
           {
-            alcohol,
+            alcoholId: alcohol.id,
             order: image.order,
             path: image.path,
             type: ImageModelEnum.ALCOHOL_IMAGE,

@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 import { join } from 'path';
-import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 
 import { BaseModel } from './base.entity';
 import { ImageModelEnum } from '../const/image-model.const';
@@ -54,11 +54,14 @@ export class ImageModel extends BaseModel {
   path: string;
 
   @ManyToOne(() => ReviewModel, (review) => review.images)
+  @JoinColumn({ name: 'reviewId' })
   review?: ReviewModel;
 
   @ManyToOne(() => AlcoholModel, (alcohol) => alcohol.images)
+  @JoinColumn({ name: 'alcoholId' })
   alcohol?: AlcoholModel;
 
   @OneToOne(() => UserModel, (user) => user.profileImage)
+  @JoinColumn({ name: 'userId' })
   user?: UserModel;
 }
