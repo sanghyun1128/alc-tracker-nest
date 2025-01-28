@@ -227,13 +227,6 @@ export class CommonService {
   }
 
   async createImage(dto: CreateImageDto, queryRunner?: QueryRunner): Promise<ImageModel> {
-    const repository = this.getRepositoryWithQueryRunner(
-      'image',
-      this.repositoryMap,
-      this.modelMap,
-      queryRunner,
-    ) as Repository<ImageModel>;
-
     const tempImagePath = join(TEMP_FOLDER_PATH, dto.path);
 
     try {
@@ -258,6 +251,13 @@ export class CommonService {
           : USERS_IMAGES_FOLDER_PATH;
 
     const newPath = join(basePath, dto.path);
+
+    const repository = this.getRepositoryWithQueryRunner(
+      'image',
+      this.repositoryMap,
+      this.modelMap,
+      queryRunner,
+    ) as Repository<ImageModel>;
 
     const image = repository.create({
       ...dtoWithoutId,
@@ -292,13 +292,7 @@ export class CommonService {
       queryRunner,
     ) as Repository<ImageModel>;
 
-    const image = await repository.findOne({
-      where: { id: imageId },
-    });
-
-    if (!image) {
-      throw new NotFoundException(`Image with id ${imageId} not found`);
-    }
+    const image = await this.findImageModel(imageId);
 
     const result = await repository.save({
       ...image,
@@ -316,13 +310,7 @@ export class CommonService {
       queryRunner,
     ) as Repository<ImageModel>;
 
-    const image = await repository.findOne({
-      where: { id: imageId },
-    });
-
-    if (!image) {
-      throw new NotFoundException(`Image with id ${imageId} not found`);
-    }
+    const image = await this.findImageModel(imageId);
 
     const imagePath = join(ALCOHOLS_IMAGES_FOLDER_PATH, image.path);
 
@@ -333,5 +321,17 @@ export class CommonService {
     } catch (e) {
       throw new InternalServerErrorException('Failed to delete image file');
     }
+  }
+
+  async findImageModel(imageId: string): Promise<ImageModel> {
+    const image = await this.imageRepository.findOne({
+      where: { id: imageId },
+    });
+
+    if (!image) {
+      throw new NotFoundException(`Image with id ${imageId} not found`);
+    }
+
+    return image;
   }
 }
