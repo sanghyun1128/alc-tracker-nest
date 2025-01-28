@@ -23,7 +23,6 @@ import { UpdateSpiritDto } from './dto/update-spirit.dto';
 import { UpdateWineDto } from './dto/update-wine.dto';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { CommonService } from 'src/common/common.service';
-import { ImageModelEnum } from 'src/common/const/image-model.const';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { User } from 'src/users/decorator/user.decorator';
@@ -58,12 +57,11 @@ export class AlcoholController {
 
     for (const image of dto.images) {
       image.isNew &&
-        (await this.commonService.createAlcoholImage(
+        (await this.commonService.createImage(
           {
             alcoholId: alcohol.id,
             order: image.order,
             path: image.path,
-            type: ImageModelEnum.ALCOHOL_IMAGE,
           },
           queryRunner,
         ));
@@ -100,12 +98,11 @@ export class AlcoholController {
 
     for (const image of dto.images) {
       if (image.isNew) {
-        await this.commonService.createAlcoholImage(
+        await this.commonService.createImage(
           {
             alcoholId: alcohol.id,
             order: image.order,
             path: image.path,
-            type: ImageModelEnum.ALCOHOL_IMAGE,
           },
           queryRunner,
         );
