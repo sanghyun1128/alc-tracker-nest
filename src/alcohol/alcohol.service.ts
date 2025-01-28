@@ -78,8 +78,15 @@ export class AlcoholService {
     );
   }
 
-  async getAlcoholById(id: string): Promise<AlcoholModel> {
-    const alcohol = await this.alcoholRepository.findOne({
+  async getAlcoholById(id: string, queryRunner?: QueryRunner): Promise<AlcoholModel> {
+    const repository = this.commonService.getRepositoryWithQueryRunner(
+      'alcohol',
+      this.repositoryMap,
+      this.modelMap,
+      queryRunner,
+    ) as Repository<AlcoholModel>;
+
+    const alcohol = await repository.findOne({
       where: {
         id,
       },
