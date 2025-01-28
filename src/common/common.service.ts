@@ -19,8 +19,8 @@ import { HOST, PROTOCOL } from './const/env-keys.const';
 import { FILTER_MAPPER } from './const/filter-mapper.const';
 import { TEMP_FOLDER_PATH, ALCOHOLS_IMAGES_FOLDER_PATH } from './const/path.const';
 import { BasePaginationDto } from './dto/base-pagination.dto';
-import { CreateAlcoholImageDto } from './dto/create-alcohol-image';
-import { UpdateAlcoholImageDto } from './dto/update-alcohol-image';
+import { CreateImageDto } from './dto/create-image';
+import { UpdateImageDto } from './dto/update-image';
 import { BaseModel } from './entity/base.entity';
 import { ImageModel } from './entity/image.entity';
 
@@ -221,10 +221,7 @@ export class CommonService {
   }
 
   //TODO: Alcohol 말고 다른 entity에도 적용할 수 있도록 수정
-  async createAlcoholImage(
-    dto: CreateAlcoholImageDto,
-    queryRunner?: QueryRunner,
-  ): Promise<ImageModel> {
+  async createAlcoholImage(dto: CreateImageDto, queryRunner?: QueryRunner): Promise<ImageModel> {
     const repository = this.getRepositoryWithQueryRunner(
       'image',
       this.repositoryMap,
@@ -255,7 +252,7 @@ export class CommonService {
 
   async updateAlcoholImage(
     imageId: string,
-    dto: UpdateAlcoholImageDto,
+    dto: UpdateImageDto,
     queryRunner?: QueryRunner,
   ): Promise<ImageModel> {
     const repository = this.getRepositoryWithQueryRunner(
