@@ -91,7 +91,7 @@ export class AlcoholModel extends BaseModel {
   @OneToMany(() => ImageModel, (image) => image.alcohol)
   images: ImageModel[];
 
-  @OneToMany(() => ReviewModel, (review) => review.alcohols)
+  @OneToMany(() => ReviewModel, (review) => review.alcohol)
   reviews: ReviewModel[];
 }
 
