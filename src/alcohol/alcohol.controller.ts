@@ -57,7 +57,7 @@ export class AlcoholController {
     const alcohol = await this.alcoholService.createAlcohol(type, userId, dto, queryRunner);
 
     for (const image of dto.images) {
-      image.isNew ??
+      image.isNew &&
         (await this.commonService.createAlcoholImage(
           {
             alcohol,
@@ -69,7 +69,7 @@ export class AlcoholController {
         ));
     }
 
-    return await this.alcoholService.getAlcoholById(alcohol.id);
+    return await this.alcoholService.getAlcoholById(alcohol.id, queryRunner);
   }
 
   // Retrieve a specific alcohol by its ID
