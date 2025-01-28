@@ -242,20 +242,22 @@ export class CommonService {
       throw new BadRequestException('Image not found');
     }
 
-    const type = dto.alcoholId
+    const { alcoholId, reviewId, userId, ...dtoWithoutId } = dto;
+
+    const type = alcoholId
       ? ImageModelEnum.ALCOHOL_IMAGE
-      : dto.reviewId
+      : reviewId
         ? ImageModelEnum.REVIEW_IMAGE
         : ImageModelEnum.USER_IMAGE;
 
-    const newPath =
+    const basePath =
       type === ImageModelEnum.ALCOHOL_IMAGE
-        ? join(ALCOHOLS_IMAGES_FOLDER_PATH, dto.path)
+        ? ALCOHOLS_IMAGES_FOLDER_PATH
         : type === ImageModelEnum.REVIEW_IMAGE
-          ? join(REVIEWS_IMAGES_FOLDER_PATH, dto.path)
-          : join(USERS_IMAGES_FOLDER_PATH, dto.path);
+          ? REVIEWS_IMAGES_FOLDER_PATH
+          : USERS_IMAGES_FOLDER_PATH;
 
-    const { alcoholId, reviewId, userId, ...dtoWithoutId } = dto;
+    const newPath = join(basePath, dto.path);
 
     const image = repository.create({
       ...dtoWithoutId,
@@ -278,7 +280,7 @@ export class CommonService {
     return result;
   }
 
-  async updateAlcoholImage(
+  async updateImage(
     imageId: string,
     dto: UpdateImageDto,
     queryRunner?: QueryRunner,
@@ -306,7 +308,7 @@ export class CommonService {
     return result;
   }
 
-  async deleteAlcoholImageById(imageId: string, queryRunner?: QueryRunner): Promise<void> {
+  async deleteImageById(imageId: string, queryRunner?: QueryRunner): Promise<void> {
     const repository = this.getRepositoryWithQueryRunner(
       'image',
       this.repositoryMap,
