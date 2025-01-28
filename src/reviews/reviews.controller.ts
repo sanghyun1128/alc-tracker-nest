@@ -79,6 +79,6 @@ export class ReviewsController {
     @Body() dto: UpdateSpiritReviewDto | UpdateWineReviewDto | UpdateCocktailReviewDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    return this.reviewsService.updateReviewById(id, dto, userId, queryRunner);
+    return this.reviewsService.updateReviewById(id, userId, dto, queryRunner);
   }
 }
