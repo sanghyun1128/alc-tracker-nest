@@ -25,6 +25,7 @@ import {
 } from 'src/alcohol/entity/alcohol.entity';
 import { CommonService } from 'src/common/common.service';
 import { BaseModel } from 'src/common/entity/base.entity';
+import { NotFoundErrorMessage, PermissionErrorMessage } from 'src/common/error-message';
 
 @Injectable()
 export class AlcoholService {
@@ -94,7 +95,7 @@ export class AlcoholService {
     });
 
     if (!alcohol) {
-      throw new NotFoundException(`Alcohol with id ${id} not found`);
+      throw new NotFoundException(NotFoundErrorMessage('alcohol'));
     }
 
     return alcohol;
@@ -120,11 +121,11 @@ export class AlcoholService {
     });
 
     if (!alcohol) {
-      throw new NotFoundException(`Alcohol with id ${id} not found`);
+      throw new NotFoundException(NotFoundErrorMessage('alcohol'));
     }
 
     if (alcohol.owner.id !== userId) {
-      throw new BadRequestException(`You don't have permission to delete this alcohol`);
+      throw new BadRequestException(PermissionErrorMessage('alcohol', 'delete'));
     }
 
     for (const image of alcohol.images) {
@@ -181,11 +182,11 @@ export class AlcoholService {
     });
 
     if (!alcohol) {
-      throw new NotFoundException(`${dto.type} with id ${id} not found`);
+      throw new NotFoundException(NotFoundErrorMessage(dto.type));
     }
 
     if (alcohol.owner.id !== userId) {
-      throw new BadRequestException(`You don't have permission to update this ${dto.type}`);
+      throw new BadRequestException(PermissionErrorMessage(dto.type, 'update'));
     }
 
     const { images, ...dtoWithoutImages } = dto;

@@ -29,6 +29,7 @@ import { CreateImageDto } from './dto/create-image';
 import { UpdateImageDto } from './dto/update-image';
 import { BaseModel } from './entity/base.entity';
 import { ImageModel } from './entity/image.entity';
+import { NotFoundErrorMessage, ServerErrorMessage } from './error-message';
 
 @Injectable()
 export class CommonService {
@@ -210,7 +211,7 @@ export class CommonService {
   ): Repository<T> {
     const repository = repositoryMap[type];
     if (!repository) {
-      throw new InternalServerErrorException('Invalid type');
+      throw new InternalServerErrorException(ServerErrorMessage('selecting repository'));
     }
     return repository;
   }
@@ -221,7 +222,7 @@ export class CommonService {
   ): typeof BaseModel {
     const model = modelMap[type];
     if (!model) {
-      throw new InternalServerErrorException('Invalid type');
+      throw new InternalServerErrorException(ServerErrorMessage('selecting model'));
     }
     return model;
   }
@@ -232,7 +233,7 @@ export class CommonService {
     try {
       await promises.access(tempImagePath);
     } catch (e) {
-      throw new BadRequestException('Image not found');
+      throw new BadRequestException(NotFoundErrorMessage('image'));
     }
 
     const { alcoholId, reviewId, userId, ...dtoWithoutId } = dto;
@@ -319,7 +320,7 @@ export class CommonService {
     try {
       await promises.unlink(imagePath);
     } catch (e) {
-      throw new InternalServerErrorException('Failed to delete image file');
+      throw new InternalServerErrorException(ServerErrorMessage('deleting image'));
     }
   }
 
@@ -329,7 +330,7 @@ export class CommonService {
     });
 
     if (!image) {
-      throw new NotFoundException(`Image with id ${imageId} not found`);
+      throw new NotFoundException(NotFoundErrorMessage('image'));
     }
 
     return image;

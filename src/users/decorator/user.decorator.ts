@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 
 import { UserModel } from '../entity/user.entity';
+import { DecoratorErrorMessage } from 'src/common/error-message';
 
 /**
  * User decorator is used to get user information from the request object.
@@ -17,7 +18,7 @@ export const User = createParamDecorator(
     const user = request.user as UserModel;
 
     if (!user) {
-      throw new InternalServerErrorException('User decorator must use with AccessTokenGuard');
+      throw new InternalServerErrorException(DecoratorErrorMessage('User', 'AccessTokenGuard'));
     }
 
     if (data) {

@@ -18,6 +18,7 @@ import {
 import { AlcoholType } from 'src/alcohol/const/alcohol-type.const';
 import { CommonService } from 'src/common/common.service';
 import { BaseModel } from 'src/common/entity/base.entity';
+import { NotFoundErrorMessage, PermissionErrorMessage } from 'src/common/error-message';
 
 @Injectable()
 export class ReviewsService {
@@ -105,7 +106,7 @@ export class ReviewsService {
     });
 
     if (!review) {
-      throw new NotFoundException(`Review with id ${id} not found`);
+      throw new NotFoundException(NotFoundErrorMessage('review'));
     }
 
     return review;
@@ -127,11 +128,11 @@ export class ReviewsService {
     });
 
     if (!review) {
-      throw new NotFoundException(`Alcohol with id ${id} not found`);
+      throw new NotFoundException(NotFoundErrorMessage('review'));
     }
 
     if (review.author.id !== userId) {
-      throw new BadRequestException(`You don't have permission to delete this alcohol`);
+      throw new BadRequestException(PermissionErrorMessage('review', 'delete'));
     }
 
     for (const image of review.images) {
@@ -162,11 +163,11 @@ export class ReviewsService {
     });
 
     if (!review) {
-      throw new NotFoundException(`${dto.type} with id ${id} not found`);
+      throw new NotFoundException(NotFoundErrorMessage(dto.type));
     }
 
     if (review.author.id !== userId) {
-      throw new BadRequestException(`You don't have permission to update this ${dto.type}`);
+      throw new BadRequestException(PermissionErrorMessage(dto.type, 'update'));
     }
 
     const { images, ...dtoWithOutImages } = dto;

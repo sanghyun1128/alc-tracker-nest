@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { UserModel } from './entity/user.entity';
+import { ExistErrorMessage } from 'src/common/error-message';
 
 @Injectable()
 export class UsersService {
@@ -17,7 +18,7 @@ export class UsersService {
     });
 
     if (nicknameExists) {
-      throw new BadRequestException('Nickname already exists');
+      throw new BadRequestException(ExistErrorMessage('nickname'));
     }
 
     const emailExists = await this.usersRepository.findOne({
@@ -25,7 +26,7 @@ export class UsersService {
     });
 
     if (emailExists) {
-      throw new BadRequestException('Email already exists');
+      throw new BadRequestException(ExistErrorMessage('email'));
     }
 
     const newUser = this.usersRepository.create({

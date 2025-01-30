@@ -10,6 +10,7 @@ import {
   ENV_JWT_REFRESH_TOKEN_EXPIRATION,
   ENV_JWT_SECRET_KEY,
 } from 'src/common/const/env-keys.const';
+import { UnauthorizedErrorMessage } from 'src/common/error-message';
 import { UserModel } from 'src/users/entity/user.entity';
 import { UsersService } from 'src/users/users.service';
 
@@ -59,13 +60,13 @@ export class AuthService {
     const existingUser = await this.usersService.getUserByEmail(user.email);
 
     if (!existingUser) {
-      throw new UnauthorizedException('Not existing user');
+      throw new UnauthorizedException(UnauthorizedErrorMessage.EmailOrPasswordIsIncorrect);
     }
 
     const isPasswordMatched = await bcrypt.compare(user.password, existingUser.password);
 
     if (!isPasswordMatched) {
-      throw new UnauthorizedException('Password is not matched');
+      throw new UnauthorizedException(UnauthorizedErrorMessage.EmailOrPasswordIsIncorrect);
     }
 
     return existingUser;
@@ -98,7 +99,7 @@ export class AuthService {
     const prefix = isBearer ? 'Bearer' : 'Basic';
 
     if (splittedHeader.length !== 2 || splittedHeader[0] !== prefix) {
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidToken);
     }
 
     const token = splittedHeader[1];
@@ -111,7 +112,7 @@ export class AuthService {
     const splittedToken = decodedToken.split(':');
 
     if (splittedToken.length !== 2) {
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidToken);
     }
 
     const [email, password] = splittedToken;
@@ -133,7 +134,7 @@ export class AuthService {
     const decodedToken = this.verifyToken(token);
 
     if (decodedToken.type !== 'refresh') {
-      throw new UnauthorizedException('Refresh token needed');
+      throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidToken);
     }
 
     return this.signToken(
@@ -151,7 +152,7 @@ export class AuthService {
         secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
       });
     } catch (error) {
-      throw new UnauthorizedException('Expired or invalid token');
+      throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidToken);
     }
   }
 }

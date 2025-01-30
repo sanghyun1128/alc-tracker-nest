@@ -1,6 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { AuthService } from '../auth.service';
+import { UnauthorizedErrorMessage } from 'src/common/error-message';
 
 @Injectable()
 export class BasicTokenGuard implements CanActivate {
@@ -13,7 +14,7 @@ export class BasicTokenGuard implements CanActivate {
     const rawToken = request.headers.authorization;
 
     if (!rawToken) {
-      throw new UnauthorizedException('Token is required');
+      throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidToken);
     }
 
     const token = this.authService.extractTokenFromHeader(rawToken, false);
