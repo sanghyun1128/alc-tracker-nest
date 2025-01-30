@@ -292,7 +292,7 @@ export class CommonService {
       queryRunner,
     ) as Repository<ImageModel>;
 
-    const image = await this.findImageModel(imageId);
+    const image = await this.findImageModel(imageId, repository);
 
     const result = await repository.save({
       ...image,
@@ -310,7 +310,7 @@ export class CommonService {
       queryRunner,
     ) as Repository<ImageModel>;
 
-    const image = await this.findImageModel(imageId);
+    const image = await this.findImageModel(imageId, repository);
 
     const imagePath = join(ALCOHOLS_IMAGES_FOLDER_PATH, image.path);
 
@@ -323,8 +323,8 @@ export class CommonService {
     }
   }
 
-  async findImageModel(imageId: string): Promise<ImageModel> {
-    const image = await this.imageRepository.findOne({
+  async findImageModel(imageId: string, repository: Repository<ImageModel>): Promise<ImageModel> {
+    const image = await repository.findOne({
       where: { id: imageId },
     });
 
