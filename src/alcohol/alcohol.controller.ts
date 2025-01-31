@@ -71,21 +71,21 @@ export class AlcoholController {
   }
 
   // Retrieve a specific alcohol by its ID
-  @Get(':alcoholId')
+  @Get('/:alcoholId')
   @UseGuards(AccessTokenGuard)
   getAlcoholById(@Param('alcoholId') alcoholId: string) {
     return this.alcoholService.getAlcoholById(alcoholId);
   }
 
   // Delete a specific alcohol by its ID
-  @Delete(':alcoholId')
+  @Delete('/:alcoholId')
   @UseGuards(AccessTokenGuard)
   deleteAlcoholById(@Param('alcoholId') alcoholId: string, @User('id') userId: UserModel['id']) {
     return this.alcoholService.deleteAlcoholById(alcoholId, userId);
   }
 
   // Update a specific alcohol by its ID
-  @Put(':alcoholId')
+  @Put('/:alcoholId')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   async updateAlcohol(
