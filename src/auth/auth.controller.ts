@@ -9,7 +9,7 @@ import { RefreshTokenGuard } from './guard/bearer-token.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('login/email')
+  @Post('/login/email')
   @UseGuards(BasicTokenGuard)
   postLoginWithEmail(@Headers('authorization') rawToken: string) {
     const token = this.authService.extractTokenFromHeader(rawToken, false);
@@ -19,12 +19,12 @@ export class AuthController {
     return this.authService.loginWithEmail(decodedToken);
   }
 
-  @Post('register/email')
+  @Post('/register/email')
   postRegisterWithEmail(@Body() dto: RegisterUserDto) {
     return this.authService.registerWithEmail(dto);
   }
 
-  @Post('token/access')
+  @Post('/token/access')
   @UseGuards(RefreshTokenGuard)
   postTokenAccess(@Headers('authorization') rawToken: string) {
     const token = this.authService.extractTokenFromHeader(rawToken, true);
@@ -36,7 +36,7 @@ export class AuthController {
     };
   }
 
-  @Post('token/refresh')
+  @Post('/token/refresh')
   @UseGuards(RefreshTokenGuard)
   postTokenRefresh(@Headers('authorization') rawToken: string) {
     const token = this.authService.extractTokenFromHeader(rawToken, true);

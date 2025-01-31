@@ -8,7 +8,7 @@ import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 export class CommonController {
   constructor(private readonly commonService: CommonService) {}
 
-  @Post('image')
+  @Post('/image')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(FileInterceptor('image'))
   postImage(@UploadedFile() image: Express.Multer.File) {
