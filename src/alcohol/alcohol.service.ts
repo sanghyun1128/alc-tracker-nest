@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, QueryRunner, Repository } from 'typeorm';
 
+import { AlcoholType } from './const/alcohol-type.const';
 import { CocktailCategoryEnum } from './const/cocktail.const';
 import { CaskEnum, SpiritCategoryEnum } from './const/spirit.const';
 import {
@@ -57,7 +58,7 @@ export class AlcoholService {
   };
 
   async getAllAlcohols(
-    type: string,
+    type: AlcoholType,
     dto: PaginateAlcoholDto,
   ): Promise<
     | { data: BaseModel[]; total: number }
@@ -79,7 +80,7 @@ export class AlcoholService {
     );
   }
 
-  async getAlcoholById(id: string, queryRunner?: QueryRunner): Promise<AlcoholModel> {
+  async getAlcoholById(alcoholId: string, queryRunner?: QueryRunner): Promise<AlcoholModel> {
     const repository = this.commonService.getRepositoryWithQueryRunner(
       'alcohol',
       this.repositoryMap,
@@ -89,7 +90,7 @@ export class AlcoholService {
 
     const alcohol = await repository.findOne({
       where: {
-        id,
+        id: alcoholId,
       },
       relations: ['owner', 'images'],
     });
@@ -102,8 +103,8 @@ export class AlcoholService {
   }
 
   async deleteAlcoholById(
+    alcoholId: string,
     userId: string,
-    id: string,
     queryRunner?: QueryRunner,
   ): Promise<DeleteResult> {
     const repository = this.commonService.getRepositoryWithQueryRunner(
@@ -115,7 +116,7 @@ export class AlcoholService {
 
     const alcohol = await repository.findOne({
       where: {
-        id,
+        id: alcoholId,
       },
       relations: ['owner', 'images'],
     });
@@ -132,11 +133,11 @@ export class AlcoholService {
       await this.commonService.deleteImageById(image.id, queryRunner);
     }
 
-    return await repository.delete(id);
+    return await repository.delete(alcoholId);
   }
 
   async createAlcohol(
-    type: string,
+    type: AlcoholType,
     userId: string,
     dto: CreateSpiritDto | CreateWineDto | CreateCocktailDto,
     queryRunner?: QueryRunner,
@@ -162,7 +163,7 @@ export class AlcoholService {
   }
 
   async updateAlcohol(
-    id: string,
+    alcoholId: string,
     userId: string,
     dto: UpdateSpiritDto | UpdateWineDto | UpdateCocktailDto,
     queryRunner?: QueryRunner,
@@ -176,7 +177,7 @@ export class AlcoholService {
 
     const alcohol = await repository.findOne({
       where: {
-        id,
+        id: alcoholId,
       },
       relations: ['owner', 'images'],
     });
@@ -206,7 +207,7 @@ export class AlcoholService {
     for (let i = 0; i < 100; i++) {
       purchaseDate.setDate(purchaseDate.getDate() - 1);
 
-      await this.createAlcohol('spirit', userId, {
+      await this.createAlcohol(AlcoholType.SPIRIT, userId, {
         name: `Test Spirit ${i}`,
         category: SpiritCategoryEnum[i % 17],
         cask: CaskEnum[i % 9],
@@ -218,7 +219,7 @@ export class AlcoholService {
         images: [],
       });
 
-      await this.createAlcohol('wine', userId, {
+      await this.createAlcohol(AlcoholType.WINE, userId, {
         name: `Test Wine ${i}`,
         category: WineCategoryEnum[i % 5],
         region: WineRegionEnum[i % 5],
@@ -233,7 +234,7 @@ export class AlcoholService {
         images: [],
       });
 
-      await this.createAlcohol('cocktail', userId, {
+      await this.createAlcohol(AlcoholType.COCKTAIL, userId, {
         name: `Test Cocktail ${i}`,
         category: CocktailCategoryEnum[i % 5],
         images: [],

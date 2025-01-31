@@ -71,30 +71,30 @@ export class AlcoholController {
   }
 
   // Retrieve a specific alcohol by its ID
-  @Get(':id')
+  @Get(':alcoholId')
   @UseGuards(AccessTokenGuard)
-  getAlcoholById(@Param('id') id: string) {
-    return this.alcoholService.getAlcoholById(id);
+  getAlcoholById(@Param('alcoholId') alcoholId: string) {
+    return this.alcoholService.getAlcoholById(alcoholId);
   }
 
   // Delete a specific alcohol by its ID
-  @Delete(':id')
+  @Delete(':alcoholId')
   @UseGuards(AccessTokenGuard)
-  deleteAlcoholById(@User('id') userId: UserModel['id'], @Param('id') alcoholId: string) {
-    return this.alcoholService.deleteAlcoholById(userId, alcoholId);
+  deleteAlcoholById(@Param('alcoholId') alcoholId: string, @User('id') userId: UserModel['id']) {
+    return this.alcoholService.deleteAlcoholById(alcoholId, userId);
   }
 
   // Update a specific alcohol by its ID
-  @Put(':id')
+  @Put(':alcoholId')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   async updateAlcohol(
-    @Param('id') id: string,
+    @Param('alcoholId') alcoholId: string,
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateSpiritDto | UpdateWineDto | UpdateCocktailDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    const alcohol = await this.alcoholService.updateAlcohol(id, userId, dto, queryRunner);
+    const alcohol = await this.alcoholService.updateAlcohol(alcoholId, userId, dto, queryRunner);
 
     for (const image of dto.images) {
       if (image.isNew) {
