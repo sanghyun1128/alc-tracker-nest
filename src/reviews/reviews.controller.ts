@@ -31,15 +31,23 @@ import { UserModel } from 'src/users/entity/user.entity';
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
+  //TODO: 삭제예정
   // Retrieve a paginated list of reviews
-  @Get('/:type')
+  @Get(':type')
   @UseGuards(AccessTokenGuard)
   getAllReviews(@Param('type') type: AlcoholType, @Query() query: PaginateReviewDto) {
     return this.reviewsService.getAllReviews(type, query);
   }
 
+  // Retrieve a paginated list of reviews by a specific alcohol ID
+  @Get(':alcoholId')
+  @UseGuards(AccessTokenGuard)
+  getReviewsByAlcoholId(@Param('alcoholId') alcoholId: string, @Query() query: PaginateReviewDto) {
+    return this.reviewsService.getReviewsByAlcoholId(alcoholId, query);
+  }
+
   // Create a new review
-  @Post('/:type')
+  @Post(':type')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   postAlcoholReview(
