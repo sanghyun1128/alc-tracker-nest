@@ -68,7 +68,36 @@ export class ReviewsService {
       {
         relations: ['author', 'images', 'alcohol'],
       },
-      `review/${type}`,
+      `reviews/${type}`,
+    );
+  }
+
+  async getReviewsByAlcoholId(
+    type: AlcoholType,
+    alcoholId: string,
+    dto: PaginateReviewDto,
+  ): Promise<
+    | { data: BaseModel[]; total: number }
+    | { data: BaseModel[]; cursor: { after: number }; count: number; next: URL }
+  > {
+    const repository = this.commonService.getRepositoryWithQueryRunner(
+      type,
+      this.repositoryMap,
+      this.modelMap,
+    );
+
+    return this.commonService.paginate(
+      dto,
+      repository,
+      {
+        where: {
+          alcohol: {
+            id: alcoholId,
+          },
+        },
+        relations: ['author', 'images', 'alcohol'],
+      },
+      `reviews/${type}/${alcoholId}`,
     );
   }
 
