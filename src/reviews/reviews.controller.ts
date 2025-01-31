@@ -52,33 +52,33 @@ export class ReviewsController {
   }
 
   // Retrieve a specific review by its ID
-  @Get(':id')
-  getReviewById(@Param('id') id: string) {
-    return this.reviewsService.getReviewById(id);
+  @Get(':reviewId')
+  getReviewById(@Param('reviewId') reviewId: string) {
+    return this.reviewsService.getReviewById(reviewId);
   }
 
   // Delete a specific review by its ID
-  @Delete(':id')
+  @Delete(':reviewId')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   deleteReviewById(
-    @Param('id') id: string,
+    @Param('reviewId') reviewId: string,
     @User('id') userId: UserModel['id'],
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    return this.reviewsService.deleteReviewById(id, userId, queryRunner);
+    return this.reviewsService.deleteReviewById(reviewId, userId, queryRunner);
   }
 
   // Update a specific review by its ID
-  @Put(':id')
+  @Put(':reviewId')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   putReviewById(
-    @Param('id') id: string,
+    @Param('reviewId') reviewId: string,
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateSpiritReviewDto | UpdateWineReviewDto | UpdateCocktailReviewDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    return this.reviewsService.updateReviewById(id, userId, dto, queryRunner);
+    return this.reviewsService.updateReviewById(reviewId, userId, dto, queryRunner);
   }
 }

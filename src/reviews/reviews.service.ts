@@ -98,10 +98,10 @@ export class ReviewsService {
     return result;
   }
 
-  async getReviewById(id: string) {
+  async getReviewById(reviewId: string) {
     const review = await this.reviewRepository.findOne({
       where: {
-        id,
+        id: reviewId,
       },
     });
 
@@ -112,7 +112,7 @@ export class ReviewsService {
     return review;
   }
 
-  async deleteReviewById(id: string, userId: string, queryRunner?: QueryRunner) {
+  async deleteReviewById(reviewId: string, userId: string, queryRunner?: QueryRunner) {
     const repository = this.commonService.getRepositoryWithQueryRunner(
       'review',
       this.repositoryMap,
@@ -122,7 +122,7 @@ export class ReviewsService {
 
     const review = await repository.findOne({
       where: {
-        id,
+        id: reviewId,
       },
       relations: ['author', 'images', 'alcohol'],
     });
@@ -139,11 +139,11 @@ export class ReviewsService {
       await this.commonService.deleteImageById(image.id, queryRunner);
     }
 
-    return await repository.delete(id);
+    return await repository.delete(reviewId);
   }
 
   async updateReviewById(
-    id: string,
+    reviewId: string,
     userId: string,
     dto: UpdateSpiritReviewDto | UpdateWineReviewDto | UpdateCocktailReviewDto,
     queryRunner?: QueryRunner,
@@ -157,7 +157,7 @@ export class ReviewsService {
 
     const review = await repository.findOne({
       where: {
-        id,
+        id: reviewId,
       },
       relations: ['author', 'images', 'alcohol'],
     });
