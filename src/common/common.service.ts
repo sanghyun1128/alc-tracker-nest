@@ -338,23 +338,36 @@ export class CommonService {
     return image;
   }
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
+  @Cron(CronExpression.EVERY_DAY_AT_2AM)
   cleanUpTempImages(): void {
     const tempDirPath = path.join(TEMP_FOLDER_PATH);
+
     fs.readdir(tempDirPath, (err, files) => {
       if (err) {
         console.error(`[CLEANUP_ERROR] ${err.message}`);
         return;
       }
+
       files.forEach((file) => {
-        const filePath = path.join(tempDirPath, file);
-        fs.unlink(filePath, (unlinkErr) => {
-          if (unlinkErr) {
-            console.error(`[CLEANUP_ERROR] Delete failed: "${file}" - ${unlinkErr.message}`);
-          } else {
-            console.log(`[CLEANUP] Deleted file: "${file}"`);
-          }
-        });
+        const creationTime = file.split('-')[0];
+        const creationDay = creationTime.slice(0, 2);
+        const creationHour = creationTime.slice(2, 4);
+
+        const now = new Date();
+        const fileDate = new Date(now.getFullYear(), now.getMonth(), +creationDay, +creationHour);
+        const hoursDifference = (now.getTime() - fileDate.getTime()) / (1000 * 60 * 60);
+
+        if (hoursDifference > 5) {
+          const filePath = path.join(tempDirPath, file);
+
+          fs.unlink(filePath, (unlinkErr) => {
+            if (unlinkErr) {
+              console.error(`[CLEANUP_ERROR] Delete failed: "${file}" - ${unlinkErr.message}`);
+            } else {
+              console.log(`[CLEANUP] Deleted file: "${file}"`);
+            }
+          });
+        }
       });
     });
   }
