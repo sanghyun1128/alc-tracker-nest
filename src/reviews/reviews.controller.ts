@@ -33,21 +33,25 @@ export class ReviewsController {
 
   //TODO: 삭제예정
   // Retrieve a paginated list of reviews
-  @Get(':type')
+  @Get('/:type')
   @UseGuards(AccessTokenGuard)
   getAllReviews(@Param('type') type: AlcoholType, @Query() query: PaginateReviewDto) {
     return this.reviewsService.getAllReviews(type, query);
   }
 
   // Retrieve a paginated list of reviews by a specific alcohol ID
-  @Get(':alcoholId')
+  @Get('/:type/:alcoholId')
   @UseGuards(AccessTokenGuard)
-  getReviewsByAlcoholId(@Param('alcoholId') alcoholId: string, @Query() query: PaginateReviewDto) {
-    return this.reviewsService.getReviewsByAlcoholId(alcoholId, query);
+  getReviewsByAlcoholId(
+    @Param('type') type: AlcoholType,
+    @Param('alcoholId') alcoholId: string,
+    @Query() query: PaginateReviewDto,
+  ) {
+    return this.reviewsService.getReviewsByAlcoholId(type, alcoholId, query);
   }
 
   // Create a new review
-  @Post(':type')
+  @Post('/:type')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   postAlcoholReview(
@@ -60,13 +64,13 @@ export class ReviewsController {
   }
 
   // Retrieve a specific review by its ID
-  @Get(':reviewId')
+  @Get('/:reviewId')
   getReviewById(@Param('reviewId') reviewId: string) {
     return this.reviewsService.getReviewById(reviewId);
   }
 
   // Delete a specific review by its ID
-  @Delete(':reviewId')
+  @Delete('/:reviewId')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   deleteReviewById(
@@ -78,7 +82,7 @@ export class ReviewsController {
   }
 
   // Update a specific review by its ID
-  @Put(':reviewId')
+  @Put('/:reviewId')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   putReviewById(
