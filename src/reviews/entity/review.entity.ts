@@ -83,6 +83,14 @@ export class ReviewModel extends BaseModel {
   @Column(() => DetailEvaluation)
   finish: DetailEvaluation;
 
+  @Column({
+    default: 0,
+  })
+  @IsInt({
+    message: integerValidationMessage,
+  })
+  likeCount: number;
+
   @ManyToOne(() => UserModel, (user) => user.reviews, {
     nullable: false,
   })
