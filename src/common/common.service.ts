@@ -4,9 +4,11 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { promises } from 'fs';
-import { join } from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 import {
   FindManyOptions,
   FindOptionsOrder,
@@ -228,7 +230,7 @@ export class CommonService {
   }
 
   async createImage(dto: CreateImageDto, queryRunner?: QueryRunner): Promise<ImageModel> {
-    const tempImagePath = join(TEMP_FOLDER_PATH, dto.path);
+    const tempImagePath = path.join(TEMP_FOLDER_PATH, dto.path);
 
     try {
       await promises.access(tempImagePath);
@@ -251,7 +253,7 @@ export class CommonService {
           ? REVIEWS_IMAGES_FOLDER_PATH
           : USERS_IMAGES_FOLDER_PATH;
 
-    const newPath = join(basePath, dto.path);
+    const newPath = path.join(basePath, dto.path);
 
     const repository = this.getRepositoryWithQueryRunner(
       'image',
@@ -313,7 +315,7 @@ export class CommonService {
 
     const image = await this.findImageModel(imageId, repository);
 
-    const imagePath = join(ALCOHOLS_IMAGES_FOLDER_PATH, image.path);
+    const imagePath = path.join(ALCOHOLS_IMAGES_FOLDER_PATH, image.path);
 
     await repository.delete(imageId);
 
@@ -334,5 +336,26 @@ export class CommonService {
     }
 
     return image;
+  }
+
+  @Cron(CronExpression.EVERY_5_MINUTES)
+  cleanUpTempImages(): void {
+    const tempDirPath = path.join(TEMP_FOLDER_PATH);
+    fs.readdir(tempDirPath, (err, files) => {
+      if (err) {
+        console.error(`[CLEANUP_ERROR] ${err.message}`);
+        return;
+      }
+      files.forEach((file) => {
+        const filePath = path.join(tempDirPath, file);
+        fs.unlink(filePath, (unlinkErr) => {
+          if (unlinkErr) {
+            console.error(`[CLEANUP_ERROR] Delete failed: "${file}" - ${unlinkErr.message}`);
+          } else {
+            console.log(`[CLEANUP] Deleted file: "${file}"`);
+          }
+        });
+      });
+    });
   }
 }
