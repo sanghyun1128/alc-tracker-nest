@@ -35,7 +35,14 @@ export class AlcoholController {
     private readonly commonService: CommonService,
   ) {}
 
-  // Retrieve a paginated list of specific user's alcohols
+  /**
+   * Get alcohol records for a specific user by type.
+   *
+   * @Param type - The type of alcohol.
+   * @Param userId - The ID of the user.
+   * @Query query - Pagination and filter options.
+   * @returns A list of alcohol records.
+   */
   @Get('/:type/:userId')
   @UseGuards(AccessTokenGuard)
   getUserAlcohols(
@@ -46,7 +53,14 @@ export class AlcoholController {
     return this.alcoholService.getUserAlcohols(type, userId, query);
   }
 
-  // Retrieve a paginated list of my alcohols
+  /**
+   * Get alcohol records for the authenticated user by type.
+   *
+   * @Param type - The type of alcohol.
+   * @User userId - The ID of the authenticated user.
+   * @Query query - Pagination and filter options.
+   * @returns A list of alcohol records.
+   */
   @Get('/:type/my')
   @UseGuards(AccessTokenGuard)
   getMyAlcohols(
@@ -54,10 +68,18 @@ export class AlcoholController {
     @User('id') userId: UserModel['id'],
     @Query() query: PaginateAlcoholDto,
   ) {
-    return this.alcoholService.getMyAlcohols(type, userId, query);
+    return this.alcoholService.getUserAlcohols(type, userId, query);
   }
 
-  // Create a new spirit, wine, or cocktail
+  /**
+   * Create a new alcohol record.
+   *
+   * @Param type - The type of alcohol.
+   * @User userId - The ID of the authenticated user.
+   * @Body dto - The data transfer object containing alcohol details.
+   * @QueryRunner queryRunner - The query runner for transaction management.
+   * @returns The created alcohol record.
+   */
   @Post('/:type')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
@@ -84,21 +106,39 @@ export class AlcoholController {
     return await this.alcoholService.getAlcoholById(alcohol.id, queryRunner);
   }
 
-  // Retrieve a specific alcohol by its ID
+  /**
+   * Get a specific alcohol by its ID.
+   *
+   * @Param alcoholId - The ID of the alcohol.
+   * @returns The alcohol record.
+   */
   @Get('/:alcoholId')
   @UseGuards(AccessTokenGuard)
   getAlcoholById(@Param('alcoholId') alcoholId: string) {
     return this.alcoholService.getAlcoholById(alcoholId);
   }
 
-  // Delete a specific alcohol by its ID
+  /**
+   * Delete an alcohol record by its ID.
+   *
+   * @Param alcoholId - The ID of the alcohol.
+   * @returns Result of the deletion.
+   */
   @Delete('/:alcoholId')
   @UseGuards(AccessTokenGuard)
   deleteAlcoholById(@Param('alcoholId') alcoholId: string, @User('id') userId: UserModel['id']) {
     return this.alcoholService.deleteAlcoholById(alcoholId, userId);
   }
 
-  // Update a specific alcohol by its ID
+  /**
+   * Update an existing alcohol record.
+   *
+   * @Param alcoholId - The ID of the alcohol.
+   * @User userId - The ID of the authenticated user.
+   * @Body dto - The data transfer object containing alcohol details.
+   * @QueryRunner queryRunner - The query runner for transaction management.
+   * @returns The alcohol record.
+   */
   @Put('/:alcoholId')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
