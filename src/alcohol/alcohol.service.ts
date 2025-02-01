@@ -87,17 +87,6 @@ export class AlcoholService {
     );
   }
 
-  async getMyAlcohols(
-    type: AlcoholType,
-    userId: UserModel['id'],
-    dto: PaginateAlcoholDto,
-  ): Promise<
-    | { data: BaseModel[]; total: number }
-    | { data: BaseModel[]; cursor: { after: number }; count: number; next: URL }
-  > {
-    return this.getUserAlcohols(type, userId, dto);
-  }
-
   async createAlcohol(
     type: AlcoholType,
     userId: string,
