@@ -35,15 +35,50 @@ export class ReviewsController {
     private readonly commonService: CommonService,
   ) {}
 
-  //TODO: 삭제예정
-  // Retrieve a paginated list of reviews
-  @Get('/:type')
+  /**
+   * Get paginated list of reviews for a specific user by type.
+   *
+   * @Param type - The type of alcohol.
+   * @Param userId - The ID of the user.
+   * @Query query - Pagination and filter options.
+   * @returns A list of reviews.
+   */
+  @Get('/:type/:userId')
   @UseGuards(AccessTokenGuard)
-  getAllReviews(@Param('type') type: AlcoholType, @Query() query: PaginateReviewDto) {
-    return this.reviewsService.getAllReviews(type, query);
+  getUserReviews(
+    @Param('type') type: AlcoholType,
+    @Param('userId') userId: UserModel['id'],
+    @Query() query: PaginateReviewDto,
+  ) {
+    return this.reviewsService.getUserReviews(type, userId, query);
   }
 
-  // Retrieve a paginated list of reviews by a specific alcohol ID
+  /**
+   * Get paginated list of reviews for the authenticated user by type.
+   *
+   * @Param type - The type of alcohol.
+   * @User userId - The ID of the authenticated user.
+   * @Query query - Pagination and filter options.
+   * @returns A list of reviews.
+   */
+  @Get('/:type/my')
+  @UseGuards(AccessTokenGuard)
+  getMyReviews(
+    @Param('type') type: AlcoholType,
+    @User('id') userId: UserModel['id'],
+    @Query() query: PaginateReviewDto,
+  ) {
+    return this.reviewsService.getUserReviews(type, userId, query);
+  }
+
+  /**
+   * Get paginated list of reviews by a specific alcohol ID.
+   *
+   * @Param type - The type of alcohol.
+   * @Param alcoholId - The ID of the alcohol.
+   * @Query query - Pagination and filter options.
+   * @returns A list of reviews
+   */
   @Get('/:type/:alcoholId')
   @UseGuards(AccessTokenGuard)
   getReviewsByAlcoholId(
@@ -54,7 +89,14 @@ export class ReviewsController {
     return this.reviewsService.getReviewsByAlcoholId(type, alcoholId, query);
   }
 
-  // Create a new review
+  /**
+   * Create a new review.
+   *
+   * @Param type - The type of alcohol.
+   * @User userId - The ID of the alcohol.
+   * @Body dto - The data transfer object containing review details.
+   * @returns The created review.
+   */
   @Post('/:type')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
@@ -81,13 +123,23 @@ export class ReviewsController {
     return this.reviewsService.getReviewById(review.id);
   }
 
-  // Retrieve a specific review by its ID
+  /**
+   * Get a specific review by its ID.
+   *
+   * @Param reviewId - The ID of the review.
+   * @returns The review record.
+   */
   @Get('/:reviewId')
   getReviewById(@Param('reviewId') reviewId: string) {
     return this.reviewsService.getReviewById(reviewId);
   }
 
-  // Delete a specific review by its ID
+  /**
+   * Delete a specific review by its ID.
+   *
+   * @Param reviewId - The ID of the review.
+   * @returns Result of the deletion.
+   */
   @Delete('/:reviewId')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
@@ -99,7 +151,15 @@ export class ReviewsController {
     return this.reviewsService.deleteReviewById(reviewId, userId, queryRunner);
   }
 
-  // Update a specific review by its ID
+  /**
+   * Update a specific review by its ID.
+   *
+   * @Param reviewId - The ID of the review.
+   * @User userId - The ID of the authenticated user.
+   * @Body dto - The data transfer object containing review details.
+   * @QueryRunner queryRunner - The query runner for transaction management.
+   * @returns Updated review.
+   */
   @Put('/:reviewId')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
