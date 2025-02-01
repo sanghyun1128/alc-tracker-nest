@@ -22,6 +22,7 @@ import { UpdateWineReviewDto } from './dto/update-wine-review.dto';
 import { ReviewsService } from './reviews.service';
 import { AlcoholType } from 'src/alcohol/const/alcohol-type.const';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
+import { CommonService } from 'src/common/common.service';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { User } from 'src/users/decorator/user.decorator';
@@ -29,7 +30,10 @@ import { UserModel } from 'src/users/entity/user.entity';
 
 @Controller('reviews')
 export class ReviewsController {
-  constructor(private readonly reviewsService: ReviewsService) {}
+  constructor(
+    private readonly reviewsService: ReviewsService,
+    private readonly commonService: CommonService,
+  ) {}
 
   //TODO: 삭제예정
   // Retrieve a paginated list of reviews
@@ -54,13 +58,27 @@ export class ReviewsController {
   @Post('/:type')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
-  postAlcoholReview(
+  async postAlcoholReview(
     @Param('type') type: AlcoholType,
     @User('id') userId: UserModel['id'],
     @Body() dto: CreateSpiritReviewDto | CreateWineReviewDto | CreateCocktailReviewDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    return this.reviewsService.createReview(type, userId, dto, queryRunner);
+    const review = await this.reviewsService.createReview(type, userId, dto, queryRunner);
+
+    for (const image of dto.images) {
+      image.isNew &&
+        (await this.commonService.createImage(
+          {
+            reviewId: review.id,
+            order: image.order,
+            path: image.path,
+          },
+          queryRunner,
+        ));
+    }
+
+    return this.reviewsService.getReviewById(review.id);
   }
 
   // Retrieve a specific review by its ID
@@ -85,12 +103,39 @@ export class ReviewsController {
   @Put('/:reviewId')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
-  putReviewById(
+  async putReviewById(
     @Param('reviewId') reviewId: string,
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateSpiritReviewDto | UpdateWineReviewDto | UpdateCocktailReviewDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    return this.reviewsService.updateReviewById(reviewId, userId, dto, queryRunner);
+    const review = await this.reviewsService.updateReviewById(reviewId, userId, dto, queryRunner);
+
+    for (const image of dto.images) {
+      if (image.isNew) {
+        await this.commonService.createImage(
+          {
+            reviewId: review.id,
+            order: image.order,
+            path: image.path,
+          },
+          queryRunner,
+        );
+      } else {
+        const reviewImage = review.images.find((reviewImage) => reviewImage.path === image.path);
+
+        if (reviewImage) {
+          await this.commonService.updateImage(
+            reviewImage.id,
+            {
+              order: image.order,
+            },
+            queryRunner,
+          );
+        }
+      }
+    }
+
+    return this.reviewsService.getReviewById(review.id);
   }
 }
