@@ -27,6 +27,7 @@ import {
 import { CommonService } from 'src/common/common.service';
 import { BaseModel } from 'src/common/entity/base.entity';
 import { NotFoundErrorMessage, PermissionErrorMessage } from 'src/common/error-message';
+import { UserModel } from 'src/users/entity/user.entity';
 
 @Injectable()
 export class AlcoholService {
@@ -57,8 +58,9 @@ export class AlcoholService {
     cocktail: CocktailModel,
   };
 
-  async getAllAlcohols(
+  async getUserAlcohols(
     type: AlcoholType,
+    userId: UserModel['id'],
     dto: PaginateAlcoholDto,
   ): Promise<
     | { data: BaseModel[]; total: number }
@@ -74,66 +76,26 @@ export class AlcoholService {
       dto,
       repository,
       {
+        where: {
+          owner: {
+            id: userId,
+          },
+        },
         relations: ['owner', 'images'],
       },
       `alcohol/${type}`,
     );
   }
 
-  async getAlcoholById(alcoholId: string, queryRunner?: QueryRunner): Promise<AlcoholModel> {
-    const repository = this.commonService.getRepositoryWithQueryRunner(
-      'alcohol',
-      this.repositoryMap,
-      this.modelMap,
-      queryRunner,
-    ) as Repository<AlcoholModel>;
-
-    const alcohol = await repository.findOne({
-      where: {
-        id: alcoholId,
-      },
-      relations: ['owner', 'images'],
-    });
-
-    if (!alcohol) {
-      throw new NotFoundException(NotFoundErrorMessage('alcohol'));
-    }
-
-    return alcohol;
-  }
-
-  async deleteAlcoholById(
-    alcoholId: string,
-    userId: string,
-    queryRunner?: QueryRunner,
-  ): Promise<DeleteResult> {
-    const repository = this.commonService.getRepositoryWithQueryRunner(
-      'alcohol',
-      this.repositoryMap,
-      this.modelMap,
-      queryRunner,
-    ) as Repository<AlcoholModel>;
-
-    const alcohol = await repository.findOne({
-      where: {
-        id: alcoholId,
-      },
-      relations: ['owner', 'images'],
-    });
-
-    if (!alcohol) {
-      throw new NotFoundException(NotFoundErrorMessage('alcohol'));
-    }
-
-    if (alcohol.owner.id !== userId) {
-      throw new BadRequestException(PermissionErrorMessage('alcohol', 'delete'));
-    }
-
-    for (const image of alcohol.images) {
-      await this.commonService.deleteImageById(image.id, queryRunner);
-    }
-
-    return await repository.delete(alcoholId);
+  async getMyAlcohols(
+    type: AlcoholType,
+    userId: UserModel['id'],
+    dto: PaginateAlcoholDto,
+  ): Promise<
+    | { data: BaseModel[]; total: number }
+    | { data: BaseModel[]; cursor: { after: number }; count: number; next: URL }
+  > {
+    return this.getUserAlcohols(type, userId, dto);
   }
 
   async createAlcohol(
@@ -160,6 +122,62 @@ export class AlcoholService {
     const result = await repository.save(alcohol);
 
     return result;
+  }
+
+  async getAlcoholById(alcoholId: string, queryRunner?: QueryRunner): Promise<AlcoholModel> {
+    const repository = this.commonService.getRepositoryWithQueryRunner(
+      'alcohol',
+      this.repositoryMap,
+      this.modelMap,
+      queryRunner,
+    ) as Repository<AlcoholModel>;
+
+    const alcohol = await repository.findOne({
+      where: {
+        id: alcoholId,
+      },
+      relations: ['owner', 'images', 'reviews'],
+    });
+
+    if (!alcohol) {
+      throw new NotFoundException(NotFoundErrorMessage('alcohol'));
+    }
+
+    return alcohol;
+  }
+
+  async deleteAlcoholById(
+    alcoholId: string,
+    userId: string,
+    queryRunner?: QueryRunner,
+  ): Promise<DeleteResult> {
+    const repository = this.commonService.getRepositoryWithQueryRunner(
+      'alcohol',
+      this.repositoryMap,
+      this.modelMap,
+      queryRunner,
+    ) as Repository<AlcoholModel>;
+
+    const alcohol = await repository.findOne({
+      where: {
+        id: alcoholId,
+      },
+      relations: ['owner', 'images', 'reviews'],
+    });
+
+    if (!alcohol) {
+      throw new NotFoundException(NotFoundErrorMessage('alcohol'));
+    }
+
+    if (alcohol.owner.id !== userId) {
+      throw new BadRequestException(PermissionErrorMessage('alcohol', 'delete'));
+    }
+
+    for (const image of alcohol.images) {
+      await this.commonService.deleteImageById(image.id, queryRunner);
+    }
+
+    return await repository.delete(alcoholId);
   }
 
   async updateAlcohol(
