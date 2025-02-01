@@ -19,6 +19,7 @@ import { AlcoholType } from 'src/alcohol/const/alcohol-type.const';
 import { CommonService } from 'src/common/common.service';
 import { BaseModel } from 'src/common/entity/base.entity';
 import { NotFoundErrorMessage, PermissionErrorMessage } from 'src/common/error-message';
+import { UserModel } from 'src/users/entity/user.entity';
 
 @Injectable()
 export class ReviewsService {
@@ -49,8 +50,9 @@ export class ReviewsService {
     cocktail: CocktailReviewModel,
   };
 
-  async getAllReviews(
+  async getUserReviews(
     type: AlcoholType,
+    userId: UserModel['id'],
     dto: PaginateReviewDto,
   ): Promise<
     | { data: BaseModel[]; total: number }
@@ -66,6 +68,11 @@ export class ReviewsService {
       dto,
       repository,
       {
+        where: {
+          author: {
+            id: userId,
+          },
+        },
         relations: ['author', 'images', 'alcohol'],
       },
       `reviews/${type}`,
