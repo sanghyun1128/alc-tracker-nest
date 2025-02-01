@@ -35,12 +35,26 @@ export class AlcoholController {
     private readonly commonService: CommonService,
   ) {}
 
-  //TODO: 자기가 소유한 알콜만 가져와야됨
-  //TODO: 특정 유저의 알콜만 가져오는 API 필요
-  // Retrieve a paginated list of alcohols
-  @Get('/:type')
-  getAllAlcohols(@Param('type') type: AlcoholType, @Query() query: PaginateAlcoholDto) {
-    return this.alcoholService.getAllAlcohols(type, query);
+  // Retrieve a paginated list of specific user's alcohols
+  @Get('/:type/:userId')
+  @UseGuards(AccessTokenGuard)
+  getUserAlcohols(
+    @Param('type') type: AlcoholType,
+    @Param('userId') userId: UserModel['id'],
+    @Query() query: PaginateAlcoholDto,
+  ) {
+    return this.alcoholService.getUserAlcohols(type, userId, query);
+  }
+
+  // Retrieve a paginated list of my alcohols
+  @Get('/:type/my')
+  @UseGuards(AccessTokenGuard)
+  getMyAlcohols(
+    @Param('type') type: AlcoholType,
+    @User('id') userId: UserModel['id'],
+    @Query() query: PaginateAlcoholDto,
+  ) {
+    return this.alcoholService.getMyAlcohols(type, userId, query);
   }
 
   // Create a new spirit, wine, or cocktail
