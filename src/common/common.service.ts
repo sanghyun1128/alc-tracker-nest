@@ -27,8 +27,8 @@ import {
   USERS_IMAGES_FOLDER_PATH,
 } from './const/path.const';
 import { BasePaginationDto } from './dto/base-pagination.dto';
-import { CreateImageDto } from './dto/create-image';
-import { UpdateImageDto } from './dto/update-image';
+import { CreateImageDto } from './dto/create-image.dto';
+import { UpdateImageDto } from './dto/update-image.dto';
 import { BaseModel } from './entity/base.entity';
 import { ImageModel } from './entity/image.entity';
 import { NotFoundErrorMessage, ServerErrorMessage } from './error-message';
