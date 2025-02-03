@@ -24,6 +24,9 @@ export class UserModel extends BaseModel {
   })
   @IsString({ message: stringValidationMessage })
   @IsEmail({}, { message: emailValidationMessage })
+  @Exclude({
+    toPlainOnly: true,
+  })
   email: string;
 
   @Column({
