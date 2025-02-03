@@ -61,7 +61,6 @@ export class UserModel extends BaseModel {
   @Column({
     type: 'enum',
     enum: Object.values(GenderEnum),
-    default: GenderEnum.OTHER,
     nullable: false,
   })
   @IsEnum(GenderEnum, {
@@ -82,7 +81,6 @@ export class UserModel extends BaseModel {
   @Column({
     length: 50,
     nullable: false,
-    default: 'Hello!',
   })
   @IsString({ message: stringValidationMessage })
   @Length(0, 50, {
