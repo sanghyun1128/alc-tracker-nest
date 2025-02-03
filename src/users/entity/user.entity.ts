@@ -82,10 +82,6 @@ export class UserModel extends BaseModel {
     length: 50,
     nullable: false,
   })
-  @IsString({ message: stringValidationMessage })
-  @Length(0, 50, {
-    message: lengthValidationMessage,
-  })
   comment: string;
 
   @OneToMany(() => ReviewModel, (review) => review.author)
