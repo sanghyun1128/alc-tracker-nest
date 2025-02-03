@@ -79,6 +79,17 @@ export class UserModel extends BaseModel {
   @Type(() => Date)
   birth: Date;
 
+  @Column({
+    length: 50,
+    nullable: false,
+    default: 'Hello!',
+  })
+  @IsString({ message: stringValidationMessage })
+  @Length(0, 50, {
+    message: lengthValidationMessage,
+  })
+  comment: string;
+
   @OneToMany(() => ReviewModel, (review) => review.author)
   reviews: ReviewModel[];
 
