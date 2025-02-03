@@ -1,9 +1,21 @@
-import { Controller, Delete, Get, Param, Put, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Put,
+  Query,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { QueryRunner as QueryRunnerType } from 'typeorm';
 
 import { User } from './decorator/user.decorator';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
-
+import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
+import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -34,8 +46,8 @@ export class UsersController {
    */
   @Put('/my')
   @UseGuards(AccessTokenGuard)
-  updateUserInfo(@User('id') userId: string) {
-    return this.usersService.updateUserInfo(userId);
+  updateUserInfo(@User('id') userId: string, @Query() dto: UpdateUserDto) {
+    return this.usersService.updateUserInfo(userId, dto);
   }
 
   /**
@@ -46,9 +58,9 @@ export class UsersController {
    */
   @Delete('/my')
   @UseGuards(AccessTokenGuard)
-  deleteUser(@User('id') userId: string) {
-    //TODO: delete all user data include reviews, alcohols
-    return this.usersService.deleteUser(userId);
+  @UseInterceptors(TransactionInterceptor)
+  async deleteUser(@User('id') userId: string, @QueryRunner() queryRunner: QueryRunnerType) {
+    return await this.usersService.deleteUser(userId, queryRunner);
   }
 
   /**
