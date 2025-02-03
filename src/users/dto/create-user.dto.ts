@@ -16,5 +16,5 @@ export class CreateUserDto extends PickType(UserModel, [
     message: lengthValidationMessage,
   })
   @IsOptional()
-  comment: string = '';
+  comment?: string = '';
 }
