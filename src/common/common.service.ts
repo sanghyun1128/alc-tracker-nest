@@ -10,6 +10,7 @@ import { promises } from 'fs';
 import * as fs from 'fs';
 import * as path from 'path';
 import {
+  DeleteResult,
   FindManyOptions,
   FindOptionsOrder,
   FindOptionsWhere,
@@ -305,7 +306,7 @@ export class CommonService {
     return result;
   }
 
-  async deleteImageById(imageId: string, queryRunner?: QueryRunner): Promise<void> {
+  async deleteImageById(imageId: string, queryRunner?: QueryRunner): Promise<DeleteResult> {
     const repository = this.getRepositoryWithQueryRunner(
       'image',
       this.repositoryMap,
@@ -317,13 +318,15 @@ export class CommonService {
 
     const imagePath = path.join(ALCOHOLS_IMAGES_FOLDER_PATH, image.path);
 
-    await repository.delete(imageId);
+    const result = await repository.delete(imageId);
 
     try {
       await promises.unlink(imagePath);
     } catch (e) {
       throw new InternalServerErrorException(ServerErrorMessage('deleting image'));
     }
+
+    return result;
   }
 
   async findImageModel(imageId: string, repository: Repository<ImageModel>): Promise<ImageModel> {
