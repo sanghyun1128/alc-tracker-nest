@@ -1,6 +1,6 @@
 import { Exclude, Type } from 'class-transformer';
 import { IsDate, IsEmail, IsEnum, IsString, Length } from 'class-validator';
-import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, Entity, OneToMany, OneToOne } from 'typeorm';
 
 import { GenderEnum } from '../const/gender.const';
 import { RoleEnum } from '../const/role.const';
@@ -15,6 +15,17 @@ import {
   lengthValidationMessage,
 } from 'src/common/validation-message';
 import { ReviewModel } from 'src/reviews/entity/review.entity';
+
+export class Profile {
+  @OneToOne(() => ImageModel, (image) => image.user)
+  image: ImageModel;
+
+  @Column({
+    length: 50,
+    nullable: false,
+  })
+  comment: string;
+}
 
 @Entity()
 export class UserModel extends BaseModel {
@@ -81,18 +92,12 @@ export class UserModel extends BaseModel {
   @Type(() => Date)
   birth: Date;
 
-  @Column({
-    length: 50,
-    nullable: false,
-  })
-  comment: string;
-
   @OneToMany(() => ReviewModel, (review) => review.author)
   reviews: ReviewModel[];
 
   @OneToMany(() => AlcoholModel, (alcohol) => alcohol.owner)
   alcohols: AlcoholModel[];
 
-  @OneToOne(() => ImageModel, (image) => image.user)
-  profileImage: ImageModel;
+  @Column(() => Profile)
+  profile: Profile;
 }
