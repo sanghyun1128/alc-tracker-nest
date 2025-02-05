@@ -1,6 +1,6 @@
 import { Exclude, Type } from 'class-transformer';
 import { IsDate, IsEmail, IsEnum, IsString, Length } from 'class-validator';
-import { Column, Entity, Entity, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 
 import { GenderEnum } from '../const/gender.const';
 import { RoleEnum } from '../const/role.const';
@@ -22,9 +22,24 @@ export class Profile {
 
   @Column({
     length: 50,
-    nullable: false,
+    nullable: true,
   })
+  @IsString({ message: stringValidationMessage })
   comment: string;
+
+  @Column({
+    length: 2,
+    nullable: true,
+  })
+  @IsString({ message: stringValidationMessage })
+  regionISOAlpha2: string;
+
+  @Column({
+    length: 2,
+    nullable: true,
+  })
+  @IsString({ message: stringValidationMessage })
+  languageISOAlpha2: string;
 }
 
 @Entity()
