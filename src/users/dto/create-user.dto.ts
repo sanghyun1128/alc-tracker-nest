@@ -10,11 +10,4 @@ export class CreateUserDto extends PickType(UserModel, [
   'password',
   'birth',
   'gender',
-] as const) {
-  @IsString({ message: stringValidationMessage })
-  @Length(0, 50, {
-    message: lengthValidationMessage,
-  })
-  @IsOptional()
-  comment?: string = '';
-}
+] as const) {}
