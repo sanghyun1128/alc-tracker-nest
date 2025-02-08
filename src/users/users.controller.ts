@@ -11,20 +11,20 @@ import {
 import { QueryRunner as QueryRunnerType } from 'typeorm';
 
 import { User } from './decorator/user.decorator';
+import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserModel } from './entity/user.entity';
 import { UsersService } from './users.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
+import { CommonService } from 'src/common/common.service';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
-
-  //FIXME: test code
-  @Get('all')
-  getAllUsers() {
-    return this.usersService.getAllUsers();
-  }
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly commonService: CommonService,
+  ) {}
 
   /**
    * Get user private information include email, password...
@@ -32,9 +32,9 @@ export class UsersController {
    * @User userId - The ID of the authenticated user.
    * @returns User private information.
    */
-  @Get('/my')
+  @Get('/info/my')
   @UseGuards(AccessTokenGuard)
-  getUserInfo(@User('id') userId: string) {
+  getUserInfo(@User('id') userId: UserModel['id']) {
     return this.usersService.getUserInfo(userId);
   }
 
@@ -44,9 +44,9 @@ export class UsersController {
    * @User userId - The ID of the authenticated user.
    * @returns Updated user private information.
    */
-  @Put('/my')
+  @Put('/info/my')
   @UseGuards(AccessTokenGuard)
-  updateUserInfo(@User('id') userId: string, @Query() dto: UpdateUserDto) {
+  updateUserInfo(@User('id') userId: UserModel['id'], @Query() dto: UpdateUserDto) {
     return this.usersService.updateUserInfo(userId, dto);
   }
 
@@ -56,10 +56,13 @@ export class UsersController {
    * @User userId - The ID of the authenticated user.
    * @returns Result of deletion.
    */
-  @Delete('/my')
+  @Delete('/info/my')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
-  async deleteUser(@User('id') userId: string, @QueryRunner() queryRunner: QueryRunnerType) {
+  async deleteUser(
+    @User('id') userId: UserModel['id'],
+    @QueryRunner() queryRunner: QueryRunnerType,
+  ) {
     return await this.usersService.deleteUser(userId, queryRunner);
   }
 
@@ -69,9 +72,46 @@ export class UsersController {
    * @Param userId - The ID of the user.
    * @returns User profile information.
    */
-  @Get('/:userId')
+  @Get('/profile/:userId')
   @UseGuards(AccessTokenGuard)
-  getUserProfile(@Param('userId') userId: string) {
+  getUserProfile(@Param('userId') userId: UserModel['id']) {
     return this.usersService.getUserProfile(userId);
+  }
+
+  /**
+   * Get my profile information for showing to other users.
+   *
+   * @User userId - The ID of the authenticated user.
+   * @returns User profile information.
+   */
+  @Get('/profile/my')
+  @UseGuards(AccessTokenGuard)
+  getMyProfile(@User('id') userId: UserModel['id']) {
+    return this.usersService.getUserProfile(userId);
+  }
+
+  /**
+   * Update my profile.
+   *
+   * @User userId - The ID of the authenticated user.
+   * @Query dto - The updated user profile information.
+   * @returns Updated user profile information.
+   */
+  @Put('/profile/my')
+  @UseGuards(AccessTokenGuard)
+  @UseInterceptors(TransactionInterceptor)
+  async putUserProfile(@User('id') userId: UserModel['id'], @Query() dto: UpdateUserProfileDto) {
+    const user = await this.usersService.getUserProfile(userId);
+    const imageId = dto.profile.image.id;
+
+    const deletionResult = await this.commonService.deleteImageById(imageId);
+
+    const creationResult = await this.commonService.createImage({
+      userId,
+      order: 0,
+      path: dto.profile.image.id,
+    });
+
+    return { deletionResult, creationResult };
   }
 }
