@@ -36,42 +36,6 @@ export class ReviewsController {
   ) {}
 
   /**
-   * Get paginated list of reviews for a specific user by type.
-   *
-   * @Param type - The type of alcohol.
-   * @Param userId - The ID of the user.
-   * @Query query - Pagination and filter options.
-   * @returns A list of reviews.
-   */
-  @Get('/:type/:userId')
-  @UseGuards(AccessTokenGuard)
-  getUserReviews(
-    @Param('type') type: AlcoholType,
-    @Param('userId') userId: UserModel['id'],
-    @Query() query: PaginateReviewDto,
-  ) {
-    return this.reviewsService.getUserReviews(type, userId, query);
-  }
-
-  /**
-   * Get paginated list of reviews for the authenticated user by type.
-   *
-   * @Param type - The type of alcohol.
-   * @User userId - The ID of the authenticated user.
-   * @Query query - Pagination and filter options.
-   * @returns A list of reviews.
-   */
-  @Get('/:type/my')
-  @UseGuards(AccessTokenGuard)
-  getMyReviews(
-    @Param('type') type: AlcoholType,
-    @User('id') userId: UserModel['id'],
-    @Query() query: PaginateReviewDto,
-  ) {
-    return this.reviewsService.getUserReviews(type, userId, query);
-  }
-
-  /**
    * Get paginated list of reviews by a specific alcohol ID.
    *
    * @Param type - The type of alcohol.
@@ -79,14 +43,10 @@ export class ReviewsController {
    * @Query query - Pagination and filter options.
    * @returns A list of reviews
    */
-  @Get('/:type/:alcoholId')
+  @Get('/:alcoholId')
   @UseGuards(AccessTokenGuard)
-  getReviewsByAlcoholId(
-    @Param('type') type: AlcoholType,
-    @Param('alcoholId') alcoholId: string,
-    @Query() query: PaginateReviewDto,
-  ) {
-    return this.reviewsService.getReviewsByAlcoholId(type, alcoholId, query);
+  getReviewsByAlcoholId(@Param('alcoholId') alcoholId: string, @Query() query: PaginateReviewDto) {
+    return this.reviewsService.getReviewsByAlcoholId(alcoholId, query);
   }
 
   /**
