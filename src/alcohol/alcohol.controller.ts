@@ -43,7 +43,7 @@ export class AlcoholController {
    * @Query query - Pagination and filter options.
    * @returns A list of alcohol records.
    */
-  @Get('/:type/:userId')
+  @Get('/:userId/:type')
   @UseGuards(AccessTokenGuard)
   getUserAlcohols(
     @Param('type') type: AlcoholType,
@@ -61,7 +61,7 @@ export class AlcoholController {
    * @Query query - Pagination and filter options.
    * @returns A list of alcohol records.
    */
-  @Get('/:type/my')
+  @Get('/my/:type')
   @UseGuards(AccessTokenGuard)
   getMyAlcohols(
     @Param('type') type: AlcoholType,
