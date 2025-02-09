@@ -80,15 +80,15 @@ export class ReviewsService {
   }
 
   async getReviewsByAlcoholId(
-    type: AlcoholType,
     alcoholId: string,
     dto: PaginateReviewDto,
   ): Promise<
     | { data: BaseModel[]; total: number }
     | { data: BaseModel[]; cursor: { after: number }; count: number; next: URL }
   > {
+    //TODO: review 레포지토리에서 가져 오는 것과 review type에 따라 가져오는 것의 성능 차이 있나?
     const repository = this.commonService.getRepositoryWithQueryRunner(
-      type,
+      'review',
       this.repositoryMap,
       this.modelMap,
     );
