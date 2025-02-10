@@ -104,7 +104,7 @@ export class UsersService {
       await repository.manager.remove(alcohol);
     }
 
-    await repository.manager.remove(user.profileImage);
+    await repository.manager.remove(user.profile.image);
 
     const result = await repository.delete({ id: userId });
 

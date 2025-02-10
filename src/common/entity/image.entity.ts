@@ -61,7 +61,7 @@ export class ImageModel extends BaseModel {
   @JoinColumn({ name: 'alcoholId' })
   alcohol?: AlcoholModel;
 
-  @OneToOne(() => UserModel, (user) => user.profileImage)
+  @OneToOne(() => UserModel, (user) => user.profile.image)
   @JoinColumn({ name: 'userId' })
   user?: UserModel;
 }
