@@ -1,27 +1,17 @@
-import { PickType } from '@nestjs/mapped-types';
-import { IsOptional, IsString } from 'class-validator';
+import { IntersectionType, PickType } from '@nestjs/mapped-types';
 
+import { CreateReviewDto } from './create-review.dto';
 import { SpiritReviewModel } from '../entity/review.entity';
-import { stringValidationMessage } from 'src/common/validation-message';
 
-export class CreateSpiritReviewDto extends PickType(SpiritReviewModel, [
-  'rating',
-  'comment',
-  'pairing',
-  'nose',
-  'palate',
-  'finish',
-  'bottleCondition',
-] as const) {
-  @IsString({
-    message: stringValidationMessage,
-  })
-  alcoholId: string;
-
-  @IsOptional()
-  images: {
-    path: string;
-    order: number;
-    isNew: boolean;
-  }[] = [];
-}
+export class CreateSpiritReviewDto extends IntersectionType(
+  CreateReviewDto,
+  PickType(SpiritReviewModel, [
+    'rating',
+    'comment',
+    'pairing',
+    'nose',
+    'palate',
+    'finish',
+    'bottleCondition',
+  ] as const),
+) {}
