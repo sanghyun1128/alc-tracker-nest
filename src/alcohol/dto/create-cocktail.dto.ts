@@ -1,13 +1,9 @@
-import { PickType } from '@nestjs/mapped-types';
-import { IsOptional } from 'class-validator';
+import { IntersectionType, PickType } from '@nestjs/mapped-types';
 
+import { CreateAlcoholDto } from './create-alcohol.dto';
 import { CocktailModel } from '../entity/alcohol.entity';
 
-export class CreateCocktailDto extends PickType(CocktailModel, ['name', 'category'] as const) {
-  @IsOptional()
-  images: {
-    path: string;
-    order: number;
-    isNew: boolean;
-  }[] = [];
-}
+export class CreateCocktailDto extends IntersectionType(
+  CreateAlcoholDto,
+  PickType(CocktailModel, ['name', 'category'] as const),
+) {}
