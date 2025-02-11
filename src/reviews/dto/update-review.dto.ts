@@ -11,11 +11,6 @@ export class UpdateReviewDto {
   })
   reviewId: UserModel['id'];
 
-  @IsString({
-    message: stringValidationMessage,
-  })
-  userId: AlcoholModel['id'];
-
   @IsEnum(AlcoholType, {
     message: enumValidationMessage,
   })
