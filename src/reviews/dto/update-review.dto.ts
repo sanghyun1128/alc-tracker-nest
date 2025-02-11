@@ -1,4 +1,4 @@
-import { IsEnum, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 import { AlcoholType } from 'src/alcohol/const/alcohol-type.const';
 import { enumValidationMessage, stringValidationMessage } from 'src/common/validation-message';
@@ -13,5 +13,10 @@ export class UpdateReviewDto {
   @IsEnum(AlcoholType, {
     message: enumValidationMessage,
   })
-  type: AlcoholType;
+  alcoholType: AlcoholType;
+
+  @IsOptional()
+  deletedImages: {
+    path: string;
+  }[] = [];
 }
