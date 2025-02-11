@@ -125,7 +125,7 @@ export class AlcoholService {
       where: {
         id: alcoholId,
       },
-      relations: ['owner', 'images', 'reviews'],
+      relations: ['owner', 'images'],
     });
 
     if (!alcohol) {
