@@ -9,6 +9,7 @@ import {
 } from './entity/review.entity';
 import { ReviewsController } from './reviews.controller';
 import { ReviewsService } from './reviews.service';
+import { AlcoholModule } from 'src/alcohol/alcohol.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { CommonModule } from 'src/common/common.module';
 import { UsersModule } from 'src/users/users.module';
@@ -24,6 +25,7 @@ import { UsersModule } from 'src/users/users.module';
     AuthModule,
     UsersModule,
     CommonModule,
+    AlcoholModule,
   ],
   controllers: [ReviewsController],
   providers: [ReviewsService],

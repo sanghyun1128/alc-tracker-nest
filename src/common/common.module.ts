@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as multer from 'multer';
@@ -14,8 +14,6 @@ import { UsersModule } from 'src/users/users.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([ImageModel]),
-    AuthModule,
-    UsersModule,
     MulterModule.register({
       limits: {
         fileSize: 1024 * 1024 * 10, // 10MB
@@ -42,6 +40,8 @@ import { UsersModule } from 'src/users/users.module';
         },
       }),
     }),
+    forwardRef(() => AuthModule),
+    forwardRef(() => UsersModule),
   ],
   controllers: [CommonController],
   providers: [CommonService],

@@ -17,5 +17,6 @@ import { UsersModule } from 'src/users/users.module';
   ],
   controllers: [AlcoholController],
   providers: [AlcoholService],
+  exports: [AlcoholService],
 })
 export class AlcoholModule {}
