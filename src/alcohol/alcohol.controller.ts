@@ -35,14 +35,6 @@ export class AlcoholController {
     private readonly commonService: CommonService,
   ) {}
 
-  /**
-   * Get alcohol records for a specific user by type.
-   *
-   * @Param type - The type of alcohol.
-   * @Param userId - The ID of the user.
-   * @Query query - Pagination and filter options.
-   * @returns A list of alcohol records.
-   */
   @Get('/:userId/:type')
   @UseGuards(AccessTokenGuard)
   getUserAlcohols(
@@ -53,14 +45,6 @@ export class AlcoholController {
     return this.alcoholService.getUserAlcohols(type, userId, query);
   }
 
-  /**
-   * Get alcohol records for the authenticated user by type.
-   *
-   * @Param type - The type of alcohol.
-   * @User userId - The ID of the authenticated user.
-   * @Query query - Pagination and filter options.
-   * @returns A list of alcohol records.
-   */
   @Get('/my/:type')
   @UseGuards(AccessTokenGuard)
   getMyAlcohols(
@@ -71,19 +55,10 @@ export class AlcoholController {
     return this.alcoholService.getUserAlcohols(type, userId, query);
   }
 
-  /**
-   * Create a new alcohol record.
-   *
-   * @Param type - The type of alcohol.
-   * @User userId - The ID of the authenticated user.
-   * @Body dto - The data transfer object containing alcohol details.
-   * @QueryRunner queryRunner - The query runner for transaction management.
-   * @returns The created alcohol record.
-   */
   @Post('/:type')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
-  async postSpirit(
+  async postAlcohol(
     @Param('type') type: AlcoholType,
     @User('id') userId: UserModel['id'],
     @Body() dto: CreateSpiritDto | CreateWineDto | CreateCocktailDto,
@@ -106,43 +81,22 @@ export class AlcoholController {
     return await this.alcoholService.getAlcoholById(alcohol.id, queryRunner);
   }
 
-  /**
-   * Get a specific alcohol by its ID.
-   *
-   * @Param alcoholId - The ID of the alcohol.
-   * @returns The alcohol record.
-   */
   @Get('/:alcoholId')
   @UseGuards(AccessTokenGuard)
   getAlcoholById(@Param('alcoholId') alcoholId: string) {
     return this.alcoholService.getAlcoholById(alcoholId);
   }
 
-  /**
-   * Delete an alcohol record by its ID.
-   *
-   * @Param alcoholId - The ID of the alcohol.
-   * @returns Result of the deletion.
-   */
   @Delete('/:alcoholId')
   @UseGuards(AccessTokenGuard)
   deleteAlcoholById(@Param('alcoholId') alcoholId: string, @User('id') userId: UserModel['id']) {
     return this.alcoholService.deleteAlcoholById(alcoholId, userId);
   }
 
-  /**
-   * Update an existing alcohol record.
-   *
-   * @Param alcoholId - The ID of the alcohol.
-   * @User userId - The ID of the authenticated user.
-   * @Body dto - The data transfer object containing alcohol details.
-   * @QueryRunner queryRunner - The query runner for transaction management.
-   * @returns The alcohol record.
-   */
   @Put('/:alcoholId')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
-  async updateAlcohol(
+  async updateAlcoholById(
     @Param('alcoholId') alcoholId: string,
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateSpiritDto | UpdateWineDto | UpdateCocktailDto,
