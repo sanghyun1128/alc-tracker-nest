@@ -1,12 +1,6 @@
-import { IsEnum } from 'class-validator';
+import { IntersectionType } from '@nestjs/mapped-types';
 
 import { CreateCocktailDto } from './create-cocktail.dto';
-import { AlcoholType } from '../const/alcohol-type.const';
-import { enumValidationMessage } from 'src/common/validation-message';
+import { UpdateAlcoholDto } from './update-alcohol.dto';
 
-export class UpdateCocktailDto extends CreateCocktailDto {
-  @IsEnum(AlcoholType, {
-    message: enumValidationMessage,
-  })
-  type: AlcoholType;
-}
+export class UpdateCocktailDto extends IntersectionType(UpdateAlcoholDto, CreateCocktailDto) {}
