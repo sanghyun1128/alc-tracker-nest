@@ -191,11 +191,13 @@ export class AlcoholService {
     }
 
     // 5. Delete alcohol
-    return await repository.delete(alcoholId);
+    const result = await repository.delete(alcoholId);
+
+    return result;
   }
 
   // Update alcohol which is specified by id
-  async updateAlcohol(
+  async updateAlcoholById(
     alcoholId: string,
     userId: string,
     dto: UpdateSpiritDto | UpdateWineDto | UpdateCocktailDto,

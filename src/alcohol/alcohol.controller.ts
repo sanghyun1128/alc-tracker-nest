@@ -87,7 +87,7 @@ export class AlcoholController {
     @Body() dto: UpdateSpiritDto | UpdateWineDto | UpdateCocktailDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    return await this.alcoholService.updateAlcohol(alcoholId, userId, dto, queryRunner);
+    return await this.alcoholService.updateAlcoholById(alcoholId, userId, dto, queryRunner);
   }
 
   //TODO: Test code
