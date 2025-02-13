@@ -57,6 +57,17 @@ export class ReviewsController {
     return await this.reviewsService.createReview(userId, dto, queryRunner);
   }
 
+  @Delete('/:reviewId')
+  @UseGuards(AccessTokenGuard)
+  @UseInterceptors(TransactionInterceptor)
+  deleteReviewById(
+    @Param('reviewId') reviewId: ReviewModel['id'],
+    @User('id') userId: UserModel['id'],
+    @QueryRunner() queryRunner: QueryRunnerType,
+  ) {
+    return this.reviewsService.deleteReviewById(reviewId, userId, queryRunner);
+  }
+
   @Put('/:reviewId')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
@@ -69,16 +80,5 @@ export class ReviewsController {
     const review = await this.reviewsService.updateReviewById(reviewId, userId, dto, queryRunner);
 
     return this.reviewsService.getReviewById(review.id);
-  }
-
-  @Delete('/:reviewId')
-  @UseGuards(AccessTokenGuard)
-  @UseInterceptors(TransactionInterceptor)
-  deleteReviewById(
-    @Param('reviewId') reviewId: ReviewModel['id'],
-    @User('id') userId: UserModel['id'],
-    @QueryRunner() queryRunner: QueryRunnerType,
-  ) {
-    return this.reviewsService.deleteReviewById(reviewId, userId, queryRunner);
   }
 }
