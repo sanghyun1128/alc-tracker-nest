@@ -55,30 +55,15 @@ export class AlcoholController {
     return this.alcoholService.getUserAlcohols(type, userId, query);
   }
 
-  @Post('/:type')
+  @Post('/')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   async postAlcohol(
-    @Param('type') type: AlcoholType,
     @User('id') userId: UserModel['id'],
     @Body() dto: CreateSpiritDto | CreateWineDto | CreateCocktailDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    const alcohol = await this.alcoholService.createAlcohol(type, userId, dto, queryRunner);
-
-    for (const image of dto.images) {
-      image.isNew &&
-        (await this.commonService.createImage(
-          {
-            alcoholId: alcohol.id,
-            order: image.order,
-            path: image.path,
-          },
-          queryRunner,
-        ));
-    }
-
-    return await this.alcoholService.getAlcoholById(alcohol.id, queryRunner);
+    return await this.alcoholService.createAlcohol(userId, dto, queryRunner);
   }
 
   @Get('/:alcoholId')
@@ -102,36 +87,7 @@ export class AlcoholController {
     @Body() dto: UpdateSpiritDto | UpdateWineDto | UpdateCocktailDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    const alcohol = await this.alcoholService.updateAlcohol(alcoholId, userId, dto, queryRunner);
-
-    for (const image of dto.images) {
-      if (image.isNew) {
-        await this.commonService.createImage(
-          {
-            alcoholId: alcohol.id,
-            order: image.order,
-            path: image.path,
-          },
-          queryRunner,
-        );
-      } else {
-        const alcoholImage = alcohol.images.find(
-          (alcoholImage) => alcoholImage.path === image.path,
-        );
-
-        if (alcoholImage) {
-          await this.commonService.updateImage(
-            alcoholImage.id,
-            {
-              order: image.order,
-            },
-            queryRunner,
-          );
-        }
-      }
-    }
-
-    return await this.alcoholService.getAlcoholById(alcohol.id);
+    return await this.alcoholService.updateAlcohol(alcoholId, userId, dto, queryRunner);
   }
 
   //TODO: Test code
