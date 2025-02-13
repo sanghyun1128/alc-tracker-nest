@@ -1,15 +1,9 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 
 import { AlcoholType } from 'src/alcohol/const/alcohol-type.const';
-import { enumValidationMessage, stringValidationMessage } from 'src/common/validation-message';
-import { UserModel } from 'src/users/entity/user.entity';
+import { enumValidationMessage } from 'src/common/validation-message';
 
 export class UpdateReviewDto {
-  @IsString({
-    message: stringValidationMessage,
-  })
-  reviewId: UserModel['id'];
-
   @IsEnum(AlcoholType, {
     message: enumValidationMessage,
   })

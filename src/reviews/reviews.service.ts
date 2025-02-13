@@ -144,6 +144,7 @@ export class ReviewsService {
 
   // Update a review by its ID.
   async updateReviewById(
+    reviewId: ReviewModel['id'],
     userId: UserModel['id'],
     dto: UpdateSpiritReviewDto | UpdateWineReviewDto | UpdateCocktailReviewDto,
     queryRunner?: QueryRunner,
@@ -156,7 +157,7 @@ export class ReviewsService {
     ) as Repository<SpiritReviewModel | WineReviewModel | CocktailReviewModel>;
 
     // Check if the review exists and the user is the author.
-    const review = await this.getReviewById(dto.reviewId);
+    const review = await this.getReviewById(reviewId);
 
     if (!review) {
       throw new NotFoundException(NotFoundErrorMessage(dto.alcoholType));

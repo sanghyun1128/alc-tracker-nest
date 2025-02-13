@@ -61,11 +61,12 @@ export class ReviewsController {
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
   async putReviewById(
+    @Param('reviewId') reviewId: ReviewModel['id'],
     @User('id') userId: UserModel['id'],
     @Body() dto: UpdateSpiritReviewDto | UpdateWineReviewDto | UpdateCocktailReviewDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
-    const review = await this.reviewsService.updateReviewById(userId, dto, queryRunner);
+    const review = await this.reviewsService.updateReviewById(reviewId, userId, dto, queryRunner);
 
     return this.reviewsService.getReviewById(review.id);
   }
