@@ -6,6 +6,7 @@ import { AlcoholService } from './alcohol.service';
 import { AlcoholModel, SpiritModel, WineModel, CocktailModel } from './entity/alcohol.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { CommonModule } from 'src/common/common.module';
+import { ReviewsModule } from 'src/reviews/reviews.module';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
@@ -14,6 +15,7 @@ import { UsersModule } from 'src/users/users.module';
     AuthModule,
     UsersModule,
     CommonModule,
+    ReviewsModule,
   ],
   controllers: [AlcoholController],
   providers: [AlcoholService],
