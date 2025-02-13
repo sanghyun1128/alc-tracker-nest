@@ -52,8 +52,18 @@ export class ReviewsService {
   };
 
   // Get a single review by its ID.
-  async getReviewById(reviewId: ReviewModel['id']): Promise<ReviewModel> {
-    const review = await this.reviewRepository.findOne({
+  async getReviewById(
+    reviewId: ReviewModel['id'],
+    queryRunner?: QueryRunner,
+  ): Promise<ReviewModel> {
+    const repository = this.commonService.getRepositoryWithQueryRunner(
+      'review',
+      this.repositoryMap,
+      this.modelMap,
+      queryRunner,
+    ) as Repository<ReviewModel>;
+
+    const review = await repository.findOne({
       where: {
         id: reviewId,
       },
@@ -101,6 +111,7 @@ export class ReviewsService {
     dto: CreateSpiritReviewDto | CreateWineReviewDto | CreateCocktailReviewDto,
     queryRunner?: QueryRunner,
   ): Promise<ReviewModel> {
+    // 1. Get the repository for the specific alcohol type with query runner.
     const repository = this.commonService.getRepositoryWithQueryRunner(
       dto.alcoholType,
       this.repositoryMap,
@@ -108,14 +119,14 @@ export class ReviewsService {
       queryRunner,
     ) as Repository<SpiritReviewModel | WineReviewModel | CocktailReviewModel>;
 
-    // Check if the user is the owner of the alcohol.
+    // 2. Check if the user is the owner of the alcohol.
     const alcohol = await this.alcoholService.getAlcoholById(dto.alcoholId);
 
     if (alcohol.owner.id !== userId) {
       throw new BadRequestException(PermissionErrorMessage('review', 'create'));
     }
 
-    // Create a new review.
+    // 3. Create a new review.
     const review = repository.create({
       author: {
         id: userId,
@@ -126,7 +137,7 @@ export class ReviewsService {
 
     const result = await repository.save(review);
 
-    // Create images.
+    // 4. Create images.
     for (const image of dto.images) {
       image.isNew &&
         (await this.commonService.createImage(
@@ -139,7 +150,7 @@ export class ReviewsService {
         ));
     }
 
-    return this.getReviewById(result.id);
+    return this.getReviewById(result.id, queryRunner);
   }
 
   // Update a review by its ID.
@@ -149,6 +160,7 @@ export class ReviewsService {
     dto: UpdateSpiritReviewDto | UpdateWineReviewDto | UpdateCocktailReviewDto,
     queryRunner?: QueryRunner,
   ): Promise<ReviewModel> {
+    // 1. Get the repository for the specific alcohol type with query runner.
     const repository = this.commonService.getRepositoryWithQueryRunner(
       dto.alcoholType,
       this.repositoryMap,
@@ -156,7 +168,7 @@ export class ReviewsService {
       queryRunner,
     ) as Repository<SpiritReviewModel | WineReviewModel | CocktailReviewModel>;
 
-    // Check if the review exists and the user is the author.
+    // 2. Check if the review exists and the user is the author.
     const review = await this.getReviewById(reviewId);
 
     if (!review) {
@@ -167,7 +179,7 @@ export class ReviewsService {
       throw new BadRequestException(PermissionErrorMessage(dto.alcoholType, 'update'));
     }
 
-    // Update the review.
+    // 3. Update the review.
     const { images, deletedImages, ...dtoWithOutImages } = dto;
 
     const updatedReview = await repository.save({
@@ -175,8 +187,9 @@ export class ReviewsService {
       ...dtoWithOutImages,
     });
 
-    // Update images.
+    // 4. Update images.
     for (const image of images) {
+      // 4-1. If the image is new, create a new image.
       if (image.isNew) {
         await this.commonService.createImage(
           {
@@ -187,6 +200,7 @@ export class ReviewsService {
           queryRunner,
         );
       } else {
+        // 4-2. If the image is not new, update the existing image.
         const reviewImage = review.images.find((reviewImage) => reviewImage.path === image.path);
 
         if (reviewImage) {
@@ -201,7 +215,7 @@ export class ReviewsService {
       }
     }
 
-    // Delete images.
+    // 5. Delete unused images.
     for (const image of deletedImages) {
       const imageId = review.images.find((reviewImage) => reviewImage.path === image.path).id;
 
@@ -217,6 +231,7 @@ export class ReviewsService {
     userId: UserModel['id'],
     queryRunner?: QueryRunner,
   ): Promise<DeleteResult> {
+    // 1. Get the repository with query runner.
     const repository = this.commonService.getRepositoryWithQueryRunner(
       'review',
       this.repositoryMap,
@@ -224,7 +239,7 @@ export class ReviewsService {
       queryRunner,
     ) as Repository<ReviewModel>;
 
-    // Check if the review exists and the user is the author.
+    // 2. Check if the review exists and the user is the author.
     const review = await this.getReviewById(reviewId);
 
     if (!review) {
@@ -235,11 +250,14 @@ export class ReviewsService {
       throw new BadRequestException(PermissionErrorMessage('review', 'delete'));
     }
 
-    // Delete images.
+    // 3. Delete images.
     for (const image of review.images) {
       await this.commonService.deleteImageById(image.id, queryRunner);
     }
 
-    return await repository.delete(reviewId);
+    // 4. Delete review.
+    const result = await repository.delete(reviewId);
+
+    return result;
   }
 }
