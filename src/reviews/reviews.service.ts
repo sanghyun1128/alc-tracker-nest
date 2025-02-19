@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, QueryRunner, Repository } from 'typeorm';
 
@@ -34,6 +40,7 @@ export class ReviewsService {
     private readonly cocktailReviewRepository: Repository<CocktailReviewModel>,
 
     private readonly commonService: CommonService,
+    @Inject(forwardRef(() => AlcoholService))
     private readonly alcoholService: AlcoholService,
   ) {}
 

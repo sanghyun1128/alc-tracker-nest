@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import {
@@ -25,9 +25,10 @@ import { UsersModule } from 'src/users/users.module';
     AuthModule,
     UsersModule,
     CommonModule,
-    AlcoholModule,
+    forwardRef(() => AlcoholModule),
   ],
   controllers: [ReviewsController],
   providers: [ReviewsService],
+  exports: [ReviewsService],
 })
 export class ReviewsModule {}
