@@ -1,4 +1,5 @@
-import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Headers, Post, Res, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
 
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dto/register-user.dto';
@@ -11,12 +12,15 @@ export class AuthController {
 
   @Post('/login/email')
   @UseGuards(BasicTokenGuard)
-  postLoginWithEmail(@Headers('authorization') rawToken: string) {
+  postLoginWithEmail(
+    @Headers('authorization') rawToken: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const token = this.authService.extractTokenFromHeader(rawToken, false);
 
     const decodedToken = this.authService.decodeBasicToken(token);
 
-    return this.authService.loginWithEmail(decodedToken);
+    return this.authService.loginWithEmail(decodedToken, res);
   }
 
   @Post('/register/email')
@@ -38,13 +42,12 @@ export class AuthController {
 
   @Post('/token/refresh')
   @UseGuards(RefreshTokenGuard)
-  postTokenRefresh(@Headers('authorization') rawToken: string) {
+  postTokenRefresh(
+    @Headers('authorization') rawToken: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const token = this.authService.extractTokenFromHeader(rawToken, true);
 
-    const newToken = this.authService.rotateToken(token, true);
-
-    return {
-      refreshToken: newToken,
-    };
+    this.authService.rotateToken(token, true, res);
   }
 }

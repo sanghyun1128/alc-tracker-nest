@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { Response } from 'express';
 
 import { RegisterUserDto } from './dto/register-user.dto';
 import {
@@ -47,13 +48,17 @@ export class AuthService {
    * Login a user with email and password.
    *
    * @param user - An object containing the user's email and password.
+   * @param res - The response object to set the refresh token.
    * @returns An object containing the access token and refresh token.
    * @throws UnauthorizedException if the user does not exist or the password is incorrect.
    */
-  async loginWithEmail(user: Pick<UserModel, 'email' | 'password'>) {
+  async loginWithEmail(user: Pick<UserModel, 'email' | 'password'>, res: Response) {
     const existingUser = await this.authWithEmailAndPassword(user);
+    const tokens = this.loginUser(existingUser);
 
-    return this.loginUser(existingUser);
+    this.setHttpOnlyCookie(res, tokens.refreshToken);
+
+    return { accessToken: tokens.accessToken };
   }
 
   async authWithEmailAndPassword(user: Pick<UserModel, 'email' | 'password'>) {
@@ -130,20 +135,24 @@ export class AuthService {
    * @returns A new access token.
    * @throws UnauthorizedException if the provided token is not a valid refresh token.
    */
-  rotateToken(token: string, isRefreshToken: boolean) {
+  rotateToken(token: string, isRefreshToken: boolean, res?: Response) {
     const decodedToken = this.verifyToken(token);
 
     if (decodedToken.type !== 'refresh') {
       throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidToken);
     }
 
-    return this.signToken(
-      {
-        email: decodedToken.email,
-        id: decodedToken.sub,
-      },
-      isRefreshToken,
-    );
+    if (isRefreshToken) {
+      this.setHttpOnlyCookie(res, token);
+    } else {
+      return this.signToken(
+        {
+          email: decodedToken.email,
+          id: decodedToken.sub,
+        },
+        isRefreshToken,
+      );
+    }
   }
 
   verifyToken(token: string) {
@@ -154,5 +163,18 @@ export class AuthService {
     } catch (error) {
       throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidToken);
     }
+  }
+
+  setHttpOnlyCookie(res: Response, refreshToken: string) {
+    //TODO: Set maxAge with login option
+    //      - login option: 'keep me logged in' or 'session'
+    //      - maxAge: 0 (session cookie)
+    //      - maxAge: 7 days (keep me logged in)
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== 'development',
+      sameSite: 'strict',
+      maxAge: +this.configService.get<string>(ENV_JWT_REFRESH_TOKEN_EXPIRATION),
+    });
   }
 }
