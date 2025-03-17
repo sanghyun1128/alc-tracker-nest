@@ -1,10 +1,9 @@
-import { Body, Controller, Headers, Post, Res, UseGuards } from '@nestjs/common';
-import { Response } from 'express';
+import { Body, Controller, Headers, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Response, Request } from 'express';
 
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { BasicTokenGuard } from './guard/basic-token.guard';
-import { RefreshTokenGuard } from './guard/bearer-token.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -29,25 +28,19 @@ export class AuthController {
   }
 
   @Post('/token/access')
-  @UseGuards(RefreshTokenGuard)
-  postTokenAccess(@Headers('authorization') rawToken: string) {
-    const token = this.authService.extractTokenFromHeader(rawToken, true);
-
-    const newToken = this.authService.rotateToken(token, false);
+  postTokenAccess(@Req() req: Request) {
+    const refreshToken = req.cookies.refreshToken;
+    const newAccessToken = this.authService.rotateToken(refreshToken, false);
 
     return {
-      accessToken: newToken,
+      accessToken: newAccessToken,
     };
   }
 
   @Post('/token/refresh')
-  @UseGuards(RefreshTokenGuard)
-  postTokenRefresh(
-    @Headers('authorization') rawToken: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const token = this.authService.extractTokenFromHeader(rawToken, true);
+  postTokenRefresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const refreshToken = req.cookies.refreshToken;
 
-    this.authService.rotateToken(token, true, res);
+    this.authService.rotateToken(refreshToken, true, res);
   }
 }
