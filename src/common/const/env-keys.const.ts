@@ -13,5 +13,5 @@ export const ENV_JWT_HASH_ROUNDS_KEY = 'JWT_HASH_ROUNDS';
 export const ENV_JWT_REFRESH_TOKEN_EXPIRATION = 'JWT_REFRESH_TOKEN_EXPIRATION';
 export const ENV_JWT_ACCESS_TOKEN_EXPIRATION = 'JWT_ACCESS_TOKEN_EXPIRATION';
 
-export const PROTOCOL = 'http';
+export const PROTOCOL = 'https';
 export const HOST = 'localhost:4000';
