@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import * as cookieParser from 'cookie-parser';
 import { readFileSync } from 'fs';
 
 import { AppModule } from './app.module';
@@ -33,6 +34,8 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   });
+
+  app.use(cookieParser());
 
   await app.listen(process.env.PORT);
 }
