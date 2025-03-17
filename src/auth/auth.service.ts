@@ -135,15 +135,22 @@ export class AuthService {
    * @returns A new access token.
    * @throws UnauthorizedException if the provided token is not a valid refresh token.
    */
-  rotateToken(token: string, isRefreshToken: boolean, res?: Response) {
-    const decodedToken = this.verifyToken(token);
+  rotateToken(refreshToken: string, isRefreshToken: boolean, res?: Response) {
+    const decodedToken = this.verifyToken(refreshToken);
 
     if (decodedToken.type !== 'refresh') {
       throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidToken);
     }
 
     if (isRefreshToken) {
-      this.setHttpOnlyCookie(res, token);
+      const newRefreshToken = this.signToken(
+        {
+          email: decodedToken.email,
+          id: decodedToken.sub,
+        },
+        isRefreshToken,
+      );
+      this.setHttpOnlyCookie(res, newRefreshToken);
     } else {
       return this.signToken(
         {
@@ -172,9 +179,10 @@ export class AuthService {
     //      - maxAge: 7 days (keep me logged in)
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
+      secure: false,
       sameSite: 'strict',
       maxAge: +this.configService.get<string>(ENV_JWT_REFRESH_TOKEN_EXPIRATION),
+      path: '/',
     });
   }
 }
