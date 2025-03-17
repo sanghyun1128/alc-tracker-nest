@@ -67,18 +67,6 @@ export class UsersController {
   }
 
   /**
-   * Get user profile information for showing to other users.
-   *
-   * @Param userId - The ID of the user.
-   * @returns User profile information.
-   */
-  @Get('/profile/:userId')
-  @UseGuards(AccessTokenGuard)
-  getUserProfile(@Param('userId') userId: UserModel['id']) {
-    return this.usersService.getUserProfile(userId);
-  }
-
-  /**
    * Get my profile information for showing to other users.
    *
    * @User userId - The ID of the authenticated user.
@@ -87,6 +75,18 @@ export class UsersController {
   @Get('/profile/my')
   @UseGuards(AccessTokenGuard)
   getMyProfile(@User('id') userId: UserModel['id']) {
+    return this.usersService.getUserProfile(userId);
+  }
+
+  /**
+   * Get user profile information for showing to other users.
+   *
+   * @Param userId - The ID of the user.
+   * @returns User profile information.
+   */
+  @Get('/profile/:userId')
+  @UseGuards(AccessTokenGuard)
+  getUserProfile(@Param('userId') userId: UserModel['id']) {
     return this.usersService.getUserProfile(userId);
   }
 
