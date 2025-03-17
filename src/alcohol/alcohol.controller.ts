@@ -35,21 +35,21 @@ export class AlcoholController {
     private readonly commonService: CommonService,
   ) {}
 
-  @Get('/:userId/:type')
-  @UseGuards(AccessTokenGuard)
-  getUserAlcohols(
-    @Param('type') type: AlcoholType,
-    @Param('userId') userId: UserModel['id'],
-    @Query() query: PaginateAlcoholDto,
-  ) {
-    return this.alcoholService.getUserAlcohols(type, userId, query);
-  }
-
   @Get('/my/:type')
   @UseGuards(AccessTokenGuard)
   getMyAlcohols(
     @Param('type') type: AlcoholType,
     @User('id') userId: UserModel['id'],
+    @Query() query: PaginateAlcoholDto,
+  ) {
+    return this.alcoholService.getUserAlcohols(type, userId, query);
+  }
+
+  @Get('/:userId/:type')
+  @UseGuards(AccessTokenGuard)
+  getUserAlcohols(
+    @Param('type') type: AlcoholType,
+    @Param('userId') userId: UserModel['id'],
     @Query() query: PaginateAlcoholDto,
   ) {
     return this.alcoholService.getUserAlcohols(type, userId, query);
