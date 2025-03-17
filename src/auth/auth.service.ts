@@ -181,7 +181,7 @@ export class AuthService {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      maxAge: +this.configService.get<string>(ENV_JWT_REFRESH_TOKEN_EXPIRATION),
+      maxAge: +this.configService.get<string>(ENV_JWT_REFRESH_TOKEN_EXPIRATION) * 1000,
       path: '/',
     });
   }
