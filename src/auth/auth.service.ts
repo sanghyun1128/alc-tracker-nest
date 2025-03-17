@@ -179,7 +179,7 @@ export class AuthService {
     //      - maxAge: 7 days (keep me logged in)
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: false,
+      secure: true,
       sameSite: 'strict',
       maxAge: +this.configService.get<string>(ENV_JWT_REFRESH_TOKEN_EXPIRATION),
       path: '/',
