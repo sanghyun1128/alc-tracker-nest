@@ -1,11 +1,19 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { readFileSync } from 'fs';
 
 import { AppModule } from './app.module';
 import { LogInterceptor } from './common/interceptor/log.interceptor';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const httpsOptions = {
+    key: readFileSync(process.env.SSL_KEY_PATH),
+    cert: readFileSync(process.env.SSL_CERT_PATH),
+  };
+
+  const app = await NestFactory.create(AppModule, {
+    httpsOptions,
+  });
 
   app.useGlobalInterceptors(new LogInterceptor());
 
@@ -21,10 +29,11 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: process.env.CORS_ORIGIN,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   });
 
-  await app.listen(4000);
+  await app.listen(process.env.PORT);
 }
 bootstrap();
