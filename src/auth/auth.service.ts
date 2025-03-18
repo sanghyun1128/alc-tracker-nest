@@ -27,10 +27,11 @@ export class AuthService {
    * Register a new user with email, password, nickname, birth date, and gender.
    *
    * @param user - An object containing the user's email, password, nickname, birth date, and gender.
+   * @param res - The response object to set the refresh token.
    * @returns An object containing the access token and refresh token.
    * @throws BadRequestException if the email or nickname already exists.
    */
-  async registerWithEmail(user: RegisterUserDto) {
+  async registerWithEmail(user: RegisterUserDto, res: Response) {
     const hashedPassword = await bcrypt.hash(
       user.password,
       +this.configService.get<string>(ENV_JWT_HASH_ROUNDS_KEY),
@@ -41,7 +42,7 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    return this.loginUser(newUser);
+    return this.loginUser(newUser, res);
   }
 
   /**
@@ -54,9 +55,7 @@ export class AuthService {
    */
   async loginWithEmail(user: Pick<UserModel, 'email' | 'password'>, res: Response) {
     const existingUser = await this.authWithEmailAndPassword(user);
-    const tokens = this.loginUser(existingUser);
-
-    this.setHttpOnlyCookie(res, tokens.refreshToken);
+    const tokens = this.loginUser(existingUser, res);
 
     return { accessToken: tokens.accessToken };
   }
@@ -77,10 +76,10 @@ export class AuthService {
     return existingUser;
   }
 
-  loginUser(user: Pick<UserModel, 'email' | 'id'>) {
+  loginUser(user: Pick<UserModel, 'email' | 'id'>, res: Response) {
+    this.setHttpOnlyCookie(res, this.signToken(user, true));
     return {
       accessToken: this.signToken(user, false),
-      refreshToken: this.signToken(user, true),
     };
   }
 
@@ -129,13 +128,15 @@ export class AuthService {
   }
 
   /**
-   * Generates a new access token using a valid refresh token.
+   * Generates a new access token and refresh token if the provided refresh token is valid.
    *
    * @param refreshToken - The refresh token used to generate a new access token.
+   * @param isRefreshToken - A boolean indicating whether the refresh token is being rotated.
+   * @param res - The response object to set the new refresh token.
    * @returns A new access token.
    * @throws UnauthorizedException if the provided token is not a valid refresh token.
    */
-  rotateToken(refreshToken: string, isRefreshToken: boolean, res?: Response) {
+  rotateToken(refreshToken: string, isRefreshToken: boolean, res: Response) {
     const decodedToken = this.verifyToken(refreshToken);
 
     if (decodedToken.type !== 'refresh') {
@@ -143,21 +144,37 @@ export class AuthService {
     }
 
     if (isRefreshToken) {
+      // Manual refresh token rotation
       const newRefreshToken = this.signToken(
         {
           email: decodedToken.email,
           id: decodedToken.sub,
         },
-        isRefreshToken,
+        true,
       );
       this.setHttpOnlyCookie(res, newRefreshToken);
+      return;
     } else {
+      // Automatic refresh token rotation
+      const now = Math.floor(Date.now() / 1000);
+      if (decodedToken.exp && decodedToken.exp - now <= 600) {
+        // If the refresh token will expire in 10 minutes or less, update it automatically
+        const newRefreshToken = this.signToken(
+          {
+            email: decodedToken.email,
+            id: decodedToken.sub,
+          },
+          true,
+        );
+        this.setHttpOnlyCookie(res, newRefreshToken);
+      }
+      // Generate a new access token
       return this.signToken(
         {
           email: decodedToken.email,
           id: decodedToken.sub,
         },
-        isRefreshToken,
+        false,
       );
     }
   }
