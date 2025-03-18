@@ -23,14 +23,14 @@ export class AuthController {
   }
 
   @Post('/register/email')
-  postRegisterWithEmail(@Body() dto: RegisterUserDto) {
-    return this.authService.registerWithEmail(dto);
+  postRegisterWithEmail(@Body() dto: RegisterUserDto, @Res({ passthrough: true }) res: Response) {
+    return this.authService.registerWithEmail(dto, res);
   }
 
   @Post('/token/access')
-  postTokenAccess(@Req() req: Request) {
+  postTokenAccess(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies.refreshToken;
-    const newAccessToken = this.authService.rotateToken(refreshToken, false);
+    const newAccessToken = this.authService.rotateToken(refreshToken, false, res);
 
     return {
       accessToken: newAccessToken,
