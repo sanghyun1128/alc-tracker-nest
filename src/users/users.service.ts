@@ -114,7 +114,7 @@ export class UsersService {
   async getUserProfile(userId: UserModel['id']) {
     const user = await this.usersRepository.findOne({
       where: { id: userId },
-      relations: ['profile', 'alcohols', 'reviews'],
+      relations: ['profile'],
     });
 
     if (!user) {
