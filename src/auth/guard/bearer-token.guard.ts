@@ -43,7 +43,7 @@ export class AccessTokenGuard extends BearerTokenGuard {
     const request = context.switchToHttp().getRequest();
 
     if (request.tokenType !== 'access') {
-      throw new UnauthorizedException('Access token is required');
+      throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidAccessToken);
     }
 
     return Promise.resolve(true);
@@ -58,7 +58,7 @@ export class RefreshTokenGuard extends BearerTokenGuard {
     const request = context.switchToHttp().getRequest();
 
     if (request.tokenType !== 'refresh') {
-      throw new UnauthorizedException('Refresh token is required');
+      throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidRefreshToken);
     }
 
     return Promise.resolve(true);
