@@ -1,9 +1,19 @@
-import { Body, Controller, Headers, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Headers,
+  Post,
+  Req,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { Response, Request } from 'express';
 
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { BasicTokenGuard } from './guard/basic-token.guard';
+import { UnauthorizedErrorMessage } from 'src/common/error-message';
 
 @Controller('auth')
 export class AuthController {
@@ -30,6 +40,9 @@ export class AuthController {
   @Post('/token/access')
   postTokenAccess(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidRefreshToken);
+    }
     const newAccessToken = this.authService.rotateToken(refreshToken, false, res);
 
     return {
@@ -40,6 +53,9 @@ export class AuthController {
   @Post('/token/refresh')
   postTokenRefresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidRefreshToken);
+    }
 
     this.authService.rotateToken(refreshToken, true, res);
   }
