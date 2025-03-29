@@ -140,7 +140,7 @@ export class AuthService {
     const decodedToken = this.verifyToken(refreshToken);
 
     if (decodedToken.type !== 'refresh') {
-      throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidToken);
+      throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidRefreshToken);
     }
 
     if (isRefreshToken) {
@@ -185,7 +185,20 @@ export class AuthService {
         secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
       });
     } catch (error) {
-      throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidToken);
+      const decodedToken = this.jwtService.decode(token);
+      if (!decodedToken) {
+        throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidToken);
+      }
+
+      const tokenType = decodedToken.type;
+
+      if (tokenType === 'access') {
+        throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidAccessToken);
+      } else if (tokenType === 'refresh') {
+        throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidRefreshToken);
+      } else {
+        throw new UnauthorizedException(UnauthorizedErrorMessage.InvalidToken);
+      }
     }
   }
 
