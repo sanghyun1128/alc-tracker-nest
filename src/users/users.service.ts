@@ -114,13 +114,23 @@ export class UsersService {
   async getUserProfile(userId: UserModel['id']) {
     const user = await this.usersRepository.findOne({
       where: { id: userId },
-      relations: ['profile'],
+      relations: ['profile', 'profile.image'],
     });
 
     if (!user) {
       throw new BadRequestException(NotFoundErrorMessage('user'));
     }
 
-    return user;
+    const { profile, ...basicUser } = user;
+    const flattenedProfile = profile
+      ? {
+          profileImage: profile.image,
+          profileComment: profile.comment,
+          profileRegionISOAlpha2: profile.regionISOAlpha2,
+          profileLanguageISOAlpha2: profile.languageISOAlpha2,
+        }
+      : {};
+
+    return { ...basicUser, ...flattenedProfile };
   }
 }
