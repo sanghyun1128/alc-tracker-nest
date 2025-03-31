@@ -121,16 +121,6 @@ export class UsersService {
       throw new BadRequestException(NotFoundErrorMessage('user'));
     }
 
-    const { profile, ...basicUser } = user;
-    const flattenedProfile = profile
-      ? {
-          profileImage: profile.image,
-          profileComment: profile.comment,
-          profileRegionISOAlpha2: profile.regionISOAlpha2,
-          profileLanguageISOAlpha2: profile.languageISOAlpha2,
-        }
-      : {};
-
-    return { ...basicUser, ...flattenedProfile };
+    return user;
   }
 }
