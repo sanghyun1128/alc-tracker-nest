@@ -39,7 +39,7 @@ export class Profile {
     nullable: true,
   })
   @IsString({ message: stringValidationMessage })
-  languageISOAlpha2: string;
+  languageISO6391: string;
 }
 
 @Entity()
