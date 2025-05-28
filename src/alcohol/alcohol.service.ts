@@ -106,7 +106,7 @@ export class AlcoholService {
             id: userId,
           },
         },
-        relations: ['owner'],
+        relations: ['owner', 'images'],
       },
       `alcohol/${userId}/${type}`,
     );
