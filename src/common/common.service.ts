@@ -88,9 +88,14 @@ export class CommonService {
   ) {
     const findOptions = this.composeFindOptions<T>(dto);
 
+    const mergedWhere = overrideFindOptions.where
+      ? { ...findOptions.where, ...overrideFindOptions.where }
+      : findOptions.where;
+
     const results = await repository.find({
       ...findOptions,
       ...overrideFindOptions,
+      where: mergedWhere,
     });
 
     const lastItem =
@@ -120,7 +125,7 @@ export class CommonService {
         after: lastItem ? lastItem.index : null,
       },
       count: results.length,
-      next: nextUrl,
+      next: nextUrl.toString(),
     };
   }
 

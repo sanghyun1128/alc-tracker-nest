@@ -90,7 +90,7 @@ export class ReviewsService {
     dto: PaginateReviewDto,
   ): Promise<
     | { data: ReviewModel[]; total: number }
-    | { data: ReviewModel[]; cursor: { after: number }; count: number; next: URL }
+    | { data: ReviewModel[]; cursor: { after: number }; count: number; next: string | null }
   > {
     const repository = this.commonService.getRepositoryWithQueryRunner(
       'review',

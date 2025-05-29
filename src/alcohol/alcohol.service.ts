@@ -89,7 +89,7 @@ export class AlcoholService {
     dto: PaginateAlcoholDto,
   ): Promise<
     | { data: AlcoholModel[]; total: number }
-    | { data: AlcoholModel[]; cursor: { after: number }; count: number; next: URL }
+    | { data: AlcoholModel[]; cursor: { after: number }; count: number; next: string | null }
   > {
     const repository = this.commonService.getRepositoryWithQueryRunner(
       type,
