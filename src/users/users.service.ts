@@ -143,20 +143,31 @@ export class UsersService {
       throw new BadRequestException(NotFoundErrorMessage('user'));
     }
 
-    const existImageId = user.profile.image.id;
-    const newImageId = dto.profile.image.id;
-    if (existImageId !== newImageId) {
-      await this.commonService.deleteImageById(existImageId, queryRunner);
+    //TODO: image test needed
+    // const existImageId = user.profile.image?.id;
+    // const newImageId = dto.profile.image?.id;
 
-      await this.commonService.createImage(
-        {
-          userId,
-          order: 0,
-          path: newImageId,
-        },
-        queryRunner,
-      );
-    }
+    // if (existImageId && newImageId && existImageId !== newImageId) {
+    //   await this.commonService.deleteImageById(existImageId, queryRunner);
+
+    //   await this.commonService.createImage(
+    //     {
+    //       userId,
+    //       order: 0,
+    //       path: newImageId,
+    //     },
+    //     queryRunner,
+    //   );
+    // } else if (!existImageId && newImageId) {
+    //   await this.commonService.createImage(
+    //     {
+    //       userId,
+    //       order: 0,
+    //       path: newImageId,
+    //     },
+    //     queryRunner,
+    //   );
+    // }
 
     const updatedUser = await repository.save({
       ...user,

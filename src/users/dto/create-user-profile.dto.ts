@@ -1,5 +1,10 @@
-import { PickType } from '@nestjs/mapped-types';
+import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
 
-import { UserModel } from '../entity/user.entity';
+import { Profile } from '../entity/user.entity';
 
-export class CreateUserProfileDto extends PickType(UserModel, ['profile'] as const) {}
+export class CreateUserProfileDto {
+  @ValidateNested()
+  @Type(() => Profile)
+  profile: Profile;
+}

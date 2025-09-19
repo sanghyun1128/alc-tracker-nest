@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -90,7 +91,7 @@ export class UsersController {
    * Update my profile.
    *
    * @User userId - The ID of the authenticated user.
-   * @Query dto - The updated user profile information.
+   * @Body dto - The updated user profile information.
    * @returns Updated user profile information.
    */
   @Put('/profile/my')
@@ -98,7 +99,7 @@ export class UsersController {
   @UseInterceptors(TransactionInterceptor)
   async putUserProfile(
     @User('id') userId: UserModel['id'],
-    @Query() dto: UpdateUserProfileDto,
+    @Body() dto: UpdateUserProfileDto,
     @QueryRunner() queryRunner: QueryRunnerType,
   ) {
     return await this.usersService.updateUserProfile(userId, dto, queryRunner);
