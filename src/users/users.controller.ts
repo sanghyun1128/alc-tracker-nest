@@ -16,15 +16,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserModel } from './entity/user.entity';
 import { UsersService } from './users.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
-import { CommonService } from 'src/common/common.service';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly commonService: CommonService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   /**
    * Get user private information include email, password...
@@ -100,21 +96,11 @@ export class UsersController {
   @Put('/profile/my')
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(TransactionInterceptor)
-  async putUserProfile(@User('id') userId: UserModel['id'], @Query() dto: UpdateUserProfileDto) {
-    const user = await this.usersService.getUserProfile(userId);
-
-    const existImageId = user.profile.image.id;
-    const newImageId = dto.profile.image.id;
-    if (existImageId !== newImageId) {
-      await this.commonService.deleteImageById(existImageId);
-
-      await this.commonService.createImage({
-        userId,
-        order: 0,
-        path: newImageId,
-      });
-    }
-
-    return await this.usersService.updateUserProfile(userId, dto);
+  async putUserProfile(
+    @User('id') userId: UserModel['id'],
+    @Query() dto: UpdateUserProfileDto,
+    @QueryRunner() queryRunner: QueryRunnerType,
+  ) {
+    return await this.usersService.updateUserProfile(userId, dto, queryRunner);
   }
 }
