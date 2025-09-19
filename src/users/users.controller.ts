@@ -102,16 +102,19 @@ export class UsersController {
   @UseInterceptors(TransactionInterceptor)
   async putUserProfile(@User('id') userId: UserModel['id'], @Query() dto: UpdateUserProfileDto) {
     const user = await this.usersService.getUserProfile(userId);
-    const imageId = dto.profile.image.id;
 
-    const deletionResult = await this.commonService.deleteImageById(imageId);
+    const existImageId = user.profile.image.id;
+    const newImageId = dto.profile.image.id;
+    if (existImageId !== newImageId) {
+      await this.commonService.deleteImageById(existImageId);
 
-    const creationResult = await this.commonService.createImage({
-      userId,
-      order: 0,
-      path: dto.profile.image.id,
-    });
+      await this.commonService.createImage({
+        userId,
+        order: 0,
+        path: newImageId,
+      });
+    }
 
-    return { deletionResult, creationResult };
+    return await this.usersService.updateUserProfile(userId, dto);
   }
 }

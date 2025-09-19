@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { QueryRunner, Repository } from 'typeorm';
 
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserModel } from './entity/user.entity';
 import { ExistErrorMessage, NotFoundErrorMessage } from 'src/common/error-message';
@@ -122,5 +123,26 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  async updateUserProfile(userId: UserModel['id'], dto: UpdateUserProfileDto) {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      relations: ['profile', 'profile.image'],
+    });
+
+    if (!user) {
+      throw new BadRequestException(NotFoundErrorMessage('user'));
+    }
+
+    const updatedUser = await this.usersRepository.save({
+      ...user,
+      profile: {
+        ...user.profile,
+        ...dto.profile,
+      },
+    });
+
+    return updatedUser.profile;
   }
 }
